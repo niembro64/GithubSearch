@@ -117,3 +117,7 @@ export type GitHubRepo = {
   default_branch: string;
   score: number;
 };
+
+export type GitHubRepoExtended = GitHubRepo & {
+  liked: boolean;
+};
