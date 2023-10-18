@@ -2,15 +2,15 @@
 import axios from 'axios';
 import React, {useEffect, useMemo, useState} from 'react';
 import {
-  StyleSheet,
+  ScrollView,
   Text,
-  View,
   TextInput,
-  Button,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Repository} from '~/types';
+import {getColorFromLanguage} from '../../colors';
+import {GitHubRepo} from '../../types';
 
 const insetCalc = (insets: EdgeInsets) => ({
   paddingTop: Math.max(insets.top, 16),
@@ -22,45 +22,30 @@ const insetCalc = (insets: EdgeInsets) => ({
 export const Home = () => {
   const insets = useSafeAreaInsets();
   const style = useMemo(() => insetCalc(insets), [insets]);
-  const [searchResults, setSearchResults] = useState<Repository[]>([]);
+  const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
   const [inputValue, setInputValue] = useState<string>('');
-  const [debouncedValue, setDebouncedValue] = useState<string>('');
+  const [searchingValue, setSearchingValue] = useState<string>('');
 
   useEffect(() => {
-    if (debouncedValue) {
-      setIsLoading(true);
-      setSearchResults([]);
-      axios
-        .get(`https://api.github.com/search/repositories?q=${debouncedValue}`)
-        .then(response => {
-          setSearchResults(response.data.items.slice(0, 10)); // take the top 10 results
-        })
-        .catch(err => {
-          console.error(err);
-          setError('Error fetching GitHub repositories');
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-  }, [debouncedValue]);
-
-  // useEffect(() => {
-  //   console.log('inputValue', inputValue);
-  //   const handler = setTimeout(() => {
-  //     setDebouncedValue(inputValue);
-  //   }, 1000);
-
-  //   return () => {
-  //     clearTimeout(handler);
-  //   };
-  // }, [inputValue]);
+    console.log('searchResults', JSON.stringify(searchResults, null, 2));
+  }, [searchResults]);
 
   useEffect(() => {
-    console.log('debouncedValue', debouncedValue);
-  }, [debouncedValue]);
+    console.log('inputValue', inputValue);
+    const handler = setTimeout(() => {
+      setSearchingValue(inputValue);
+    }, 1000);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [inputValue]);
+
+  useEffect(() => {
+    console.log('debouncedValue', searchingValue);
+  }, [searchingValue]);
 
   return (
     <View style={style}>
@@ -96,20 +81,60 @@ export const Home = () => {
             justifyContent: 'center',
             alignItems: 'center',
           }}
-          onPress={() => setDebouncedValue(inputValue)}>
+          onPress={() => {
+            if (searchingValue) {
+              setIsLoading(true);
+              setSearchResults([]);
+              axios
+                .get(
+                  `https://api.github.com/search/repositories?q=${searchingValue}`,
+                )
+                .then(response => {
+                  setSearchResults(response.data.items.slice(0, 10));
+                })
+                .catch(err => {
+                  console.error(err);
+                  setError('Error fetching GitHub repositories');
+                })
+                .finally(() => {
+                  setIsLoading(false);
+                });
+            }
+          }}>
           <Text>Search</Text>
         </TouchableOpacity>
       </View>
       <Text>{inputValue}</Text>
-      <Text>{debouncedValue}</Text>
-      {isLoading && <Text>Loading...</Text>}
-      {error && <Text>Error: {error}</Text>}
-      {!isLoading &&
-        !error &&
-        Array.isArray(searchResults) &&
-        searchResults.map((repo, index: number) => (
-          <Text key={index}>{JSON.stringify(repo)}</Text>
-        ))}
+      <Text>{searchingValue}</Text>
+      <ScrollView>
+        {isLoading && <Text>Loading...</Text>}
+        {error && <Text>Error: {error}</Text>}
+        {!isLoading &&
+          !error &&
+          Array.isArray(searchResults) &&
+          searchResults.map((repo: GitHubRepo, index: number) => (
+            <View
+              style={{
+                backgroundColor: getColorFromLanguage(repo?.language),
+              }}>
+              <View
+                style={{
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: 8,
+                  borderWidth: 1,
+                  borderRadius: 8,
+                }}
+                key={index}>
+                <Text>{repo.name}</Text>
+                <Text>{repo.language}</Text>
+                <Text>{repo.stargazers_count}</Text>
+                <Text>{repo.url}</Text>
+              </View>
+            </View>
+          ))}
+      </ScrollView>
     </View>
   );
 };

@@ -1,0 +1,57 @@
+export const getColorFromLanguage = (language: any): string => {
+  if (typeof language !== 'string') {
+    return '#ccc';
+  }
+  // @ts-ignore
+  return languageColors[language] || '#ccc';
+};
+
+const languageColors = {
+  JavaScript: '#f1e05a',
+  TypeScript: '#2b7489',
+  Ruby: '#701516',
+  Java: '#b07219',
+  Python: '#3572A5',
+  PHP: '#4F5D95',
+  'C#': '#178600',
+  C: '#555555',
+  'C++': '#f34b7d',
+  'Objective-C': '#438eff',
+  Shell: '#89e051',
+  Go: '#00ADD8',
+  'Visual Basic': '#945db7',
+  Kotlin: '#F18E33',
+  Rust: '#dea584',
+  'Rust Analyzer': '#dea584',
+  Scala: '#c22d40',
+  Swift: '#ffac45',
+  Dart: '#00B4AB',
+  Lua: '#000080',
+  Perl: '#0298c3',
+  CoffeeScript: '#244776',
+  PowerShell: '#012456',
+  Elixir: '#6e4a7e',
+  Erlang: '#B83998',
+  Crystal: '#000100',
+  HTML: '#e34c26',
+  CSS: '#563d7c',
+  Vue: '#2c3e50',
+  Dockerfile: '#384d54',
+  Assembly: '#6E4C13',
+  R: '#198CE7',
+  Haskell: '#5e5086',
+  OCaml: '#3be133',
+  Clojure: '#db5855',
+  Groovy: '#e69f56',
+  Julia: '#a270ba',
+  TeX: '#3D6117',
+  'Vim script': '#199f4b',
+  D: '#ba595e',
+  'F#': '#b845fc',
+  Roff: '#ecdebe',
+  'Common Lisp': '#3fb68b',
+  Puppet: '#302B6D',
+  Elm: '#60B5CC',
+  PureScript: '#1D222D',
+  'Emacs Lisp': '#c065db',
+};
