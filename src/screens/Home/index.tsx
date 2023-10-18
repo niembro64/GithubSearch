@@ -130,6 +130,7 @@ export const Home = () => {
           Array.isArray(extendedResults) &&
           extendedResults.map((repo: GitHubRepoExtended, index: number) => (
             <View
+              key={index}
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
