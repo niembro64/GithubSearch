@@ -59,7 +59,6 @@ const LikesScreen = () => {
         flex: 1,
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: spacing.xl,
       }}>
       <FlatList
         data={likes}
@@ -67,6 +66,7 @@ const LikesScreen = () => {
           width: '100%',
         }}
         contentContainerStyle={{
+          marginTop: spacing.xxl,
           width: '100%',
         }}
         keyExtractor={item => item.id.toString()}
@@ -125,8 +125,11 @@ const LikesScreen = () => {
               borderRadius: spacing.sm,
               padding: spacing.sm,
             }}
-            // @ts-ignore
-            onPress={() => navigation.navigate('Home')}>
+            onPress={() => {
+              // @ts-ignore
+              navigation.canGoBack() && navigation.goBack();
+              // navigation.navigate('Home');
+            }}>
             <Text
               style={{
                 fontSize: 22,
