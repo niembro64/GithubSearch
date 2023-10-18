@@ -13,7 +13,6 @@ import {colors, getColorFromLanguage} from '../../colors';
 import {GitHubRepo, GitHubRepoExtended} from '../../types';
 import {truncateString} from '../../helpers';
 import {spacing} from '../../styles';
-import {useStores} from '../../models';
 
 const insetCalc = (insets: EdgeInsets) => ({
   paddingTop: Math.max(insets.top, 16),
@@ -26,10 +25,7 @@ export const Home = () => {
   const insets = useSafeAreaInsets();
   const style = useMemo(() => insetCalc(insets), [insets]);
 
-  const {
-    likesStore: {searchResults, setSearchResults},
-  } = useStores();
-  // const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
+  const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
   const [extendedResults, setExtendedResults] = useState<GitHubRepoExtended[]>(
     [],
   );
