@@ -1,8 +1,7 @@
-// src/screens/LikesScreen.js
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
-export const LikesScreen = () => {
+const LikesScreen = () => {
   return (
     <View style={styles.container}>
       <Text>Likes Screen</Text>
@@ -17,3 +16,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+export default LikesScreen;
