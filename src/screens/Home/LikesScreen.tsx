@@ -1,7 +1,14 @@
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
 import React, {useCallback, useEffect, useState} from 'react';
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {colors} from '../../colors';
 import {spacing} from '../../styles';
 import {GitHubRepo, ServerRepo} from '../../types';
@@ -10,6 +17,13 @@ import {ListItem} from './ListItem';
 const LikesScreen = () => {
   const [likes, setLikes] = useState<GitHubRepo[]>([]);
   const [serverLikes, setServerLikes] = useState<ServerRepo[]>([]);
+
+  const deleteFromServer = useCallback((repoId: string) => {
+    axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
+      console.error('Error deleting repo from server:', err);
+      Alert.alert('Error', 'Failed to delete repository from server.');
+    });
+  }, []);
 
   useEffect(() => {
     const likesFromServerFormatted: GitHubRepo[] = serverLikes.map(
@@ -54,10 +68,12 @@ const LikesScreen = () => {
         renderItem={({item: repo}) => (
           <ListItem
             repo={repo}
-            likes={[]}
+            likes={likes}
             allowLikes={false}
-            onLikeToggle={function (repo: GitHubRepo): void {
-              console.log('onLikeToggle', repo);
+            onLikeToggle={() => {
+              deleteFromServer(repo.id.toString());
+              const newLikes = likes.filter(r => r.id !== repo.id);
+              setLikes(newLikes);
             }}
           />
         )}

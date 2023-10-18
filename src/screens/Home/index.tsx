@@ -187,15 +187,6 @@ export const Home = () => {
                     saveToServer(repo);
                   }
                   setLikes(newLikes);
-                  // const newExtendedResults = [...extendedResults];
-                  // const extendedIndex = newExtendedResults.findIndex(
-                  //   (r: GitHubRepo) => r.id === repo.id,
-                  // );
-                  // if (extendedIndex > -1) {
-                  //   newExtendedResults[extendedIndex].liked =
-                  //     !newExtendedResults[extendedIndex].liked;
-                  // }
-                  // setExtendedResults(newExtendedResults);
                 }}
               />
             )}
