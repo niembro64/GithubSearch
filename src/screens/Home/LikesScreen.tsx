@@ -13,6 +13,7 @@ const LikesScreen = () => {
       {/* ////////////////////////////////// */}
       <View
         style={{
+          width: '100%',
           borderTopWidth: 1,
           borderTopColor: colors.palette.gray400,
           display: 'flex',
@@ -28,7 +29,7 @@ const LikesScreen = () => {
             fontWeight: 'bold',
             marginBottom: spacing.md,
           }}>
-          Search GitHub Repositories
+          Liked Repositories
         </Text>
         <View
           style={{
@@ -50,14 +51,14 @@ const LikesScreen = () => {
               padding: spacing.sm,
             }}
             // @ts-ignore
-            onPress={() => navigation.navigate('Likes')}>
+            onPress={() => navigation.navigate('Home')}>
             <Text
               style={{
                 fontSize: 22,
                 fontWeight: 'bold',
                 color: colors.palette.blue600,
               }}>
-              Likes
+              Home
             </Text>
           </TouchableOpacity>
         </View>
@@ -69,7 +70,7 @@ const LikesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
 });
