@@ -68,6 +68,7 @@ export const Home = () => {
     if (searchingValue) {
       setIsLoading(true);
       setSearchResults([]);
+
       axios
         .get(`https://api.github.com/search/repositories?q=${searchingValue}`)
         .then(response => {
@@ -140,7 +141,7 @@ export const Home = () => {
         <Text>{inputValue}</Text>
         <Text>{searchingValue}</Text>
       </View>
-      {isLoading && <Text>Loading...</Text>}
+      {/* {isLoading && <Text>Loading...</Text>} */}
       {error && <Text>Error: {error}</Text>}
       {!isLoading && !error && (
         <FlatList
@@ -149,8 +150,12 @@ export const Home = () => {
             <RefreshControl
               refreshing={isLoading}
               onRefresh={getRepositories}
+              colors={['blue', 'green']}
             />
           }
+          contentContainerStyle={{
+            width: '100%',
+          }}
           keyExtractor={item => item.id.toString()}
           renderItem={({item: repo}) => (
             <ListItem
