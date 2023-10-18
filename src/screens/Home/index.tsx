@@ -223,6 +223,23 @@ export const Home = () => {
               alignItems: 'center',
               marginBottom: spacing.xl,
             }}>
+            <TextInput
+              style={{
+                flex: 1,
+                height: 40,
+                borderColor: colors.palette.gray400,
+                borderWidth: 1,
+                borderRadius: spacing.sm,
+                paddingLeft: spacing.md,
+                paddingRight: spacing.md,
+                marginRight: spacing.md,
+                marginLeft: spacing.md,
+                paddingVertical: 0,
+              }}
+              placeholder="Search GitHub repositories..."
+              onChangeText={text => setInputValue(text)}
+              value={inputValue}
+            />
             <TouchableOpacity
               style={{
                 height: 40,
@@ -246,23 +263,6 @@ export const Home = () => {
                 Likes
               </Text>
             </TouchableOpacity>
-
-            <TextInput
-              style={{
-                flex: 1,
-                height: 40,
-                borderColor: colors.palette.gray400,
-                borderWidth: 1,
-                borderRadius: spacing.sm,
-                paddingLeft: spacing.md,
-                paddingRight: spacing.md,
-                marginRight: spacing.md,
-                paddingVertical: 0,
-              }}
-              placeholder="Search GitHub repositories..."
-              onChangeText={text => setInputValue(text)}
-              value={inputValue}
-            />
           </View>
         </View>
       </View>
