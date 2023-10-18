@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable react-native/no-inline-styles */
 // ListItem.tsx
 import React from 'react';
@@ -5,19 +6,23 @@ import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {colors, getColorFromLanguage} from '../../colors';
 import {truncateString} from '../../helpers';
 import {spacing} from '../../styles';
-import {GitHubRepoExtended} from '../../types';
+import {GitHubRepo} from '../../types';
 
 interface ListItemProps {
-  repo: GitHubRepoExtended;
+  repo: GitHubRepo;
+  likes: GitHubRepo[];
   allowLikes: boolean;
-  onLikeToggle: (repo: GitHubRepoExtended) => void;
+  onLikeToggle: (repo: GitHubRepo) => void;
 }
 
 export const ListItem: React.FC<ListItemProps> = ({
   repo,
+  likes,
   allowLikes,
   onLikeToggle,
 }) => {
+  const repoLiked = likes.find((r: GitHubRepo) => r.id == repo.id);
+
   return (
     <View
       style={{
@@ -105,7 +110,7 @@ export const ListItem: React.FC<ListItemProps> = ({
           style={{
             width: 40,
             height: 40,
-            tintColor: repo.liked
+            tintColor: repoLiked
               ? colors.palette.blue600
               : allowLikes
               ? colors.palette.gray300

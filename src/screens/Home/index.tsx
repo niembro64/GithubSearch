@@ -14,54 +14,53 @@ import {
 } from 'react-native';
 import {colors} from '../../colors';
 import {spacing} from '../../styles';
-import {GitHubRepo, GitHubRepoExtended, ServerRepo} from '../../types';
+import {GitHubRepo, ServerRepo} from '../../types';
 import {ListItem} from './ListItem';
 
 export const Home = () => {
   const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
-  const [extendedResults, setExtendedResults] = useState<GitHubRepoExtended[]>(
-    [],
-  );
+  // const [extendedResults, setExtendedResults] = useState<GitHubRepo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
   const [inputValue, setInputValue] = useState<string>('web_smashed');
   const [searchingValue, setSearchingValue] = useState<string>('web_smashed');
-  const [likes, setLikes] = useState<GitHubRepoExtended[]>([]);
+  const [likes, setLikes] = useState<GitHubRepo[]>([]);
   const [serverLikes, setServerLikes] = useState<ServerRepo[]>([]);
   const [allowLikes, setAllowLikes] = useState<boolean>(true);
 
-  useEffect(() => {
-    if (Array.isArray(searchResults) && searchResults.length > 0) {
-      const extended: GitHubRepoExtended[] = searchResults.map(
-        (repo: GitHubRepo) => ({
-          ...repo,
-          liked: !!likes.find((r: GitHubRepoExtended) => r.id === repo.id),
-        }),
-      );
+  // useEffect(() => {
+  //   if (Array.isArray(searchResults) && searchResults.length > 0) {
+  //     const extended: GitHubRepo[] = searchResults.map((repo: GitHubRepo) => ({
+  //       ...repo,
+  //       liked: !!likes.find((r: GitHubRepo) => r.id === repo.id),
+  //     }));
 
-      setExtendedResults(extended);
-    }
-  }, [searchResults, likes]);
+  //     setExtendedResults(extended);
+  //   }
+  // }, [searchResults, likes, serverLikes]);
 
   useEffect(() => {
     console.log('serverLikes.length', serverLikes.length);
 
     // @ts-ignore
-    const extendedWithLikesFromServer: GitHubRepoExtended[] =
-      extendedResults.map((repo: GitHubRepoExtended, index: number) => {
-        const x = {
-          ...repo,
-          liked: !!serverLikes.find(
-            (r: ServerRepo) => r.id === repo.id.toString(),
-          ),
+    const likesFromServerFormatted: GitHubRepo[] = serverLikes.map(
+      (repo: ServerRepo, index: number) => {
+        // @ts-ignore
+        const x: GitHubRepo = {
+          id: repo.id,
+          name: repo.fullName,
+          description: repo.description,
+          language: repo.language,
+          stargazers_count: repo.stargazersCount,
         };
 
         console.log('index', index, 'x', x);
 
         return x;
-      });
+      },
+    );
 
-    setExtendedResults(extendedWithLikesFromServer);
+    setLikes(likesFromServerFormatted);
   }, [serverLikes]);
 
   useEffect(() => {
@@ -108,7 +107,7 @@ export const Home = () => {
     }
   }, [searchingValue]);
 
-  const saveToServer = useCallback((repo: GitHubRepoExtended) => {
+  const saveToServer = useCallback((repo: GitHubRepo) => {
     axios
       .post('http://192.168.1.19:8080/repo/', {
         id: repo.id.toString(),
@@ -157,7 +156,7 @@ export const Home = () => {
         {error && <Text>Error: {error}</Text>}
         {!error && (
           <FlatList
-            data={extendedResults}
+            data={searchResults}
             refreshControl={
               <RefreshControl
                 refreshing={isLoading}
@@ -171,10 +170,11 @@ export const Home = () => {
             renderItem={({item: repo}) => (
               <ListItem
                 repo={repo}
+                likes={likes}
                 allowLikes={allowLikes}
                 onLikeToggle={() => {
                   const isThisLiked = likes.find(
-                    (r: GitHubRepoExtended) => r.id === repo.id,
+                    (r: GitHubRepo) => r.id === repo.id,
                   );
 
                   if (!isThisLiked && !allowLikes) {
@@ -186,7 +186,7 @@ export const Home = () => {
                   }
                   const newLikes = [...likes];
                   const likeFound = newLikes.findIndex(
-                    (r: GitHubRepoExtended) => r.id === repo.id,
+                    (r: GitHubRepo) => r.id === repo.id,
                   );
                   if (likeFound > -1) {
                     newLikes.splice(likeFound, 1);
@@ -196,15 +196,15 @@ export const Home = () => {
                     saveToServer(repo);
                   }
                   setLikes(newLikes);
-                  const newExtendedResults = [...extendedResults];
-                  const extendedIndex = newExtendedResults.findIndex(
-                    (r: GitHubRepoExtended) => r.id === repo.id,
-                  );
-                  if (extendedIndex > -1) {
-                    newExtendedResults[extendedIndex].liked =
-                      !newExtendedResults[extendedIndex].liked;
-                  }
-                  setExtendedResults(newExtendedResults);
+                  // const newExtendedResults = [...extendedResults];
+                  // const extendedIndex = newExtendedResults.findIndex(
+                  //   (r: GitHubRepo) => r.id === repo.id,
+                  // );
+                  // if (extendedIndex > -1) {
+                  //   newExtendedResults[extendedIndex].liked =
+                  //     !newExtendedResults[extendedIndex].liked;
+                  // }
+                  // setExtendedResults(newExtendedResults);
                 }}
               />
             )}

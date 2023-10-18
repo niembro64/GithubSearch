@@ -119,6 +119,3 @@ export type GitHubRepo = {
   score: number;
 };
 
-export type GitHubRepoExtended = GitHubRepo & {
-  liked: boolean;
-};
