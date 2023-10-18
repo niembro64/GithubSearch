@@ -9,9 +9,10 @@ import {
   View,
 } from 'react-native';
 import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
-import {getColorFromLanguage} from '../../colors';
-import {GitHubRepo} from '../../types';
+import {colors, getColorFromLanguage} from '../../colors';
+import {GitHubRepo, GitHubRepoExtended} from '../../types';
 import {truncateString} from '../../helpers';
+import {spacing} from '../../styles';
 
 const insetCalc = (insets: EdgeInsets) => ({
   paddingTop: Math.max(insets.top, 16),
@@ -23,7 +24,11 @@ const insetCalc = (insets: EdgeInsets) => ({
 export const Home = () => {
   const insets = useSafeAreaInsets();
   const style = useMemo(() => insetCalc(insets), [insets]);
+
   const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
+  const [extendedResults, setExtendedResults] = useState<GitHubRepoExtended[]>(
+    [],
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
   const [inputValue, setInputValue] = useState<string>('web_smashed');
@@ -31,6 +36,16 @@ export const Home = () => {
 
   useEffect(() => {
     console.log('searchResults', JSON.stringify(searchResults, null, 2));
+
+    if (Array.isArray(searchResults) && searchResults.length > 0) {
+      const extended: GitHubRepoExtended[] = searchResults.map(
+        (repo: GitHubRepo) => ({
+          ...repo,
+          liked: false,
+        }),
+      );
+      setExtendedResults(extended);
+    }
   }, [searchResults]);
 
   useEffect(() => {
@@ -63,10 +78,10 @@ export const Home = () => {
             height: 40,
             borderColor: '#999',
             borderWidth: 1,
-            borderRadius: 8,
-            paddingLeft: 8,
-            paddingRight: 8,
-            marginRight: 8,
+            borderRadius: spacing.sm,
+            paddingLeft: spacing.md,
+            paddingRight: spacing.md,
+            marginRight: spacing.md,
             paddingVertical: 0,
           }}
           placeholder="Search GitHub repositories..."
@@ -78,7 +93,7 @@ export const Home = () => {
             backgroundColor: '#ccc',
             height: 40,
             width: 80,
-            borderRadius: 8,
+            borderRadius: spacing.md,
             justifyContent: 'center',
             alignItems: 'center',
           }}
@@ -112,27 +127,58 @@ export const Home = () => {
         {error && <Text>Error: {error}</Text>}
         {!isLoading &&
           !error &&
-          Array.isArray(searchResults) &&
-          searchResults.map((repo: GitHubRepo, index: number) => (
+          Array.isArray(extendedResults) &&
+          extendedResults.map((repo: GitHubRepoExtended, index: number) => (
             <View
+              key={index}
               style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: spacing.md,
+                padding: spacing.md,
+
+                borderRadius: spacing.md,
                 backgroundColor: getColorFromLanguage(repo?.language),
               }}>
               <View
                 style={{
+                  flex: 1,
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  marginTop: 8,
-                  borderWidth: 1,
-                  borderRadius: 8,
+                  borderRadius: spacing.md,
                 }}
                 key={index}>
                 <Text>{repo?.name}</Text>
-                <Text>{truncateString(repo?.description, 30)}</Text>
+                <Text>{truncateString(repo?.description, 40)}</Text>
                 <Text>{repo?.language}</Text>
                 <Text>{repo?.stargazers_count}</Text>
               </View>
+
+              <TouchableOpacity
+                style={{
+                  height: 80,
+                  width: 80,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginLeft: spacing.md,
+                  borderRadius: spacing.md,
+                  backgroundColor: repo.liked
+                    ? colors.palette.green500
+                    : colors.palette.gray300,
+                }}>
+                <Text
+                  style={{
+                    color: repo.liked
+                      ? colors.palette.white
+                      : colors.palette.gray800,
+                  }}>
+                  {repo.liked ? 'YES' : 'NO'}
+                </Text>
+              </TouchableOpacity>
             </View>
           ))}
       </ScrollView>
