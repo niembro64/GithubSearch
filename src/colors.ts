@@ -1,7 +1,8 @@
 export const getColorFromLanguage = (language: any): string => {
-  if (typeof language !== 'string') {
-    return '#444';
+  if (typeof language !== 'string' || language === '') {
+    return colors.transparent;
   }
+
   // @ts-ignore
   return languageColors[language] || '#444';
 };

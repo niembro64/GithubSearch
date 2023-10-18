@@ -24,8 +24,8 @@ export const ListItem: React.FC<ListItemProps> = ({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: spacing.md,
-        padding: spacing.md,
+        marginTop: spacing.xs,
+        marginHorizontal: spacing.md,
         borderRadius: spacing.md,
         backgroundColor: colors.transparent,
       }}>
