@@ -11,6 +11,7 @@ import {
 import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {getColorFromLanguage} from '../../colors';
 import {GitHubRepo} from '../../types';
+import {truncateString} from '../../helpers';
 
 const insetCalc = (insets: EdgeInsets) => ({
   paddingTop: Math.max(insets.top, 16),
@@ -25,8 +26,8 @@ export const Home = () => {
   const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
-  const [inputValue, setInputValue] = useState<string>('');
-  const [searchingValue, setSearchingValue] = useState<string>('');
+  const [inputValue, setInputValue] = useState<string>('web_smashed');
+  const [searchingValue, setSearchingValue] = useState<string>('web_smashed');
 
   useEffect(() => {
     console.log('searchResults', JSON.stringify(searchResults, null, 2));
@@ -127,10 +128,10 @@ export const Home = () => {
                   borderRadius: 8,
                 }}
                 key={index}>
-                <Text>{repo.name}</Text>
-                <Text>{repo.language}</Text>
-                <Text>{repo.stargazers_count}</Text>
-                <Text>{repo.url}</Text>
+                <Text>{repo?.name}</Text>
+                <Text>{truncateString(repo?.description, 30)}</Text>
+                <Text>{repo?.language}</Text>
+                <Text>{repo?.stargazers_count}</Text>
               </View>
             </View>
           ))}
