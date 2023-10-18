@@ -118,4 +118,3 @@ export type GitHubRepo = {
   default_branch: string;
   score: number;
 };
-
