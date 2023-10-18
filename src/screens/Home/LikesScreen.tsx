@@ -1,20 +1,15 @@
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Alert,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Alert, FlatList, Text, TouchableOpacity, View} from 'react-native';
 import {colors} from '../../colors';
 import {spacing} from '../../styles';
 import {GitHubRepo, ServerRepo} from '../../types';
 import {ListItem} from './ListItem';
+import {useNavigation} from '@react-navigation/native';
 
 const LikesScreen = () => {
+  const navigation = useNavigation();
   const [likes, setLikes] = useState<GitHubRepo[]>([]);
   const [serverLikes, setServerLikes] = useState<ServerRepo[]>([]);
 
@@ -59,11 +54,21 @@ const LikesScreen = () => {
     fetchSavedRepos();
   }, [fetchSavedRepos]);
   return (
-    <View style={styles.container}>
-      <Text>Likes Screen</Text>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: spacing.xl,
+      }}>
       <FlatList
         data={likes}
-        contentContainerStyle={{width: '100%'}}
+        style={{
+          width: '100%',
+        }}
+        contentContainerStyle={{
+          width: '100%',
+        }}
         keyExtractor={item => item.id.toString()}
         renderItem={({item: repo}) => (
           <ListItem
@@ -136,13 +141,5 @@ const LikesScreen = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-});
 
 export default LikesScreen;

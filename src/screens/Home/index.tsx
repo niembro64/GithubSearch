@@ -141,7 +141,7 @@ export const Home = () => {
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
-      keyboardVerticalOffset={72}
+      // keyboardVerticalOffset={72}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={{flex: 1, justifyContent: 'space-between'}}>
         {error && <Text>Error: {error}</Text>}
@@ -155,6 +155,7 @@ export const Home = () => {
               />
             }
             contentContainerStyle={{
+              marginTop: spacing.xxl,
               width: '100%',
             }}
             keyExtractor={item => item.id.toString()}
