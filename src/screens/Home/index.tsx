@@ -10,16 +10,18 @@ import {
   RefreshControl,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {colors} from '../../colors';
 import {spacing} from '../../styles';
 import {GitHubRepo, ServerRepo} from '../../types';
 import {ListItem} from './ListItem';
+import {useNavigation} from '@react-navigation/native';
 
 export const Home = () => {
+  const navigation = useNavigation();
   const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
-  // const [extendedResults, setExtendedResults] = useState<GitHubRepo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
   const [inputValue, setInputValue] = useState<string>('web_smashed');
@@ -27,17 +29,6 @@ export const Home = () => {
   const [likes, setLikes] = useState<GitHubRepo[]>([]);
   const [serverLikes, setServerLikes] = useState<ServerRepo[]>([]);
   const [allowLikes, setAllowLikes] = useState<boolean>(true);
-
-  // useEffect(() => {
-  //   if (Array.isArray(searchResults) && searchResults.length > 0) {
-  //     const extended: GitHubRepo[] = searchResults.map((repo: GitHubRepo) => ({
-  //       ...repo,
-  //       liked: !!likes.find((r: GitHubRepo) => r.id === repo.id),
-  //     }));
-
-  //     setExtendedResults(extended);
-  //   }
-  // }, [searchResults, likes, serverLikes]);
 
   useEffect(() => {
     console.log('serverLikes.length', serverLikes.length);
@@ -238,7 +229,32 @@ export const Home = () => {
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
+              marginBottom: spacing.xl,
             }}>
+            <TouchableOpacity
+              style={{
+                height: 40,
+                marginRight: spacing.md,
+                backgroundColor: colors.palette.blue200,
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: spacing.sm,
+                padding: spacing.sm,
+              }}
+              // @ts-ignore
+              onPress={() => navigation.navigate('Likes')}>
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: 'bold',
+                  color: colors.palette.blue600,
+                }}>
+                Likes
+              </Text>
+            </TouchableOpacity>
+
             <TextInput
               style={{
                 flex: 1,
@@ -250,7 +266,6 @@ export const Home = () => {
                 paddingRight: spacing.md,
                 marginRight: spacing.md,
                 paddingVertical: 0,
-                marginBottom: spacing.xl,
               }}
               placeholder="Search GitHub repositories..."
               onChangeText={text => setInputValue(text)}
