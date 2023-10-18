@@ -1,13 +1,67 @@
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import axios from 'axios';
+import React, {useCallback, useEffect, useState} from 'react';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {colors} from '../../colors';
 import {spacing} from '../../styles';
+import {GitHubRepo, ServerRepo} from '../../types';
+import {ListItem} from './ListItem';
 
 const LikesScreen = () => {
+  const [likes, setLikes] = useState<GitHubRepo[]>([]);
+  const [serverLikes, setServerLikes] = useState<ServerRepo[]>([]);
+
+  useEffect(() => {
+    const likesFromServerFormatted: GitHubRepo[] = serverLikes.map(
+      (repo: ServerRepo) => {
+        // @ts-ignore
+        const x: GitHubRepo = {
+          id: repo.id,
+          name: repo.fullName,
+          description: repo.description,
+          language: repo.language,
+          stargazers_count: repo.stargazersCount,
+        };
+        return x;
+      },
+    );
+    setLikes(likesFromServerFormatted);
+  }, [serverLikes]);
+
+  const fetchSavedRepos = useCallback(() => {
+    axios
+      .get('http://192.168.1.19:8080/repo/')
+      .then(response => {
+        if (response?.data?.repos && Array.isArray(response.data.repos)) {
+          setServerLikes(response.data.repos);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching saved repos from server:', err);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetchSavedRepos();
+  }, [fetchSavedRepos]);
   return (
     <View style={styles.container}>
       <Text>Likes Screen</Text>
+      <FlatList
+        data={likes}
+        contentContainerStyle={{width: '100%'}}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({item: repo}) => (
+          <ListItem
+            repo={repo}
+            likes={[]}
+            allowLikes={false}
+            onLikeToggle={function (repo: GitHubRepo): void {
+              console.log('onLikeToggle', repo);
+            }}
+          />
+        )}
+      />
       {/* ////////////////////////////////// */}
       {/* SEARCH BAR */}
       {/* ////////////////////////////////// */}
