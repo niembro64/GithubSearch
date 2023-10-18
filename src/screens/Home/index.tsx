@@ -1,17 +1,18 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
+  KeyboardAvoidingView,
+  Platform,
   RefreshControl,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
+import {colors} from '../../colors';
 import {spacing} from '../../styles';
 import {GitHubRepo, GitHubRepoExtended} from '../../types';
 import {ListItem} from './ListItem';
@@ -62,10 +63,6 @@ export const Home = () => {
     };
   }, [inputValue]);
 
-  useEffect(() => {
-    console.log('debouncedValue', searchingValue);
-  }, [searchingValue]);
-
   const getRepositories = () => {
     if (searchingValue) {
       setIsLoading(true);
@@ -86,9 +83,18 @@ export const Home = () => {
     }
   };
 
+  useEffect(() => {
+    console.log('debouncedValue', searchingValue);
+
+    if (searchingValue) {
+      getRepositories();
+    }
+  }, [searchingValue]);
+
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
+      keyboardVerticalOffset={72}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={{flex: 1, justifyContent: 'space-between'}}>
         {error && <Text>Error: {error}</Text>}
@@ -110,7 +116,11 @@ export const Home = () => {
                 repo={repo}
                 allowLikes={allowLikes}
                 onLikeToggle={() => {
-                  if (!allowLikes) {
+                  const isThisLiked = likes.find(
+                    (r: GitHubRepoExtended) => r.id === repo.id,
+                  );
+
+                  if (!isThisLiked && !allowLikes) {
                     Alert.alert(
                       'Maximum number of likes reached',
                       'Please unlike some repositories to like more',
@@ -141,13 +151,19 @@ export const Home = () => {
             )}
           />
         )}
+
+        {/* ////////////////////////////////// */}
+        {/* SEARCH BAR */}
+        {/* ////////////////////////////////// */}
         <View
           style={{
+            borderTopWidth: 1,
+            borderTopColor: colors.palette.gray400,
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginTop: spacing.md,
+            marginTop: 0,
             padding: spacing.md,
           }}>
           <Text
@@ -168,19 +184,20 @@ export const Home = () => {
               style={{
                 flex: 1,
                 height: 40,
-                borderColor: '#999',
+                borderColor: colors.palette.gray400,
                 borderWidth: 1,
                 borderRadius: spacing.sm,
                 paddingLeft: spacing.md,
                 paddingRight: spacing.md,
                 marginRight: spacing.md,
                 paddingVertical: 0,
+                marginBottom: spacing.xl,
               }}
               placeholder="Search GitHub repositories..."
               onChangeText={text => setInputValue(text)}
               value={inputValue}
             />
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{
                 backgroundColor: '#ccc',
                 height: 40,
@@ -191,10 +208,10 @@ export const Home = () => {
               }}
               onPress={getRepositories}>
               <Text>Search</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
-          <Text>{inputValue}</Text>
-          <Text>{searchingValue}</Text>
+          {/* <Text>{inputValue}</Text>
+          <Text>{searchingValue}</Text> */}
         </View>
       </View>
     </KeyboardAvoidingView>
