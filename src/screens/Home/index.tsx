@@ -3,7 +3,8 @@ import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {
   Alert,
-  ScrollView,
+  FlatList,
+  RefreshControl,
   Text,
   TextInput,
   TouchableOpacity,
@@ -63,6 +64,25 @@ export const Home = () => {
     console.log('debouncedValue', searchingValue);
   }, [searchingValue]);
 
+  const getRepositories = () => {
+    if (searchingValue) {
+      setIsLoading(true);
+      setSearchResults([]);
+      axios
+        .get(`https://api.github.com/search/repositories?q=${searchingValue}`)
+        .then(response => {
+          setSearchResults(response.data.items.slice(0, 10));
+        })
+        .catch(err => {
+          console.error(err);
+          setError('Error fetching GitHub repositories');
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  };
+
   return (
     <View>
       <View
@@ -113,41 +133,27 @@ export const Home = () => {
               justifyContent: 'center',
               alignItems: 'center',
             }}
-            onPress={() => {
-              if (searchingValue) {
-                setIsLoading(true);
-                setSearchResults([]);
-                axios
-                  .get(
-                    `https://api.github.com/search/repositories?q=${searchingValue}`,
-                  )
-                  .then(response => {
-                    setSearchResults(response.data.items.slice(0, 10));
-                  })
-                  .catch(err => {
-                    console.error(err);
-                    setError('Error fetching GitHub repositories');
-                  })
-                  .finally(() => {
-                    setIsLoading(false);
-                  });
-              }
-            }}>
+            onPress={getRepositories}>
             <Text>Search</Text>
           </TouchableOpacity>
         </View>
         <Text>{inputValue}</Text>
         <Text>{searchingValue}</Text>
       </View>
-      <ScrollView>
-        {isLoading && <Text>Loading...</Text>}
-        {error && <Text>Error: {error}</Text>}
-        {!isLoading &&
-          !error &&
-          Array.isArray(extendedResults) &&
-          extendedResults.map((repo: GitHubRepoExtended, index: number) => (
+      {isLoading && <Text>Loading...</Text>}
+      {error && <Text>Error: {error}</Text>}
+      {!isLoading && !error && (
+        <FlatList
+          data={extendedResults}
+          refreshControl={
+            <RefreshControl
+              refreshing={isLoading}
+              onRefresh={getRepositories}
+            />
+          }
+          keyExtractor={item => item.id.toString()}
+          renderItem={({item: repo}) => (
             <ListItem
-              key={index}
               repo={repo}
               allowLikes={allowLikes}
               onLikeToggle={() => {
@@ -179,8 +185,9 @@ export const Home = () => {
                 setExtendedResults(newExtendedResults);
               }}
             />
-          ))}
-      </ScrollView>
+          )}
+        />
+      )}
     </View>
   );
 };
