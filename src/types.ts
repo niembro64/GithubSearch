@@ -1,8 +1,10 @@
 ///////////////////////////////////////////////
 // THIS DIFFERS FROM THE GITHUB API RESPONSE
 ///////////////////////////////////////////////
+export type GitHubId = string;
+
 export type RepositoryProject = {
-  id: string;
+  id: GitHubId;
   fullName: string;
   stargazersCount: number;
   language: string;
@@ -11,7 +13,7 @@ export type RepositoryProject = {
 };
 
 export type GitHubRepo = {
-  id: number;
+  id: GitHubId;
   node_id: string;
   name: string;
   full_name: string;

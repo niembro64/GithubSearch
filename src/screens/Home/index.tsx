@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {colors, getColorFromLanguage} from '../../colors';
-import {GitHubRepo, GitHubRepoExtended} from '../../types';
+import {GitHubId, GitHubRepo, GitHubRepoExtended} from '../../types';
 import {truncateString} from '../../helpers';
 import {spacing} from '../../styles';
 
@@ -33,6 +33,7 @@ export const Home = () => {
   const [error, setError] = useState<any>(null);
   const [inputValue, setInputValue] = useState<string>('web_smashed');
   const [searchingValue, setSearchingValue] = useState<string>('web_smashed');
+  const [likes, setLikes] = useState<GitHubId[]>([]);
 
   useEffect(() => {
     console.log('searchResults', JSON.stringify(searchResults, null, 2));
@@ -41,12 +42,13 @@ export const Home = () => {
       const extended: GitHubRepoExtended[] = searchResults.map(
         (repo: GitHubRepo) => ({
           ...repo,
-          liked: false,
+          liked: likes.indexOf(repo.id) > -1,
         }),
       );
+
       setExtendedResults(extended);
     }
-  }, [searchResults]);
+  }, [searchResults, likes]);
 
   useEffect(() => {
     console.log('inputValue', inputValue);
@@ -169,6 +171,25 @@ export const Home = () => {
                   backgroundColor: repo.liked
                     ? colors.palette.green500
                     : colors.palette.gray300,
+                }}
+                onPress={() => {
+                  const newLikes = [...likes];
+                  const likeIndex = newLikes.indexOf(repo.id);
+                  if (likeIndex > -1) {
+                    newLikes.splice(likeIndex, 1);
+                  } else {
+                    newLikes.push(repo.id);
+                  }
+                  setLikes(newLikes);
+                  const newExtendedResults = [...extendedResults];
+                  const extendedIndex = newExtendedResults.findIndex(
+                    (r: GitHubRepoExtended) => r.id === repo.id,
+                  );
+                  if (extendedIndex > -1) {
+                    newExtendedResults[extendedIndex].liked =
+                      !newExtendedResults[extendedIndex].liked;
+                  }
+                  setExtendedResults(newExtendedResults);
                 }}>
                 <Text
                   style={{
