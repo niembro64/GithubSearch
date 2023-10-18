@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
@@ -14,8 +14,10 @@ import {
 } from 'react-native';
 import {colors} from '../../colors';
 import {spacing} from '../../styles';
-import {GitHubRepo, GitHubRepoExtended} from '../../types';
+import {GitHubRepo, GitHubRepoExtended, ServerRepo} from '../../types';
 import {ListItem} from './ListItem';
+
+const myIp = '192.168.1.19';
 
 export const Home = () => {
   const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
@@ -27,11 +29,10 @@ export const Home = () => {
   const [inputValue, setInputValue] = useState<string>('web_smashed');
   const [searchingValue, setSearchingValue] = useState<string>('web_smashed');
   const [likes, setLikes] = useState<GitHubRepoExtended[]>([]);
+  const [serverLikes, setServerLikes] = useState<ServerRepo[]>([]);
   const [allowLikes, setAllowLikes] = useState<boolean>(true);
 
   useEffect(() => {
-    console.log('searchResults', JSON.stringify(searchResults, null, 2));
-
     if (Array.isArray(searchResults) && searchResults.length > 0) {
       const extended: GitHubRepoExtended[] = searchResults.map(
         (repo: GitHubRepo) => ({
@@ -45,6 +46,27 @@ export const Home = () => {
   }, [searchResults, likes]);
 
   useEffect(() => {
+    console.log('serverLikes.length', serverLikes.length);
+
+    // @ts-ignore
+    const extendedWithLikesFromServer: GitHubRepoExtended[] =
+      extendedResults.map((repo: GitHubRepoExtended, index: number) => {
+        const x = {
+          ...repo,
+          liked: !!serverLikes.find(
+            (r: ServerRepo) => r.id === repo.id.toString(),
+          ),
+        };
+
+        console.log('index', index, 'x', x);
+
+        return x;
+      });
+
+    setExtendedResults(extendedWithLikesFromServer);
+  }, [serverLikes]);
+
+  useEffect(() => {
     if (likes.length > 9) {
       setAllowLikes(false);
     } else {
@@ -53,7 +75,6 @@ export const Home = () => {
   }, [likes]);
 
   useEffect(() => {
-    console.log('inputValue', inputValue);
     const handler = setTimeout(() => {
       setSearchingValue(inputValue);
     }, 1000);
@@ -84,12 +105,50 @@ export const Home = () => {
   };
 
   useEffect(() => {
-    console.log('debouncedValue', searchingValue);
-
     if (searchingValue) {
       getRepositories();
     }
   }, [searchingValue]);
+
+  const saveToServer = useCallback((repo: GitHubRepoExtended) => {
+    axios
+      .post('http://${myIp}:8080/repo/', {
+        id: repo.id.toString(),
+        fullName: repo.full_name,
+        createdAt: repo.created_at,
+        stargazersCount: repo.stargazers_count,
+        language: repo.language,
+        url: repo.html_url,
+      })
+      .catch(err => {
+        console.error('Error saving repo to server:', err);
+        Alert.alert('Error', 'Failed to save repository to server.');
+      });
+  }, []);
+
+  const deleteFromServer = useCallback((repoId: string) => {
+    axios.delete(`http://${myIp}:8080/repo/${repoId}`).catch(err => {
+      console.error('Error deleting repo from server:', err);
+      Alert.alert('Error', 'Failed to delete repository from server.');
+    });
+  }, []);
+
+  const fetchSavedRepos = useCallback(() => {
+    axios
+      .get('http://${myIp}:8080/repo/')
+      .then(response => {
+        if (response?.data?.repos && Array.isArray(response.data.repos)) {
+          setServerLikes(response.data.repos);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching saved repos from server:', err);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetchSavedRepos();
+  }, [fetchSavedRepos]);
 
   return (
     <KeyboardAvoidingView
@@ -133,8 +192,10 @@ export const Home = () => {
                   );
                   if (likeFound > -1) {
                     newLikes.splice(likeFound, 1);
+                    deleteFromServer(repo.id.toString());
                   } else {
                     newLikes.push(repo);
+                    saveToServer(repo);
                   }
                   setLikes(newLikes);
                   const newExtendedResults = [...extendedResults];
@@ -197,21 +258,7 @@ export const Home = () => {
               onChangeText={text => setInputValue(text)}
               value={inputValue}
             />
-            {/* <TouchableOpacity
-              style={{
-                backgroundColor: '#ccc',
-                height: 40,
-                width: 80,
-                borderRadius: spacing.md,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-              onPress={getRepositories}>
-              <Text>Search</Text>
-            </TouchableOpacity> */}
           </View>
-          {/* <Text>{inputValue}</Text>
-          <Text>{searchingValue}</Text> */}
         </View>
       </View>
     </KeyboardAvoidingView>

@@ -3,13 +3,12 @@
 ///////////////////////////////////////////////
 export type GitHubId = string;
 
-export type RepositoryProject = {
+export type ServerRepo = {
   id: GitHubId;
   fullName: string;
+  description: string;
   stargazersCount: number;
   language: string;
-  url: string;
-  createdAt: string;
 };
 
 export type GitHubRepo = {
