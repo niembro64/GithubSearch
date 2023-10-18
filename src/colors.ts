@@ -1,13 +1,13 @@
 export const getColorFromLanguage = (language: any): string => {
   if (typeof language !== 'string') {
-    return '#ccc';
+    return '#444';
   }
   // @ts-ignore
-  return languageColors[language] || '#ccc';
+  return languageColors[language] || '#444';
 };
 
 const languageColors = {
-  JavaScript: '#f1e05a',
+  JavaScript: '#ac9739',
   TypeScript: '#2b7489',
   Ruby: '#701516',
   Java: '#b07219',
