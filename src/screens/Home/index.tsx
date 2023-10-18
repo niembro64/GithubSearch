@@ -1,7 +1,16 @@
+/* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
 import React, {useEffect, useMemo, useState} from 'react';
-import {StyleSheet, Text, View, TextInput} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
 import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {Repository} from '~/types';
 
 const insetCalc = (insets: EdgeInsets) => ({
   paddingTop: Math.max(insets.top, 16),
@@ -13,7 +22,7 @@ const insetCalc = (insets: EdgeInsets) => ({
 export const Home = () => {
   const insets = useSafeAreaInsets();
   const style = useMemo(() => insetCalc(insets), [insets]);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<Repository[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
   const [inputValue, setInputValue] = useState<string>('');
@@ -38,16 +47,16 @@ export const Home = () => {
     }
   }, [debouncedValue]);
 
-  useEffect(() => {
-    console.log('inputValue', inputValue);
-    const handler = setTimeout(() => {
-      setDebouncedValue(inputValue);
-    }, 1000);
+  // useEffect(() => {
+  //   console.log('inputValue', inputValue);
+  //   const handler = setTimeout(() => {
+  //     setDebouncedValue(inputValue);
+  //   }, 1000);
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [inputValue]);
+  //   return () => {
+  //     clearTimeout(handler);
+  //   };
+  // }, [inputValue]);
 
   useEffect(() => {
     console.log('debouncedValue', debouncedValue);
@@ -55,15 +64,44 @@ export const Home = () => {
 
   return (
     <View style={style}>
-      <Text style={styles.paragraph}>Search GitHub repos...</Text>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search GitHub repositories..."
-        onChangeText={text => setInputValue(text)}
-        value={inputValue}
-      />
-      <Text style={styles.paragraph}>{inputValue}</Text>
-      <Text style={styles.paragraph}>{debouncedValue}</Text>
+      <Text>Search GitHub repos...</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+        <TextInput
+          style={{
+            flex: 1,
+            height: 40,
+            borderColor: '#999',
+            borderWidth: 1,
+            borderRadius: 8,
+            paddingLeft: 8,
+            paddingRight: 8,
+            marginRight: 8,
+            paddingVertical: 0,
+          }}
+          placeholder="Search GitHub repositories..."
+          onChangeText={text => setInputValue(text)}
+          value={inputValue}
+        />
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#ccc',
+            height: 40,
+            width: 80,
+            borderRadius: 8,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onPress={() => setDebouncedValue(inputValue)}>
+          <Text>Search</Text>
+        </TouchableOpacity>
+      </View>
+      <Text>{inputValue}</Text>
+      <Text>{debouncedValue}</Text>
       {isLoading && <Text>Loading...</Text>}
       {error && <Text>Error: {error}</Text>}
       {!isLoading &&
@@ -75,18 +113,3 @@ export const Home = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  searchInput: {
-    height: 40,
-    borderColor: '#999',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingLeft: 8,
-    paddingRight: 8,
-    marginBottom: 16,
-  },
-  paragraph: {
-    marginBottom: 16,
-  },
-});
