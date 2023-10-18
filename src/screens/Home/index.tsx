@@ -2,6 +2,7 @@
 import axios from 'axios';
 import React, {useEffect, useMemo, useState} from 'react';
 import {
+  Image,
   ScrollView,
   Text,
   TextInput,
@@ -10,9 +11,9 @@ import {
 } from 'react-native';
 import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {colors, getColorFromLanguage} from '../../colors';
-import {GitHubId, GitHubRepo, GitHubRepoExtended} from '../../types';
 import {truncateString} from '../../helpers';
 import {spacing} from '../../styles';
+import {GitHubId, GitHubRepo, GitHubRepoExtended} from '../../types';
 
 const insetCalc = (insets: EdgeInsets) => ({
   paddingTop: Math.max(insets.top, 16),
@@ -141,7 +142,7 @@ export const Home = () => {
                 padding: spacing.md,
 
                 borderRadius: spacing.md,
-                backgroundColor: getColorFromLanguage(repo?.language),
+                backgroundColor: colors.palette.gray200,
               }}>
               <View
                 style={{
@@ -150,6 +151,7 @@ export const Home = () => {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   borderRadius: spacing.md,
+                  backgroundColor: getColorFromLanguage(repo?.language),
                 }}
                 key={index}>
                 <Text>{repo?.name}</Text>
@@ -168,9 +170,6 @@ export const Home = () => {
                   alignItems: 'center',
                   marginLeft: spacing.md,
                   borderRadius: spacing.md,
-                  backgroundColor: repo.liked
-                    ? colors.palette.green500
-                    : colors.palette.gray300,
                 }}
                 onPress={() => {
                   const newLikes = [...likes];
@@ -191,14 +190,25 @@ export const Home = () => {
                   }
                   setExtendedResults(newExtendedResults);
                 }}>
-                <Text
-                  style={{
-                    color: repo.liked
-                      ? colors.palette.white
-                      : colors.palette.gray800,
-                  }}>
-                  {repo.liked ? 'YES' : 'NO'}
-                </Text>
+                {repo.liked ? (
+                  <Image
+                    source={require('../../../assets/images/like-button.png')}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      tintColor: colors.palette.blue600,
+                    }}
+                  />
+                ) : (
+                  <Image
+                    source={require('../../../assets/images/like-button.png')}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      tintColor: colors.palette.gray300,
+                    }}
+                  />
+                )}
               </TouchableOpacity>
             </View>
           ))}
