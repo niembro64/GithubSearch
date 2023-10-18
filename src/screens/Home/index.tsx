@@ -34,7 +34,8 @@ export const Home = () => {
   const [error, setError] = useState<any>(null);
   const [inputValue, setInputValue] = useState<string>('web_smashed');
   const [searchingValue, setSearchingValue] = useState<string>('web_smashed');
-  const [likedResults, setLikedResults] = useState<GitHubRepoExtended[]>([]);
+  const [likes, setLikes] = useState<GitHubRepoExtended[]>([]);
+  const [allowLikes, setAllowLikes] = useState<boolean>(true);
 
   useEffect(() => {
     console.log('searchResults', JSON.stringify(searchResults, null, 2));
@@ -43,15 +44,21 @@ export const Home = () => {
       const extended: GitHubRepoExtended[] = searchResults.map(
         (repo: GitHubRepo) => ({
           ...repo,
-          liked: !!likedResults.find(
-            (r: GitHubRepoExtended) => r.id === repo.id,
-          ),
+          liked: !!likes.find((r: GitHubRepoExtended) => r.id === repo.id),
         }),
       );
 
       setExtendedResults(extended);
     }
-  }, [searchResults, likedResults]);
+  }, [searchResults, likes]);
+
+  useEffect(() => {
+    if (likes.length > 9) {
+      setAllowLikes(false);
+    } else {
+      setAllowLikes(true);
+    }
+  }, [likes]);
 
   useEffect(() => {
     console.log('inputValue', inputValue);
@@ -174,7 +181,10 @@ export const Home = () => {
                   borderRadius: spacing.md,
                 }}
                 onPress={() => {
-                  const newLikes = [...likedResults];
+                  if (!allowLikes) {
+                    return;
+                  }
+                  const newLikes = [...likes];
                   const likeFound = newLikes.findIndex(
                     (r: GitHubRepoExtended) => r.id === repo.id,
                   );
@@ -183,7 +193,7 @@ export const Home = () => {
                   } else {
                     newLikes.push(repo);
                   }
-                  setLikedResults(newLikes);
+                  setLikes(newLikes);
                   const newExtendedResults = [...extendedResults];
                   const extendedIndex = newExtendedResults.findIndex(
                     (r: GitHubRepoExtended) => r.id === repo.id,
@@ -194,25 +204,18 @@ export const Home = () => {
                   }
                   setExtendedResults(newExtendedResults);
                 }}>
-                {repo.liked ? (
-                  <Image
-                    source={require('../../../assets/images/like-button.png')}
-                    style={{
-                      width: 40,
-                      height: 40,
-                      tintColor: colors.palette.blue600,
-                    }}
-                  />
-                ) : (
-                  <Image
-                    source={require('../../../assets/images/like-button.png')}
-                    style={{
-                      width: 40,
-                      height: 40,
-                      tintColor: colors.palette.gray300,
-                    }}
-                  />
-                )}
+                <Image
+                  source={require('../../../assets/images/like-button.png')}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    tintColor: repo.liked
+                      ? colors.palette.blue600
+                      : allowLikes
+                      ? colors.palette.gray300
+                      : colors.transparent,
+                  }}
+                />
               </TouchableOpacity>
             </View>
           ))}
