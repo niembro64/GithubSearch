@@ -17,8 +17,6 @@ import {spacing} from '../../styles';
 import {GitHubRepo, GitHubRepoExtended, ServerRepo} from '../../types';
 import {ListItem} from './ListItem';
 
-const myIp = '192.168.1.19';
-
 export const Home = () => {
   const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
   const [extendedResults, setExtendedResults] = useState<GitHubRepoExtended[]>(
@@ -112,7 +110,7 @@ export const Home = () => {
 
   const saveToServer = useCallback((repo: GitHubRepoExtended) => {
     axios
-      .post('http://${myIp}:8080/repo/', {
+      .post('http://192.168.1.19:8080/repo/', {
         id: repo.id.toString(),
         fullName: repo.full_name,
         createdAt: repo.created_at,
@@ -127,7 +125,7 @@ export const Home = () => {
   }, []);
 
   const deleteFromServer = useCallback((repoId: string) => {
-    axios.delete(`http://${myIp}:8080/repo/${repoId}`).catch(err => {
+    axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
       console.error('Error deleting repo from server:', err);
       Alert.alert('Error', 'Failed to delete repository from server.');
     });
@@ -135,7 +133,7 @@ export const Home = () => {
 
   const fetchSavedRepos = useCallback(() => {
     axios
-      .get('http://${myIp}:8080/repo/')
+      .get('http://192.168.1.19:8080/repo/')
       .then(response => {
         if (response?.data?.repos && Array.isArray(response.data.repos)) {
           setServerLikes(response.data.repos);
