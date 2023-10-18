@@ -13,7 +13,7 @@ import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {colors, getColorFromLanguage} from '../../colors';
 import {truncateString} from '../../helpers';
 import {spacing} from '../../styles';
-import {GitHubId, GitHubRepo, GitHubRepoExtended} from '../../types';
+import {GitHubRepo, GitHubRepoExtended} from '../../types';
 
 const insetCalc = (insets: EdgeInsets) => ({
   paddingTop: Math.max(insets.top, 16),
@@ -34,7 +34,7 @@ export const Home = () => {
   const [error, setError] = useState<any>(null);
   const [inputValue, setInputValue] = useState<string>('web_smashed');
   const [searchingValue, setSearchingValue] = useState<string>('web_smashed');
-  const [likes, setLikes] = useState<GitHubId[]>([]);
+  const [likedResults, setLikedResults] = useState<GitHubRepoExtended[]>([]);
 
   useEffect(() => {
     console.log('searchResults', JSON.stringify(searchResults, null, 2));
@@ -43,13 +43,15 @@ export const Home = () => {
       const extended: GitHubRepoExtended[] = searchResults.map(
         (repo: GitHubRepo) => ({
           ...repo,
-          liked: likes.indexOf(repo.id) > -1,
+          liked: !!likedResults.find(
+            (r: GitHubRepoExtended) => r.id === repo.id,
+          ),
         }),
       );
 
       setExtendedResults(extended);
     }
-  }, [searchResults, likes]);
+  }, [searchResults, likedResults]);
 
   useEffect(() => {
     console.log('inputValue', inputValue);
@@ -172,14 +174,16 @@ export const Home = () => {
                   borderRadius: spacing.md,
                 }}
                 onPress={() => {
-                  const newLikes = [...likes];
-                  const likeIndex = newLikes.indexOf(repo.id);
-                  if (likeIndex > -1) {
-                    newLikes.splice(likeIndex, 1);
+                  const newLikes = [...likedResults];
+                  const likeFound = newLikes.findIndex(
+                    (r: GitHubRepoExtended) => r.id === repo.id,
+                  );
+                  if (likeFound > -1) {
+                    newLikes.splice(likeFound, 1);
                   } else {
-                    newLikes.push(repo.id);
+                    newLikes.push(repo);
                   }
-                  setLikes(newLikes);
+                  setLikedResults(newLikes);
                   const newExtendedResults = [...extendedResults];
                   const extendedIndex = newExtendedResults.findIndex(
                     (r: GitHubRepoExtended) => r.id === repo.id,
