@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, {useEffect, useMemo, useState} from 'react';
 import {StyleSheet, Text, View, TextInput} from 'react-native';
 import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -11,12 +12,31 @@ const insetCalc = (insets: EdgeInsets) => ({
 
 export const Home = () => {
   const insets = useSafeAreaInsets();
-
   const style = useMemo(() => insetCalc(insets), [insets]);
-
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<any>(null);
   const [inputValue, setInputValue] = useState<string>('');
-
   const [debouncedValue, setDebouncedValue] = useState<string>('');
+
+  useEffect(() => {
+    if (debouncedValue) {
+      setIsLoading(true);
+      setSearchResults([]);
+      axios
+        .get(`https://api.github.com/search/repositories?q=${debouncedValue}`)
+        .then(response => {
+          setSearchResults(response.data.items.slice(0, 10)); // take the top 10 results
+        })
+        .catch(err => {
+          console.error(err);
+          setError('Error fetching GitHub repositories');
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [debouncedValue]);
 
   useEffect(() => {
     console.log('inputValue', inputValue);
@@ -35,6 +55,7 @@ export const Home = () => {
 
   return (
     <View style={style}>
+      <Text style={styles.paragraph}>Search GitHub repos...</Text>
       <TextInput
         style={styles.searchInput}
         placeholder="Search GitHub repositories..."
@@ -43,6 +64,14 @@ export const Home = () => {
       />
       <Text style={styles.paragraph}>{inputValue}</Text>
       <Text style={styles.paragraph}>{debouncedValue}</Text>
+      {isLoading && <Text>Loading...</Text>}
+      {error && <Text>Error: {error}</Text>}
+      {!isLoading &&
+        !error &&
+        Array.isArray(searchResults) &&
+        searchResults.map((repo, index: number) => (
+          <Text key={index}>{JSON.stringify(repo)}</Text>
+        ))}
     </View>
   );
 };
