@@ -1,5 +1,5 @@
-import React, {useMemo} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useMemo, useState} from 'react';
+import {StyleSheet, Text, View, TextInput} from 'react-native';
 import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const insetCalc = (insets: EdgeInsets) => ({
@@ -14,23 +14,49 @@ export const Home = () => {
 
   const style = useMemo(() => insetCalc(insets), [insets]);
 
+  const [inputValue, setInputValue] = useState<string>('');
+
+  const [debouncedValue, setDebouncedValue] = useState<string>('');
+
+  useEffect(() => {
+    console.log('inputValue', inputValue);
+    const handler = setTimeout(() => {
+      setDebouncedValue(inputValue);
+    }, 1000);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [inputValue]);
+
+  useEffect(() => {
+    console.log('debouncedValue', debouncedValue);
+  }, [debouncedValue]);
+
   return (
     <View style={style}>
-      <Text style={styles.paragraph}>
-        Thanks for trying our development challenge!
-      </Text>
-      <Text style={styles.paragraph}>
-        Please see README.md for full instructions.
-      </Text>
-      <Text style={styles.paragraph}>
-        When complete, please push to a github public repo that you can share
-        with us.
-      </Text>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search GitHub repositories..."
+        onChangeText={text => setInputValue(text)}
+        value={inputValue}
+      />
+      <Text style={styles.paragraph}>{inputValue}</Text>
+      <Text style={styles.paragraph}>{debouncedValue}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  searchInput: {
+    height: 40,
+    borderColor: '#999',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingLeft: 8,
+    paddingRight: 8,
+    marginBottom: 16,
+  },
   paragraph: {
     marginBottom: 16,
   },
