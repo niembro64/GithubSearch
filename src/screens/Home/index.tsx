@@ -9,6 +9,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {spacing} from '../../styles';
 import {GitHubRepo, GitHubRepoExtended} from '../../types';
@@ -85,114 +87,116 @@ export const Home = () => {
   };
 
   return (
-    <View>
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: spacing.md,
-          padding: spacing.md,
-        }}>
-        <Text
-          style={{
-            fontSize: 22,
-            fontWeight: 'bold',
-            marginBottom: spacing.md,
-          }}>
-          Search GitHub Repositories
-        </Text>
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <View style={{flex: 1, justifyContent: 'space-between'}}>
+        {error && <Text>Error: {error}</Text>}
+        {!error && (
+          <FlatList
+            data={extendedResults}
+            refreshControl={
+              <RefreshControl
+                refreshing={isLoading}
+                onRefresh={getRepositories}
+              />
+            }
+            contentContainerStyle={{
+              width: '100%',
+            }}
+            keyExtractor={item => item.id.toString()}
+            renderItem={({item: repo}) => (
+              <ListItem
+                repo={repo}
+                allowLikes={allowLikes}
+                onLikeToggle={() => {
+                  if (!allowLikes) {
+                    Alert.alert(
+                      'Maximum number of likes reached',
+                      'Please unlike some repositories to like more',
+                    );
+                    return;
+                  }
+                  const newLikes = [...likes];
+                  const likeFound = newLikes.findIndex(
+                    (r: GitHubRepoExtended) => r.id === repo.id,
+                  );
+                  if (likeFound > -1) {
+                    newLikes.splice(likeFound, 1);
+                  } else {
+                    newLikes.push(repo);
+                  }
+                  setLikes(newLikes);
+                  const newExtendedResults = [...extendedResults];
+                  const extendedIndex = newExtendedResults.findIndex(
+                    (r: GitHubRepoExtended) => r.id === repo.id,
+                  );
+                  if (extendedIndex > -1) {
+                    newExtendedResults[extendedIndex].liked =
+                      !newExtendedResults[extendedIndex].liked;
+                  }
+                  setExtendedResults(newExtendedResults);
+                }}
+              />
+            )}
+          />
+        )}
         <View
           style={{
-            flexDirection: 'row',
+            display: 'flex',
+            flexDirection: 'column',
             justifyContent: 'space-between',
             alignItems: 'center',
+            marginTop: spacing.md,
+            padding: spacing.md,
           }}>
-          <TextInput
+          <Text
             style={{
-              flex: 1,
-              height: 40,
-              borderColor: '#999',
-              borderWidth: 1,
-              borderRadius: spacing.sm,
-              paddingLeft: spacing.md,
-              paddingRight: spacing.md,
-              marginRight: spacing.md,
-              paddingVertical: 0,
-            }}
-            placeholder="Search GitHub repositories..."
-            onChangeText={text => setInputValue(text)}
-            value={inputValue}
-          />
-          <TouchableOpacity
+              fontSize: 22,
+              fontWeight: 'bold',
+              marginBottom: spacing.md,
+            }}>
+            Search GitHub Repositories
+          </Text>
+          <View
             style={{
-              backgroundColor: '#ccc',
-              height: 40,
-              width: 80,
-              borderRadius: spacing.md,
-              justifyContent: 'center',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
               alignItems: 'center',
-            }}
-            onPress={getRepositories}>
-            <Text>Search</Text>
-          </TouchableOpacity>
-        </View>
-        <Text>{inputValue}</Text>
-        <Text>{searchingValue}</Text>
-      </View>
-      {/* {isLoading && <Text>Loading...</Text>} */}
-      {error && <Text>Error: {error}</Text>}
-      {!isLoading && !error && (
-        <FlatList
-          data={extendedResults}
-          refreshControl={
-            <RefreshControl
-              refreshing={isLoading}
-              onRefresh={getRepositories}
-              colors={['blue', 'green']}
-            />
-          }
-          contentContainerStyle={{
-            width: '100%',
-          }}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({item: repo}) => (
-            <ListItem
-              repo={repo}
-              allowLikes={allowLikes}
-              onLikeToggle={() => {
-                if (!allowLikes) {
-                  Alert.alert(
-                    'Maximum number of likes reached',
-                    'Please unlike some repositories to like more',
-                  );
-                  return;
-                }
-                const newLikes = [...likes];
-                const likeFound = newLikes.findIndex(
-                  (r: GitHubRepoExtended) => r.id === repo.id,
-                );
-                if (likeFound > -1) {
-                  newLikes.splice(likeFound, 1);
-                } else {
-                  newLikes.push(repo);
-                }
-                setLikes(newLikes);
-                const newExtendedResults = [...extendedResults];
-                const extendedIndex = newExtendedResults.findIndex(
-                  (r: GitHubRepoExtended) => r.id === repo.id,
-                );
-                if (extendedIndex > -1) {
-                  newExtendedResults[extendedIndex].liked =
-                    !newExtendedResults[extendedIndex].liked;
-                }
-                setExtendedResults(newExtendedResults);
+            }}>
+            <TextInput
+              style={{
+                flex: 1,
+                height: 40,
+                borderColor: '#999',
+                borderWidth: 1,
+                borderRadius: spacing.sm,
+                paddingLeft: spacing.md,
+                paddingRight: spacing.md,
+                marginRight: spacing.md,
+                paddingVertical: 0,
               }}
+              placeholder="Search GitHub repositories..."
+              onChangeText={text => setInputValue(text)}
+              value={inputValue}
             />
-          )}
-        />
-      )}
-    </View>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#ccc',
+                height: 40,
+                width: 80,
+                borderRadius: spacing.md,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              onPress={getRepositories}>
+              <Text>Search</Text>
+            </TouchableOpacity>
+          </View>
+          <Text>{inputValue}</Text>
+          <Text>{searchingValue}</Text>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
