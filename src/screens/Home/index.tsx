@@ -170,23 +170,22 @@ export const Home = () => {
             renderItem={({item: repo}) => (
               <ListItem
                 repo={repo}
-                likes={likes}
                 allowLikes={allowLikes}
                 onLikeToggle={() => {
                   const isThisLiked = likes.find(
-                    (r: GitHubRepo) => r.id === repo.id,
+                    (r: GitHubRepo) => r.id === repo.id
                   );
 
                   if (!isThisLiked && !allowLikes) {
                     Alert.alert(
                       'Maximum number of likes reached',
-                      'Please unlike some repositories to like more',
+                      'Please unlike some repositories to like more'
                     );
                     return;
                   }
                   const newLikes = [...likes];
                   const likeFound = newLikes.findIndex(
-                    (r: GitHubRepo) => r.id === repo.id,
+                    (r: GitHubRepo) => r.id === repo.id
                   );
                   if (likeFound > -1) {
                     newLikes.splice(likeFound, 1);
@@ -205,8 +204,7 @@ export const Home = () => {
                   //     !newExtendedResults[extendedIndex].liked;
                   // }
                   // setExtendedResults(newExtendedResults);
-                }}
-              />
+                } } likes={[]}              />
             )}
           />
         )}
