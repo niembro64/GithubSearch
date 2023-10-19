@@ -2,7 +2,15 @@
 import axios from 'axios';
 import {inject, observer} from 'mobx-react';
 import React, {useCallback, useEffect, useState} from 'react';
-import {Alert, FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  FlatList,
+  KeyboardAvoidingView,
+  Text,
+  TouchableOpacity,
+  Platform,
+  View,
+} from 'react-native';
 import {colors} from '../../colors';
 import {spacing} from '../../styles';
 import {GitHubRepo, ServerRepo} from '../../types';
@@ -64,12 +72,11 @@ const LikesScreen = inject('rootStore')(
       fetchSavedRepos();
     }, [fetchSavedRepos]);
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        // NEED TO ACCOUNT FOR HEADER BEING USED
+        keyboardVerticalOffset={72}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <FlatList
           data={likes}
           style={{
@@ -152,7 +159,7 @@ const LikesScreen = inject('rootStore')(
             Liked Repositories
           </Text>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     );
   }),
 );

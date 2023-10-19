@@ -154,7 +154,8 @@ const GithubListScreen = inject('rootStore')(
     return (
       <KeyboardAvoidingView
         style={{flex: 1}}
-        // keyboardVerticalOffset={72}
+        // NEED TO ACCOUNT FOR HEADER BEING USED
+        keyboardVerticalOffset={72}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={{flex: 1, justifyContent: 'space-between'}}>
           {error && <Text>Error: {error}</Text>}
