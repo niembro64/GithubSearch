@@ -43,20 +43,20 @@ const LikesScreen = inject('rootStore')(
     };
 
     useEffect(() => {
-      const likesFromServerFormatted: RepoGithub[] = serverLikes.map(
+      const newLikesGithub: RepoGithub[] = serverLikes.map(
         (repo: RepoServer) => {
           // @ts-ignore
-          const x: RepoGithub = {
+          const newLikeGithub: RepoGithub = {
             id: repo.id,
-            name: repo.fullName,
+            full_name: repo.fullName,
             description: repo.description,
             language: repo.language,
             stargazers_count: repo.stargazersCount,
           };
-          return x;
+          return newLikeGithub;
         },
       );
-      setLikesGithub(likesFromServerFormatted);
+      setLikesGithub(newLikesGithub);
     }, [serverLikes]);
 
     const fetchSavedRepos = () => {
