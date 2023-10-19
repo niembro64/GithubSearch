@@ -46,7 +46,7 @@ export const ListItem: React.FC<ListItemProps> = ({
           padding: spacing.md,
         }}>
         <Text style={{fontSize: 22, color: 'black'}}>
-          {truncateString(repo?.name, 20)}
+          {truncateString(repo?.full_name, 20)}
         </Text>
         <Text
           style={{

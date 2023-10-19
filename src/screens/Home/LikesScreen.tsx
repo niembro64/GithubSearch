@@ -1,18 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
 import {inject, observer} from 'mobx-react';
 import React, {useEffect, useState} from 'react';
-import {
-  Alert,
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {colors} from '../../colors';
+import {Alert, FlatList, KeyboardAvoidingView, Platform} from 'react-native';
 import {spacing} from '../../styles';
 import {RepoGithub, RepoServer} from '../../types';
 import {ListItem} from './ListItem';
@@ -45,13 +37,12 @@ const LikesScreen = inject('rootStore')(
     useEffect(() => {
       const newLikesGithub: RepoGithub[] = serverLikes.map(
         (repo: RepoServer) => {
-
-          if (!repo?.id) {
-            throw new Error('Repo does not have an id');
+          if (!repo || repo.id === undefined || repo.id === null) {
+            throw new Error('Repo id is undefined or null');
           }
 
           const newLikeGithub: RepoGithub = {
-            id: repo.id
+            id: repo.id,
             full_name: repo?.fullName || '',
             description: repo?.description || '',
             language: repo?.language || '',
@@ -110,65 +101,6 @@ const LikesScreen = inject('rootStore')(
             />
           )}
         />
-        {/* ////////////////////////////////// */}
-        {/* SEARCH BAR */}
-        {/* ////////////////////////////////// */}
-        <View
-          style={{
-            width: '100%',
-            borderTopWidth: 1,
-            borderTopColor: colors.palette.gray400,
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: 0,
-            padding: spacing.md,
-            marginBottom: spacing.xl,
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <TouchableOpacity
-              style={{
-                height: 40,
-                marginLeft: spacing.md,
-                backgroundColor: colors.palette.blue200,
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: spacing.sm,
-                padding: spacing.sm,
-              }}
-              onPress={() => {
-                // @ts-ignore
-                navigation.canGoBack() && navigation.goBack();
-                // navigation.navigate('Home');
-              }}>
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: 'bold',
-                  color: colors.palette.blue600,
-                }}>
-                Home
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <Text
-            style={{
-              flex: 1,
-              textAlign: 'center',
-              fontSize: 22,
-              fontWeight: 'bold',
-            }}>
-            Liked Repositories
-          </Text>
-        </View>
       </KeyboardAvoidingView>
     );
   }),

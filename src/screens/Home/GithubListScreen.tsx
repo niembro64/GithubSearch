@@ -53,13 +53,16 @@ const GithubListScreen = inject('rootStore')(
       // @ts-ignore
       const newLikesGithub: RepoGithub[] = likesServer.map(
         (repo: RepoServer, index: number) => {
-          // @ts-ignore
+          if (!repo || repo.id === undefined || repo.id === null) {
+            throw new Error('Repo id is undefined or null');
+          }
+
           const newLikeGithub: RepoGithub = {
             id: repo.id,
-            full_name: repo.fullName,
-            description: repo.description,
-            language: repo.language,
-            stargazers_count: repo.stargazersCount,
+            full_name: repo?.fullName || '',
+            description: repo?.description || '',
+            language: repo?.language || '',
+            stargazers_count: repo?.stargazersCount || 0,
           };
 
           console.log('index', index, 'x', newLikeGithub);
