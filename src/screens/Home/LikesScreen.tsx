@@ -7,6 +7,7 @@ import {FlatList, KeyboardAvoidingView, Platform} from 'react-native';
 import {serverLikesGet} from '../../helpers';
 import {spacing} from '../../styles';
 import {ListItem} from './ListItem';
+import {Repo} from '~/types';
 
 type LikesScreenProps = {
   navigation: any;
@@ -20,7 +21,7 @@ const LikesScreen = inject('rootStore')(
     }
 
     const {
-      likesStore: {likes, setLikesApp},
+      likesStore: {likes, setLikesApp, pressThumbBoth},
     } = rootStore;
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -54,7 +55,14 @@ const LikesScreen = inject('rootStore')(
           }}
           keyExtractor={item => item.id.toString()}
           renderItem={({item: repo}) => (
-            <ListItem repo={repo} rootStore={rootStore} />
+            <ListItem
+              repo={repo}
+              rootStore={rootStore}
+              likes={likes}
+              pressThumbBoth={async function (r: Repo): Promise<void> {
+                await pressThumbBoth(repo);
+              }}
+            />
           )}
         />
       </KeyboardAvoidingView>

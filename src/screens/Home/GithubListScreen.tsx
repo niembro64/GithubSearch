@@ -17,6 +17,7 @@ import {colors} from '../../colors';
 import {githubGetRepos, serverLikesGet} from '../../helpers';
 import {spacing} from '../../styles';
 import {ListItem} from './ListItem';
+import {Repo} from '~/types';
 
 type GithubListScreenProps = {
   navigation: any;
@@ -38,6 +39,7 @@ const GithubListScreen = inject('rootStore')(
         searchResults,
         setSearchResultsApp,
         likes,
+        pressThumbBoth,
         setLikesApp,
       },
     } = rootStore;
@@ -111,7 +113,14 @@ const GithubListScreen = inject('rootStore')(
               }}
               keyExtractor={item => item.id.toString()}
               renderItem={({item: repo}) => (
-                <ListItem repo={repo} rootStore={rootStore} />
+                <ListItem
+                  repo={repo}
+                  rootStore={rootStore}
+                  likes={likes}
+                  pressThumbBoth={async function (r: Repo): Promise<void> {
+                    await pressThumbBoth(repo);
+                  }}
+                />
               )}
             />
           }

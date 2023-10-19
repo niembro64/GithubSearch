@@ -12,17 +12,15 @@ import {Repo} from '../../types';
 interface ListItemProps {
   repo: Repo;
   rootStore: any;
+  likes: Repo[];
+  pressThumbBoth: (repo: Repo) => Promise<void>;
 }
 
 export const ListItem: React.FC<ListItemProps> = inject('rootStore')(
-  observer(({repo, rootStore}) => {
+  observer(({repo, rootStore, likes, pressThumbBoth}) => {
     if (!rootStore) {
       return null;
     }
-
-    const {
-      likesStore: {likes, pressThumbBoth},
-    } = rootStore;
 
     useEffect(() => {
       console.log('repo.like', repo.like);
