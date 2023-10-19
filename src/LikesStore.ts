@@ -3,43 +3,55 @@ import {RepoGithub, RepoServer} from './types';
 
 export const LikesStoreModel = types
   .model('LikesStore', {
+    searchResults: types.optional(types.array(types.frozen<RepoServer>()), []),
     likesGithub: types.optional(types.array(types.frozen<RepoGithub>()), []),
-    serverLikes: types.optional(types.array(types.frozen<RepoServer>()), []),
+    likesServer: types.optional(types.array(types.frozen<RepoServer>()), []),
     allowLikes: types.optional(types.boolean, true),
     isLoading: types.optional(types.boolean, false),
-    searchResults: types.optional(types.array(types.frozen<RepoServer>()), []),
   })
   .actions(self => ({
+    ///////////////////////////////
+    // SEARCH RESULTS
+    ///////////////////////////////
     setSearchResults(repos: RepoGithub[]) {
       // @ts-ignore
       self.searchResults = repos;
     },
-    addLike(newLike: RepoGithub) {
+    ///////////////////////////////
+    // LIKES GITHUB
+    ///////////////////////////////
+    setLikesGithub(likes: RepoGithub[]) {
+      // @ts-ignore
+      self.likesGithub = likes;
+    },
+    addLikeGithub(newLike: RepoGithub) {
       self.likesGithub.push(newLike);
     },
-    removeLike(likeId: string) {
+    removeLikeGithub(likeId: string) {
       const index = self.likesGithub.findIndex(like => like.id === likeId);
       if (index > -1) {
         self.likesGithub.splice(index, 1);
       }
     },
-    setLikesGithub(likes: RepoGithub[]) {
-      // @ts-ignore
-      self.likesGithub = likes;
-    },
-    addServerLike(newLike: RepoServer) {
-      self.serverLikes.push(newLike);
-    },
+    ///////////////////////////////
+    // LIKES SERVER
+    ///////////////////////////////
     setServerLikes(likes: RepoServer[]) {
       // @ts-ignore
-      self.serverLikes = likes;
+      self.likesServer = likes;
+    },
+    addLikeServer(newLike: RepoServer) {
+      self.likesServer.push(newLike);
     },
     removeServerLike(likeId: string) {
-      const index = self.serverLikes.findIndex(like => like.id === likeId);
+      const index = self.likesServer.findIndex(like => like.id === likeId);
       if (index > -1) {
-        self.serverLikes.splice(index, 1);
+        self.likesServer.splice(index, 1);
       }
     },
+    ///////////////////////////////
+    // CETERA
+    ///////////////////////////////
     setIsLoading(isLoading: boolean) {
       self.isLoading = isLoading;
     },

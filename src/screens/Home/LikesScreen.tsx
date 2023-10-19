@@ -35,7 +35,7 @@ const LikesScreen = inject('rootStore')(
 
     // const [likesGithub, setLikesGithub] = useState<GitHubRepo[]>([]);
 
-    const [serverLikes, setServerLikes] = useState<RepoServer[]>([]);
+    const [likesServer, setLikesServer] = useState<RepoServer[]>([]);
 
     const deleteFromServer = useCallback((repoId: string) => {
       axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
@@ -45,7 +45,7 @@ const LikesScreen = inject('rootStore')(
     }, []);
 
     useEffect(() => {
-      const likesFromServerFormatted: RepoGithub[] = serverLikes.map(
+      const likesFromServerFormatted: RepoGithub[] = likesServer.map(
         (repo: RepoServer) => {
           // @ts-ignore
           const x: RepoGithub = {
@@ -59,14 +59,14 @@ const LikesScreen = inject('rootStore')(
         },
       );
       setLikesGithub(likesFromServerFormatted);
-    }, [serverLikes]);
+    }, [likesServer]);
 
     const fetchSavedRepos = useCallback(() => {
       axios
         .get('http://192.168.1.19:8080/repo/')
         .then(response => {
           if (response?.data?.repos && Array.isArray(response.data.repos)) {
-            setServerLikes(response.data.repos);
+            setLikesServer(response.data.repos);
           }
         })
         .catch(err => {

@@ -51,7 +51,7 @@ const GithubListScreen = inject('rootStore')(
           // @ts-ignore
           const x: RepoGithub = {
             id: repo.id,
-            name: repo.fullName,
+            full_name: repo.fullName,
             description: repo.description,
             language: repo.language,
             stargazers_count: repo.stargazersCount,
@@ -113,12 +113,12 @@ const GithubListScreen = inject('rootStore')(
     const saveToServer = useCallback((repo: RepoGithub) => {
       axios
         .post('http://192.168.1.19:8080/repo/', {
-          id: repo.id.toString(),
-          fullName: repo.full_name,
-          createdAt: repo.created_at,
-          stargazersCount: repo.stargazers_count,
-          language: repo.language,
-          url: repo.html_url,
+          id: repo?.id.toString() || '',
+          fullName: repo?.full_name || '',
+          createdAt: repo?.created_at || '',
+          stargazersCount: repo?.stargazers_count || 0,
+          language: repo?.language || '',
+          url: repo?.html_url || '',
         })
         .catch(err => {
           console.error('Error saving repo to server:', err);
