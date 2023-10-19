@@ -33,8 +33,7 @@ const GithubListScreen = inject('rootStore')(
 
     const {likesStore} = rootStore;
 
-    // Now you can use any values or actions from the likesStore
-    // const { searchResults, likes, allowLikes, setSearchResults } = likesStore;
+    // const {searchResults, likes, allowLikes, setSearchResults} = likesStore;
 
     // const navigation = useNavigation();
     const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
