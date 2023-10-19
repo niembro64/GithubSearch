@@ -2,10 +2,10 @@
 /* eslint-disable react-native/no-inline-styles */
 // ListItem.tsx
 import React from 'react';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {Image, Platform, Text, TouchableOpacity, View} from 'react-native';
 import {colors, getColorFromLanguage} from '../../colors';
 import {truncateString} from '../../helpers';
-import {spacing} from '../../styles';
+import {spacing, spacingNegative} from '../../styles';
 import {GitHubRepo} from '../../types';
 
 interface ListItemProps {
@@ -64,28 +64,37 @@ export const ListItem: React.FC<ListItemProps> = ({
           }}>
           <View
             style={{
+              height: 35,
               backgroundColor: getColorFromLanguage(repo?.language),
-              padding: spacing.sm,
               borderRadius: spacing.sm,
+              display: 'flex',
+              justifyContent: 'center',
+              paddingHorizontal: spacing.md,
             }}>
             <Text
               style={{
                 fontWeight: '600',
                 color: 'white',
+                fontSize: 16,
               }}>
               {repo?.language}
             </Text>
           </View>
           <View
             style={{
+              height: 35,
               backgroundColor: colors.palette.blue600,
-              padding: spacing.sm,
               borderRadius: spacing.sm,
+              display: 'flex',
+              justifyContent: 'center',
+              paddingHorizontal: spacing.md,
             }}>
             <Text
               style={{
                 fontWeight: '600',
                 color: 'white',
+                fontSize: 16,
+                fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
               }}>
               {repo?.stargazers_count + ' ' + '⭐'}
             </Text>

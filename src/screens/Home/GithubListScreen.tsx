@@ -259,7 +259,7 @@ const GithubListScreen: React.FC<GithubListScreenProps> = ({navigation}) => {
                       ? colors.palette.blue600
                       : colors.palette.gray400,
                 }}>
-                {' Likes'}
+                {likes.length === 1 ? ' Like' : ' Likes'}
               </Text>
             </TouchableOpacity>
             <Text
