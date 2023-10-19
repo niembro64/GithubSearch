@@ -25,11 +25,16 @@ export const MainNavigator = () => {
             headerLeft: () => (
               <Button onPress={() => {}} title="" color={colors.transparent} />
             ),
+            /////////////////////////////////
+            // NAV IS ACTING WONKY
+            // NORMALLLY CAN DO navigation.goBack() and navigation.navigate("Likes")
+            // BUT IT IS NOT WORKING
+            /////////////////////////////////
             headerRight: () => (
               <Button
                 onPress={() => navigation.push('Likes')}
-                title="Likes"
-                color="#000"
+                title="Likes ›"
+                color={colors.palette.blue500}
               />
             ),
           })}
@@ -39,10 +44,15 @@ export const MainNavigator = () => {
           component={LikesScreen}
           options={({navigation}) => ({
             headerLeft: () => (
+              /////////////////////////////////
+              // NAV IS ACTING WONKY
+              // NORMALLLY CAN DO navigation.goBack() and navigation.navigate("Github")
+              // BUT IT IS NOT WORKING
+              /////////////////////////////////
               <Button
                 onPress={() => navigation.push('Github')}
-                title="Github"
-                color="#000"
+                title="‹ Github"
+                color={colors.palette.blue500}
               />
             ),
             /////////////////////////////////
