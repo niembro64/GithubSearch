@@ -3,7 +3,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
 import {inject, observer} from 'mobx-react';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
@@ -89,7 +89,7 @@ const GithubListScreen = inject('rootStore')(
       };
     }, [textInput]);
 
-    const getRepositories = () => {
+    const getRepositories = useCallback(() => {
       if (textQuery) {
         setIsLoading(true);
         setSearchResults([]);
@@ -107,7 +107,7 @@ const GithubListScreen = inject('rootStore')(
             setIsLoading(false);
           });
       }
-    };
+    }, [textQuery]);
 
     useEffect(() => {
       if (textQuery) {
