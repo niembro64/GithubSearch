@@ -2,7 +2,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
 import {inject, observer} from 'mobx-react';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {
   Alert,
   FlatList,
@@ -30,12 +30,8 @@ const LikesScreen = inject('rootStore')(
     }
 
     const {
-      likesStore: {likesGithub, setLikesGithub},
+      likesStore: {likesGithub, setLikesGithub, likesServer, fetchReposServer},
     } = rootStore;
-
-    // const [likesGithub, setLikesGithub] = useState<GitHubRepo[]>([]);
-
-    const [likesServer, setLikesServer] = useState<RepoServer[]>([]);
 
     const deleteFromServer = useCallback((repoId: string) => {
       axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
@@ -61,22 +57,22 @@ const LikesScreen = inject('rootStore')(
       setLikesGithub(likesFromServerFormatted);
     }, [likesServer]);
 
-    const fetchSavedRepos = useCallback(() => {
-      axios
-        .get('http://192.168.1.19:8080/repo/')
-        .then(response => {
-          if (response?.data?.repos && Array.isArray(response.data.repos)) {
-            setLikesServer(response.data.repos);
-          }
-        })
-        .catch(err => {
-          console.error('Error fetching saved repos from server:', err);
-        });
-    }, []);
+    // const fetchReposServer = useCallback(() => {
+    //   axios
+    //     .get('http://192.168.1.19:8080/repo/')
+    //     .then(response => {
+    //       if (response?.data?.repos && Array.isArray(response.data.repos)) {
+    //         setLikesServer(response.data.repos);
+    //       }
+    //     })
+    //     .catch(err => {
+    //       console.error('Error fetching saved repos from server:', err);
+    //     });
+    // }, []);
 
     useEffect(() => {
-      fetchSavedRepos();
-    }, [fetchSavedRepos]);
+      fetchReposServer();
+    }, [fetchReposServer]);
     return (
       <KeyboardAvoidingView
         style={{flex: 1}}

@@ -1,5 +1,6 @@
 import {Instance, SnapshotOut, types} from 'mobx-state-tree';
 import {RepoGithub, RepoServer} from './types';
+import axios from 'axios';
 
 export const LikesStoreModel = types
   .model('LikesStore', {
@@ -8,6 +9,7 @@ export const LikesStoreModel = types
     likesServer: types.optional(types.array(types.frozen<RepoServer>()), []),
     allowLikes: types.optional(types.boolean, true),
     isLoading: types.optional(types.boolean, false),
+    error: types.optional(types.frozen<any>(), null),
   })
   .actions(self => ({
     ///////////////////////////////
@@ -36,7 +38,7 @@ export const LikesStoreModel = types
     ///////////////////////////////
     // LIKES SERVER
     ///////////////////////////////
-    setServerLikes(likes: RepoServer[]) {
+    setLikesServer(likes: RepoServer[]) {
       // @ts-ignore
       self.likesServer = likes;
     },
@@ -50,6 +52,22 @@ export const LikesStoreModel = types
       }
     },
     ///////////////////////////////
+    // REPOS SERVER
+    ///////////////////////////////
+    fetchReposServer: async () => {
+      axios
+        .get('http://192.168.1.19:8080/repo/')
+        .then(response => {
+          if (response?.data?.repos && Array.isArray(response.data.repos)) {
+            // @ts-ignore
+            self.setLikesServer(response.data.repos as any);
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+    ///////////////////////////////
     // CETERA
     ///////////////////////////////
     setIsLoading(isLoading: boolean) {
@@ -57,6 +75,9 @@ export const LikesStoreModel = types
     },
     toggleAllowLikes() {
       self.allowLikes = !self.allowLikes;
+    },
+    setError(error: any) {
+      console.log(error);
     },
   }));
 
