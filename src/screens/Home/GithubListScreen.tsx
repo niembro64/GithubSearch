@@ -210,7 +210,6 @@ const GithubListScreen: React.FC<GithubListScreenProps> = ({navigation}) => {
             justifyContent: 'space-between',
             alignItems: 'center',
             marginTop: 0,
-            padding: spacing.md,
           }}>
           <View
             style={{
@@ -219,23 +218,23 @@ const GithubListScreen: React.FC<GithubListScreenProps> = ({navigation}) => {
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
-              borderColor: 'red',
-              borderWidth: 1,
-              marginBottom: spacing.md,
+              marginVertical: spacing.md,
             }}>
             <TouchableOpacity
               activeOpacity={1}
               style={{
-                borderColor: 'red',
-                borderWidth: 1,
                 marginHorizontal: spacing.md,
-                backgroundColor: colors.palette.blue200,
+                backgroundColor:
+                  likes.length > 0
+                    ? colors.palette.blue200
+                    : colors.palette.gray200,
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
                 borderRadius: spacing.sm,
                 padding: spacing.sm,
+                paddingHorizontal: spacing.md,
               }}
               // @ts-ignore
               onPress={() => navigation.navigate('Likes')}>
@@ -243,17 +242,32 @@ const GithubListScreen: React.FC<GithubListScreenProps> = ({navigation}) => {
                 style={{
                   fontSize: 22,
                   fontWeight: 'bold',
-                  color: colors.palette.blue600,
+                  color:
+                    likes.length > 0
+                      ? colors.palette.blue600
+                      : colors.palette.gray400,
+                  fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
                 }}>
-                Likes
+                {likes.length}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: 'bold',
+                  color:
+                    likes.length > 0
+                      ? colors.palette.blue600
+                      : colors.palette.gray400,
+                }}>
+                {' Likes'}
               </Text>
             </TouchableOpacity>
             <Text
               style={{
+                flex: 1,
+                textAlign: 'center',
                 fontSize: 22,
                 fontWeight: 'bold',
-                borderColor: 'red',
-                borderWidth: 1,
               }}>
               Search Repositories
             </Text>
