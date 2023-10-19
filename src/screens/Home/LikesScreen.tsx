@@ -72,7 +72,7 @@ const LikesScreen = inject('rootStore')(
 
     useEffect(() => {
       fetchReposServer();
-    }, [fetchReposServer]);
+    }, []);
     return (
       <KeyboardAvoidingView
         style={{flex: 1}}
