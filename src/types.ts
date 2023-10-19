@@ -1,5 +1,7 @@
 ///////////////////////////////////////////////
-// THIS DIFFERS FROM THE GITHUB API RESPONSE
+// README DESCRIPTION OF DATA
+// DIFFERS FROM GITHUB DATA RECEIVED
+// I'M BEING PEDANTIC HERE
 ///////////////////////////////////////////////
 export type GitHubId = string;
 
@@ -13,9 +15,12 @@ export type RepoServer = {
 
 export type RepoGithub = {
   id: GitHubId;
+  full_name: string;
+  description: string;
+  stargazers_url: string;
+  language: string;
   node_id: string;
   name: string;
-  full_name: string;
   private: boolean;
   owner: {
     login: string;
@@ -38,7 +43,6 @@ export type RepoGithub = {
     site_admin: boolean;
   };
   html_url: string;
-  description: string;
   fork: boolean;
   url: string;
   forks_url: string;
@@ -57,7 +61,6 @@ export type RepoGithub = {
   trees_url: string;
   statuses_url: string;
   languages_url: string;
-  stargazers_url: string;
   contributors_url: string;
   subscribers_url: string;
   subscription_url: string;
@@ -88,7 +91,6 @@ export type RepoGithub = {
   size: number;
   stargazers_count: number;
   watchers_count: number;
-  language: string;
   has_issues: boolean;
   has_projects: boolean;
   has_downloads: boolean;

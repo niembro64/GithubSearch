@@ -45,7 +45,6 @@ const LikesScreen = inject('rootStore')(
     useEffect(() => {
       const newLikesGithub: RepoGithub[] = serverLikes.map(
         (repo: RepoServer) => {
-          // @ts-ignore
           const newLikeGithub: RepoGithub = {
             id: repo.id,
             full_name: repo.fullName,
