@@ -25,9 +25,11 @@ type GithubListScreenProps = {
   rootStore: any;
 };
 
-const GithubListScreen: React.FC<GithubListScreenProps> = observer(
-  ({rootStore}) => {
-    if (!rootStore) return null; // Just a safety check
+const GithubListScreen = inject('rootStore')(
+  ({navigation, rootStore}: GithubListScreenProps) => {
+    if (!rootStore) {
+      return null;
+    }
 
     const {likesStore} = rootStore;
 
