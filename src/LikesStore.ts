@@ -1,7 +1,7 @@
 import {Instance, SnapshotOut, types} from 'mobx-state-tree';
-import {Repo} from './types';
-import {serverLikeDelete, serverLikeSave} from './helpers';
 import {Alert} from 'react-native';
+import {serverLikeDelete, serverLikeSave} from './helpers';
+import {Repo} from './types';
 
 export const LikesStoreModel = types
   .model('LikesStore', {
@@ -47,62 +47,68 @@ export const LikesStoreModel = types
       self.searchResults.replace(newSearchResults);
     },
     addLikeBoth(newLike: Repo) {
-      const res = serverLikeSave(newLike);
+      (async () => {
+        const res = await serverLikeSave(newLike);
 
-      if (!res) {
-        Alert.alert('Error', 'Error saving like');
-        return;
-      }
-      self.likes.push(newLike);
+        if (!res) {
+          Alert.alert('Error', 'Error saving like');
+          return;
+        }
+        self.likes.push(newLike);
+      })();
     },
     pressThumbBoth(repo: Repo) {
-      console.log('PRESSED STATUS', !!repo?.like);
-      if (repo?.like) {
-        ////////////////////
-        // DELETE LIKE
-        ////////////////////
-        const res = serverLikeDelete(repo.id);
+      (async () => {
+        console.log('PRESSED STATUS', !!repo?.like);
+        if (repo?.like) {
+          ////////////////////
+          // DELETE LIKE
+          ////////////////////
+          const res = await serverLikeDelete(repo.id);
+
+          if (!res) {
+            Alert.alert('Error', 'Error deleting like');
+            return;
+          }
+
+          const index = self.likes.findIndex(like => like.id === repo.id);
+
+          if (index > -1) {
+            const newLikes = self.likes.filter(like => like.id !== repo.id);
+
+            this.setLikesApp(newLikes);
+          }
+        } else {
+          ////////////////////
+          // ADD LIKE
+          ////////////////////
+          const res = await serverLikeSave(repo);
+
+          if (!res) {
+            Alert.alert('Error', 'Error saving like');
+            return;
+          }
+
+          this.setLikesApp([...self.likes, repo]);
+        }
+      })();
+    },
+    removeLikeBoth(likeId: string) {
+      (async () => {
+        const res = await serverLikeDelete(likeId);
 
         if (!res) {
           Alert.alert('Error', 'Error deleting like');
           return;
         }
 
-        const index = self.likes.findIndex(like => like.id === repo.id);
-
+        const index = self.likes.findIndex(like => like.id === likeId);
         if (index > -1) {
-          const newLikes = self.likes.filter(like => like.id !== repo.id);
+          const newLikes = self.likes.filter(like => like.id !== likeId);
 
-          this.setLikesApp(newLikes);
+          self.likes.replace(newLikes);
         }
-      } else {
-        ////////////////////
-        // ADD LIKE
-        ////////////////////
-        const res = serverLikeSave(repo);
-
-        if (!res) {
-          Alert.alert('Error', 'Error saving like');
-          return;
-        }
-
-        this.setLikesApp([...self.likes, repo]);
-      }
-    },
-    removeLikeBoth(likeId: string) {
-      const res = serverLikeDelete(likeId);
-
-      if (!res) {
-        Alert.alert('Error', 'Error deleting like');
-        return;
-      }
-
-      const index = self.likes.findIndex(like => like.id === likeId);
-      if (index > -1) {
-        const newLikes = self.likes.filter(like => like.id !== likeId);
-
-        self.likes.replace(newLikes);
-      }
+      })();
     },
     setTextInput(text: string) {
       self.textInput = text;

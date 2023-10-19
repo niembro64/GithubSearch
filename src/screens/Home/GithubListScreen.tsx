@@ -45,6 +45,7 @@ const GithubListScreen = inject('rootStore')(
     } = rootStore;
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [renderHelper, setRenderHelper] = useState<boolean>(false);
 
     //////////////////////////////
     // POPULATE LIKES
@@ -119,6 +120,7 @@ const GithubListScreen = inject('rootStore')(
                   likes={likes}
                   pressThumbBoth={async function (r: Repo): Promise<void> {
                     await pressThumbBoth(repo);
+                    setRenderHelper(!renderHelper);
                   }}
                 />
               )}
