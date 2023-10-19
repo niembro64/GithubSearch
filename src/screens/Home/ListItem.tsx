@@ -5,7 +5,7 @@ import React from 'react';
 import {Image, Platform, Text, TouchableOpacity, View} from 'react-native';
 import {colors, getColorFromLanguage} from '../../colors';
 import {truncateString} from '../../helpers';
-import {spacing, spacingNegative} from '../../styles';
+import {spacing} from '../../styles';
 import {GitHubRepo} from '../../types';
 
 interface ListItemProps {
