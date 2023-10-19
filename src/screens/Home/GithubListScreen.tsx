@@ -17,14 +17,14 @@ import {colors} from '../../colors';
 import {spacing} from '../../styles';
 import {GitHubRepo, ServerRepo} from '../../types';
 import {ListItem} from './ListItem';
-import {useNavigation} from '@react-navigation/native';
+// import {useNavigation} from '@react-navigation/native';
 
 type GithubListScreenProps = {
   navigation: any;
 };
 
-const GithubListScreen: React.FC<GithubListScreenProps> = () => {
-  const navigation = useNavigation();
+const GithubListScreen: React.FC<GithubListScreenProps> = ({navigation}) => {
+  // const navigation = useNavigation();
   const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);

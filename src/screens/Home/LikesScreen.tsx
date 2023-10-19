@@ -6,14 +6,14 @@ import {colors} from '../../colors';
 import {spacing} from '../../styles';
 import {GitHubRepo, ServerRepo} from '../../types';
 import {ListItem} from './ListItem';
-import {useNavigation} from '@react-navigation/native';
+// import {useNavigation} from '@react-navigation/native';
 
 type LikesScreenProps = {
   navigation: any;
 };
 
-const LikesScreen: React.FC<LikesScreenProps> = () => {
-  const navigation = useNavigation();
+const LikesScreen: React.FC<LikesScreenProps> = ({navigation}) => {
+  // const navigation = useNavigation();
   const [likes, setLikes] = useState<GitHubRepo[]>([]);
   const [serverLikes, setServerLikes] = useState<ServerRepo[]>([]);
 

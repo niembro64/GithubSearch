@@ -6,20 +6,28 @@ import React from 'react';
 import {Button} from 'react-native';
 import GithubListScreen from '../screens/Home/GithubListScreen';
 import LikesScreen from '../screens/Home/LikesScreen';
+import {colors} from '../colors';
 
 const Stack = createNativeStackNavigator();
 
 export const MainNavigator = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Likes">
+      <Stack.Navigator initialRouteName="Github">
         <Stack.Screen
           name="Github"
           component={GithubListScreen}
           options={({navigation}) => ({
+            /////////////////////////////////
+            // NAV IS ACTING WONKY
+            // SO KEEPING THIS HERE
+            /////////////////////////////////
+            headerLeft: () => (
+              <Button onPress={() => {}} title="" color={colors.transparent} />
+            ),
             headerRight: () => (
               <Button
-                onPress={() => navigation.navigate('Likes')}
+                onPress={() => navigation.push('Likes')}
                 title="Likes"
                 color="#000"
               />
@@ -30,12 +38,19 @@ export const MainNavigator = () => {
           name="Likes"
           component={LikesScreen}
           options={({navigation}) => ({
-            headerRight: () => (
+            headerLeft: () => (
               <Button
-                onPress={() => navigation.navigate('Github')}
+                onPress={() => navigation.push('Github')}
                 title="Github"
                 color="#000"
               />
+            ),
+            /////////////////////////////////
+            // NAV IS ACTING WONKY
+            // SO KEEPING THIS HERE
+            /////////////////////////////////
+            headerRight: () => (
+              <Button onPress={() => {}} title="" color={colors.transparent} />
             ),
           })}
         />
