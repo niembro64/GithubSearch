@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
-import {inject} from 'mobx-react';
+import {inject, observer} from 'mobx-react';
 import React, {useCallback, useEffect, useState} from 'react';
 import {Alert, FlatList, Text, TouchableOpacity, View} from 'react-native';
 import {colors} from '../../colors';
@@ -15,7 +15,7 @@ type LikesScreenProps = {
 };
 
 const LikesScreen = inject('rootStore')(
-  ({navigation, rootStore}: LikesScreenProps) => {
+  observer(({navigation, rootStore}: LikesScreenProps) => {
     if (!rootStore) {
       return null;
     }
@@ -154,7 +154,7 @@ const LikesScreen = inject('rootStore')(
         </View>
       </View>
     );
-  },
+  }),
 );
 
 export default LikesScreen;

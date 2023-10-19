@@ -2,7 +2,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
-import {inject} from 'mobx-react';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
@@ -19,6 +18,7 @@ import {colors} from '../../colors';
 import {spacing} from '../../styles';
 import {GitHubRepo, ServerRepo} from '../../types';
 import {ListItem} from './ListItem';
+import {inject, observer} from 'mobx-react';
 
 type GithubListScreenProps = {
   navigation: any;
@@ -26,7 +26,7 @@ type GithubListScreenProps = {
 };
 
 const GithubListScreen = inject('rootStore')(
-  ({navigation, rootStore}: GithubListScreenProps) => {
+  observer(({navigation, rootStore}: GithubListScreenProps) => {
     if (!rootStore) {
       return null;
     }
@@ -310,7 +310,7 @@ const GithubListScreen = inject('rootStore')(
         </View>
       </KeyboardAvoidingView>
     );
-  },
+  }),
 );
 
 export default GithubListScreen;
