@@ -212,14 +212,52 @@ const GithubListScreen: React.FC<GithubListScreenProps> = ({navigation}) => {
             marginTop: 0,
             padding: spacing.md,
           }}>
-          <Text
+          <View
             style={{
-              fontSize: 22,
-              fontWeight: 'bold',
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              borderColor: 'red',
+              borderWidth: 1,
               marginBottom: spacing.md,
             }}>
-            Search GitHub Repositories
-          </Text>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={{
+                borderColor: 'red',
+                borderWidth: 1,
+                marginHorizontal: spacing.md,
+                backgroundColor: colors.palette.blue200,
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: spacing.sm,
+                padding: spacing.sm,
+              }}
+              // @ts-ignore
+              onPress={() => navigation.navigate('Likes')}>
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: 'bold',
+                  color: colors.palette.blue600,
+                }}>
+                Likes
+              </Text>
+            </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: 'bold',
+                borderColor: 'red',
+                borderWidth: 1,
+              }}>
+              Search Repositories
+            </Text>
+          </View>
           <View
             style={{
               flexDirection: 'row',
@@ -244,29 +282,6 @@ const GithubListScreen: React.FC<GithubListScreenProps> = ({navigation}) => {
               onChangeText={text => setInputValue(text)}
               value={inputValue}
             />
-            <TouchableOpacity
-              style={{
-                height: 40,
-                marginRight: spacing.md,
-                backgroundColor: colors.palette.blue200,
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: spacing.sm,
-                padding: spacing.sm,
-              }}
-              // @ts-ignore
-              onPress={() => navigation.navigate('Likes')}>
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: 'bold',
-                  color: colors.palette.blue600,
-                }}>
-                Likes
-              </Text>
-            </TouchableOpacity>
           </View>
         </View>
       </View>
