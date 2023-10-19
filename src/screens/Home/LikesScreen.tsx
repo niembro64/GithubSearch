@@ -94,7 +94,7 @@ const LikesScreen = inject('rootStore')(
             <ListItem
               repo={repo}
               likesGithub={likesGithub}
-              allowLikes={false}
+              allowLikes={likesGithub.length < 10}
               onLikeToggle={() => {
                 deleteFromServer(repo.id.toString());
                 const newLikes = likesGithub.filter(

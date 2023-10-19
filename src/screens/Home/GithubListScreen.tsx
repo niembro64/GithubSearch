@@ -49,7 +49,6 @@ const GithubListScreen = inject('rootStore')(
     const [textInput, setTextInput] = useState<string>('web_smashed');
     const [textQuery, setTextQuery] = useState<string>('web_smashed');
     const [likesServer, setLikesServer] = useState<RepoServer[]>([]);
-    const [allowLikesGithub, setAllowLikesGithub] = useState<boolean>(true);
 
     useEffect(() => {
       // @ts-ignore
@@ -75,14 +74,6 @@ const GithubListScreen = inject('rootStore')(
 
       setLikesGithub(newLikesGithub);
     }, [likesServer]);
-
-    useEffect(() => {
-      if (likesGithub.length > 9) {
-        setAllowLikesGithub(false);
-      } else {
-        setAllowLikesGithub(true);
-      }
-    }, [likesGithub]);
 
     useEffect(() => {
       const handler = setTimeout(() => {
@@ -189,15 +180,15 @@ const GithubListScreen = inject('rootStore')(
                 <ListItem
                   repo={repo}
                   likesGithub={likesGithub}
-                  allowLikes={allowLikesGithub}
+                  allowLikes={likesGithub.length < 10}
                   onLikeToggle={() => {
-                    const liked = !!likesGithub.find(
+                    const exists = !!likesGithub.find(
                       (r: RepoGithub) => r.id === repo.id,
                     );
 
-                    console.log('liked', liked);
+                    console.log('liked', exists);
 
-                    if (!liked && !allowLikesGithub) {
+                    if (likesGithub.length > 9 && !exists) {
                       Alert.alert(
                         'Maximum number of likesGithub reached',
                         'Please unlike some repositories to like more',

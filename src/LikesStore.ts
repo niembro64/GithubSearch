@@ -6,7 +6,6 @@ export const LikesStoreModel = types
     searchResults: types.optional(types.array(types.frozen<RepoGithub>()), []),
     likesGithub: types.optional(types.array(types.frozen<RepoGithub>()), []),
     likesServer: types.optional(types.array(types.frozen<RepoServer>()), []),
-    allowLikesGithub: types.optional(types.boolean, true),
   })
   .actions(self => ({
     ///////////////////////////////////////////////
@@ -29,9 +28,6 @@ export const LikesStoreModel = types
       if (index > -1) {
         self.likesGithub.splice(index, 1);
       }
-    },
-    setAllowLikesGithub(allowLikesGithub: boolean) {
-      self.allowLikesGithub = allowLikesGithub;
     },
     ///////////////////////////////////////////////
     // LIKES SERVER
