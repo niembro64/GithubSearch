@@ -31,15 +31,14 @@ const GithubListScreen = inject('rootStore')(
       return null;
     }
 
-    const {likesStore} = rootStore;
-
-    const {searchResults, setSearchResults, isLoading, setIsLoading} =
-      likesStore;
+    const {
+      likesStore: {searchResults, setSearchResults, isLoading, setIsLoading},
+    } = rootStore;
 
     const [error, setError] = useState<any>(null);
     const [inputValue, setInputValue] = useState<string>('web_smashed');
     const [searchingValue, setSearchingValue] = useState<string>('web_smashed');
-    const [likes, setLikes] = useState<GitHubRepo[]>([]);
+    const [likesGithub, setLikesGithub] = useState<GitHubRepo[]>([]);
     const [serverLikes, setServerLikes] = useState<ServerRepo[]>([]);
     const [allowLikes, setAllowLikes] = useState<boolean>(true);
 
@@ -64,16 +63,16 @@ const GithubListScreen = inject('rootStore')(
         },
       );
 
-      setLikes(likesFromServerFormatted);
+      setLikesGithub(likesFromServerFormatted);
     }, [serverLikes]);
 
     useEffect(() => {
-      if (likes.length > 9) {
+      if (likesGithub.length > 9) {
         setAllowLikes(false);
       } else {
         setAllowLikes(true);
       }
-    }, [likes]);
+    }, [likesGithub]);
 
     useEffect(() => {
       const handler = setTimeout(() => {
@@ -176,21 +175,21 @@ const GithubListScreen = inject('rootStore')(
               renderItem={({item: repo}) => (
                 <ListItem
                   repo={repo}
-                  likes={likes}
+                  likesGithub={likesGithub}
                   allowLikes={allowLikes}
                   onLikeToggle={() => {
-                    const isThisLiked = likes.find(
+                    const isThisLiked = likesGithub.find(
                       (r: GitHubRepo) => r.id === repo.id,
                     );
 
                     if (!isThisLiked && !allowLikes) {
                       Alert.alert(
-                        'Maximum number of likes reached',
+                        'Maximum number of likesGithub reached',
                         'Please unlike some repositories to like more',
                       );
                       return;
                     }
-                    const newLikes = [...likes];
+                    const newLikes = [...likesGithub];
                     const likeFound = newLikes.findIndex(
                       (r: GitHubRepo) => r.id === repo.id,
                     );
@@ -201,7 +200,7 @@ const GithubListScreen = inject('rootStore')(
                       newLikes.push(repo);
                       saveToServer(repo);
                     }
-                    setLikes(newLikes);
+                    setLikesGithub(newLikes);
                   }}
                 />
               )}
@@ -235,7 +234,7 @@ const GithubListScreen = inject('rootStore')(
                 style={{
                   marginHorizontal: spacing.md,
                   backgroundColor:
-                    likes.length > 0
+                    likesGithub.length > 0
                       ? colors.palette.blue200
                       : colors.palette.gray200,
                   display: 'flex',
@@ -253,23 +252,23 @@ const GithubListScreen = inject('rootStore')(
                     fontSize: 22,
                     fontWeight: 'bold',
                     color:
-                      likes.length > 0
+                      likesGithub.length > 0
                         ? colors.palette.blue600
                         : colors.palette.gray400,
                     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
                   }}>
-                  {likes.length}
+                  {likesGithub.length}
                 </Text>
                 <Text
                   style={{
                     fontSize: 22,
                     fontWeight: 'bold',
                     color:
-                      likes.length > 0
+                      likesGithub.length > 0
                         ? colors.palette.blue600
                         : colors.palette.gray400,
                   }}>
-                  {likes.length === 1 ? ' Like' : ' Likes'}
+                  {likesGithub.length === 1 ? ' Like' : ' Likes'}
                 </Text>
               </TouchableOpacity>
               <Text

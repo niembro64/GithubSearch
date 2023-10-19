@@ -10,18 +10,19 @@ import {GitHubRepo} from '../../types';
 
 interface ListItemProps {
   repo: GitHubRepo;
-  likes: GitHubRepo[];
+  likesGithub: GitHubRepo[];
   allowLikes: boolean;
   onLikeToggle: (repo: GitHubRepo) => void;
 }
 
 export const ListItem: React.FC<ListItemProps> = ({
   repo,
-  likes,
+  likesGithub,
   allowLikes,
   onLikeToggle,
 }) => {
-  const repoLiked = likes.find((r: GitHubRepo) => r.id == repo.id);
+  const repoLiked = likesGithub.find((r: GitHubRepo) => r.id == repo.id);
+  const numStars = repo?.stargazers_count || 0;
 
   return (
     <View
@@ -96,7 +97,7 @@ export const ListItem: React.FC<ListItemProps> = ({
                 fontSize: 16,
                 fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
               }}>
-              {repo?.stargazers_count + ' ' + '⭐'}
+              {numStars + ' ' + '⭐'}
             </Text>
           </View>
         </View>

@@ -3,7 +3,7 @@ import {GitHubRepo, ServerRepo} from './types';
 
 export const LikesStoreModel = types
   .model('LikesStore', {
-    likes: types.optional(types.array(types.frozen<GitHubRepo>()), []),
+    likesGithub: types.optional(types.array(types.frozen<GitHubRepo>()), []),
     serverLikes: types.optional(types.array(types.frozen<ServerRepo>()), []),
     allowLikes: types.optional(types.boolean, true),
     isLoading: types.optional(types.boolean, false),
@@ -15,13 +15,17 @@ export const LikesStoreModel = types
       self.searchResults = repos;
     },
     addLike(newLike: GitHubRepo) {
-      self.likes.push(newLike);
+      self.likesGithub.push(newLike);
     },
     removeLike(likeId: string) {
-      const index = self.likes.findIndex(like => like.id === likeId);
+      const index = self.likesGithub.findIndex(like => like.id === likeId);
       if (index > -1) {
-        self.likes.splice(index, 1);
+        self.likesGithub.splice(index, 1);
       }
+    },
+    setLikesGithub(likes: GitHubRepo[]) {
+      // @ts-ignore
+      self.likesGithub = likes;
     },
     addServerLike(newLike: ServerRepo) {
       self.serverLikes.push(newLike);

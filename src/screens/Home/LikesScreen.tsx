@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
 import {inject, observer} from 'mobx-react';
@@ -27,8 +28,13 @@ const LikesScreen = inject('rootStore')(
     if (!rootStore) {
       return null;
     }
-    // const navigation = useNavigation();
-    const [likes, setLikes] = useState<GitHubRepo[]>([]);
+
+    const {
+      likesStore: {likesGithub, setLikesGithub},
+    } = rootStore;
+
+    // const [likesGithub, setLikesGithub] = useState<GitHubRepo[]>([]);
+
     const [serverLikes, setServerLikes] = useState<ServerRepo[]>([]);
 
     const deleteFromServer = useCallback((repoId: string) => {
@@ -52,7 +58,7 @@ const LikesScreen = inject('rootStore')(
           return x;
         },
       );
-      setLikes(likesFromServerFormatted);
+      setLikesGithub(likesFromServerFormatted);
     }, [serverLikes]);
 
     const fetchSavedRepos = useCallback(() => {
@@ -78,7 +84,7 @@ const LikesScreen = inject('rootStore')(
         keyboardVerticalOffset={72}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <FlatList
-          data={likes}
+          data={likesGithub}
           style={{
             width: '100%',
           }}
@@ -90,12 +96,14 @@ const LikesScreen = inject('rootStore')(
           renderItem={({item: repo}) => (
             <ListItem
               repo={repo}
-              likes={likes}
+              likesGithub={likesGithub}
               allowLikes={false}
               onLikeToggle={() => {
                 deleteFromServer(repo.id.toString());
-                const newLikes = likes.filter(r => r.id !== repo.id);
-                setLikes(newLikes);
+                const newLikes = likesGithub.filter(
+                  (r: GitHubRepo) => r.id !== repo.id,
+                );
+                setLikesGithub(newLikes);
               }}
             />
           )}
