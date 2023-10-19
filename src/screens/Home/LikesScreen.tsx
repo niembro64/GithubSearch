@@ -45,12 +45,17 @@ const LikesScreen = inject('rootStore')(
     useEffect(() => {
       const newLikesGithub: RepoGithub[] = serverLikes.map(
         (repo: RepoServer) => {
+
+          if (!repo?.id) {
+            throw new Error('Repo does not have an id');
+          }
+
           const newLikeGithub: RepoGithub = {
-            id: repo.id,
-            full_name: repo.fullName,
-            description: repo.description,
-            language: repo.language,
-            stargazers_count: repo.stargazersCount,
+            id: repo.id
+            full_name: repo?.fullName || '',
+            description: repo?.description || '',
+            language: repo?.language || '',
+            stargazers_count: repo?.stargazersCount || 0,
           };
           return newLikeGithub;
         },
