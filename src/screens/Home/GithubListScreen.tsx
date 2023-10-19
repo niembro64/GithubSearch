@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import {colors} from '../../colors';
 import {spacing} from '../../styles';
-import {RepoGithub, RepoServer} from '../../types';
+import {RepoGithub} from '../../types';
 import {ListItem} from './ListItem';
 
 type GithubListScreenProps = {
@@ -32,48 +32,17 @@ const GithubListScreen = inject('rootStore')(
     }
 
     const {
-      likesStore: {
-        searchResults,
-        setSearchResults,
-        likesGithub,
-        setLikesGithub,
-      },
+      likesStore: {searchResults, setSearchResults, likes, setLikes},
     } = rootStore;
 
     useEffect(() => {
-      console.log('XXXXX likesGithub.length', likesGithub.length);
-    }, [likesGithub]);
+      console.log('XXXXX likes.length', likes.length);
+    }, [likes]);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<any>(null);
     const [textInput, setTextInput] = useState<string>('web_smashed');
     const [textQuery, setTextQuery] = useState<string>('web_smashed');
-    const [likesServer, setLikesServer] = useState<RepoServer[]>([]);
-
-    useEffect(() => {
-      // @ts-ignore
-      const newLikesGithub: RepoGithub[] = likesServer.map(
-        (repo: RepoServer, index: number) => {
-          if (!repo || repo.id === undefined || repo.id === null) {
-            throw new Error('Repo id is undefined or null');
-          }
-
-          const newLikeGithub: RepoGithub = {
-            id: repo.id,
-            full_name: repo?.fullName || '',
-            description: repo?.description || '',
-            language: repo?.language || '',
-            stargazers_count: repo?.stargazersCount || 0,
-          };
-
-          console.log('index', index, 'x', newLikeGithub);
-
-          return newLikeGithub;
-        },
-      );
-
-      setLikesGithub(newLikesGithub);
-    }, [likesServer]);
 
     useEffect(() => {
       const handler = setTimeout(() => {
@@ -142,7 +111,7 @@ const GithubListScreen = inject('rootStore')(
         .get('http://192.168.1.19:8080/repo/')
         .then(response => {
           if (response?.data?.repos && Array.isArray(response.data.repos)) {
-            setLikesServer(response.data.repos);
+            setLikes(response.data.repos);
           }
         })
         .catch(err => {
@@ -179,24 +148,24 @@ const GithubListScreen = inject('rootStore')(
               renderItem={({item: repo}) => (
                 <ListItem
                   repo={repo}
-                  likesGithub={likesGithub}
-                  allowLikes={likesGithub.length < 10}
+                  likes={likes}
+                  allowLikes={likes.length < 10}
                   onLikeToggle={() => {
-                    const exists = !!likesGithub.find(
+                    const exists = !!likes.find(
                       (r: RepoGithub) => r.id === repo.id,
                     );
 
                     console.log('liked', exists);
 
-                    if (likesGithub.length > 9 && !exists) {
+                    if (likes.length > 9 && !exists) {
                       Alert.alert(
-                        'Maximum number of likesGithub reached',
+                        'Maximum number of likes reached',
                         'Please unlike some repositories to like more',
                       );
                       return;
                     }
-                    const newLikesGithub = [...likesGithub];
-                    const likeGithubFound = likesGithub.findIndex(
+                    const newLikesGithub = [...likes];
+                    const likeGithubFound = likes.findIndex(
                       (r: RepoGithub) => r.id === repo.id,
                     );
                     if (likeGithubFound > -1) {
@@ -206,7 +175,7 @@ const GithubListScreen = inject('rootStore')(
                       newLikesGithub.push(repo);
                       saveToServer(repo);
                     }
-                    setLikesGithub(newLikesGithub);
+                    setLikes(newLikesGithub);
                   }}
                 />
               )}
@@ -240,7 +209,7 @@ const GithubListScreen = inject('rootStore')(
                 style={{
                   marginHorizontal: spacing.md,
                   backgroundColor:
-                    likesGithub.length > 0
+                    likes.length > 0
                       ? colors.palette.blue200
                       : colors.palette.gray200,
                   display: 'flex',
@@ -258,23 +227,23 @@ const GithubListScreen = inject('rootStore')(
                     fontSize: 22,
                     fontWeight: 'bold',
                     color:
-                      likesGithub.length > 0
+                      likes.length > 0
                         ? colors.palette.blue600
                         : colors.palette.gray400,
                     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
                   }}>
-                  {likesGithub.length}
+                  {likes.length}
                 </Text>
                 <Text
                   style={{
                     fontSize: 22,
                     fontWeight: 'bold',
                     color:
-                      likesGithub.length > 0
+                      likes.length > 0
                         ? colors.palette.blue600
                         : colors.palette.gray400,
                   }}>
-                  {likesGithub.length === 1 ? ' Like' : ' Likes'}
+                  {likes.length === 1 ? ' Like' : ' Likes'}
                 </Text>
               </TouchableOpacity>
               <Text

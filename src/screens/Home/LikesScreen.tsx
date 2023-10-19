@@ -6,7 +6,7 @@ import {inject, observer} from 'mobx-react';
 import React, {useEffect, useState} from 'react';
 import {Alert, FlatList, KeyboardAvoidingView, Platform} from 'react-native';
 import {spacing} from '../../styles';
-import {RepoGithub, RepoServer} from '../../types';
+import {RepoGithub} from '../../types';
 import {ListItem} from './ListItem';
 // import {useNavigation} from '@react-navigation/native';
 
@@ -22,14 +22,12 @@ const LikesScreen = inject('rootStore')(
     }
 
     const {
-      likesStore: {likesGithub, setLikesGithub},
+      likesStore: {likes, setLikes},
     } = rootStore;
 
     useEffect(() => {
-      console.log('XXXXX likesGithub.length', likesGithub.length);
-    }, [likesGithub]);
-
-    const [likesServer, setLikesServer] = useState<RepoServer[]>([]);
+      console.log('XXXXX likes.length', likes.length);
+    }, [likes]);
 
     const deleteFromServer = (repoId: string) => {
       axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
@@ -38,32 +36,12 @@ const LikesScreen = inject('rootStore')(
       });
     };
 
-    useEffect(() => {
-      const newLikesGithub: RepoGithub[] = likesServer.map(
-        (repo: RepoServer) => {
-          if (!repo || repo.id === undefined || repo.id === null) {
-            throw new Error('Repo id is undefined or null');
-          }
-
-          const newLikeGithub: RepoGithub = {
-            id: repo.id,
-            full_name: repo?.fullName || '',
-            description: repo?.description || '',
-            language: repo?.language || '',
-            stargazers_count: repo?.stargazersCount || 0,
-          };
-          return newLikeGithub;
-        },
-      );
-      setLikesGithub(newLikesGithub);
-    }, [likesServer]);
-
     const fetchSavedRepos = () => {
       axios
         .get('http://192.168.1.19:8080/repo/')
         .then(response => {
           if (response?.data?.repos && Array.isArray(response.data.repos)) {
-            setLikesServer(response.data.repos);
+            setLikes(response.data.repos);
           }
         })
         .catch(err => {
@@ -81,7 +59,7 @@ const LikesScreen = inject('rootStore')(
         keyboardVerticalOffset={72}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <FlatList
-          data={likesGithub}
+          data={likes}
           style={{
             width: '100%',
           }}
@@ -93,14 +71,14 @@ const LikesScreen = inject('rootStore')(
           renderItem={({item: repo}) => (
             <ListItem
               repo={repo}
-              likesGithub={likesGithub}
-              allowLikes={likesGithub.length < 10}
+              likes={likes}
+              allowLikes={likes.length < 10}
               onLikeToggle={() => {
                 deleteFromServer(repo.id.toString());
-                const newLikes = likesGithub.filter(
+                const newLikes = likes.filter(
                   (r: RepoGithub) => r.id !== repo.id,
                 );
-                setLikesGithub(newLikes);
+                setLikes(newLikes);
               }}
             />
           )}

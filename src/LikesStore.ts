@@ -1,11 +1,10 @@
 import {Instance, SnapshotOut, types} from 'mobx-state-tree';
-import {RepoGithub, RepoServer} from './types';
+import {RepoGithub} from './types';
 
 export const LikesStoreModel = types
   .model('LikesStore', {
     searchResults: types.optional(types.array(types.frozen<RepoGithub>()), []),
-    likesGithub: types.optional(types.array(types.frozen<RepoGithub>()), []),
-    likesServer: types.optional(types.array(types.frozen<RepoServer>()), []),
+    likes: types.optional(types.array(types.frozen<RepoGithub>()), []),
   })
   .actions(self => ({
     ///////////////////////////////////////////////
@@ -17,31 +16,16 @@ export const LikesStoreModel = types
     ///////////////////////////////////////////////
     // LIKES GITHUB
     ///////////////////////////////////////////////
-    setLikesGithub(likes: RepoGithub[]) {
-      self.likesGithub.replace(likes);
+    setLikes(likes: RepoGithub[]) {
+      self.likes.replace(likes);
     },
-    addLikeGithub(newLike: RepoGithub) {
-      self.likesGithub.push(newLike);
+    addLike(newLike: RepoGithub) {
+      self.likes.push(newLike);
     },
-    removeLikeGithub(likeId: string) {
-      const index = self.likesGithub.findIndex(like => like.id === likeId);
+    removeLIke(likeId: string) {
+      const index = self.likes.findIndex(like => like.id === likeId);
       if (index > -1) {
-        self.likesGithub.splice(index, 1);
-      }
-    },
-    ///////////////////////////////////////////////
-    // LIKES SERVER
-    ///////////////////////////////////////////////
-    setLikesServer(likes: RepoServer[]) {
-      self.likesServer.replace(likes);
-    },
-    addServerLike(newLike: RepoServer) {
-      self.likesServer.push(newLike);
-    },
-    removeServerLike(likeId: string) {
-      const index = self.likesServer.findIndex(like => like.id === likeId);
-      if (index > -1) {
-        self.likesServer.splice(index, 1);
+        self.likes.splice(index, 1);
       }
     },
   }));

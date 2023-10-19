@@ -5,13 +5,13 @@
 ///////////////////////////////////////////////
 export type GitHubId = string;
 
-export type RepoServer = {
-  id: GitHubId;
-  fullName: string;
-  description: string;
-  stargazersCount: number;
-  language: string;
-};
+// export type RepoServer = {
+//   id: GitHubId;
+//   fullName: string;
+//   description: string;
+//   stargazersCount: number;
+//   language: string;
+// };
 
 export type RepoGithub = {
   id: GitHubId;

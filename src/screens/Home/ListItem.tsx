@@ -10,18 +10,18 @@ import {RepoGithub} from '../../types';
 
 interface ListItemProps {
   repo: RepoGithub;
-  likesGithub: RepoGithub[];
+  likes: RepoGithub[];
   allowLikes: boolean;
   onLikeToggle: (repo: RepoGithub) => void;
 }
 
 export const ListItem: React.FC<ListItemProps> = ({
   repo,
-  likesGithub,
+  likes,
   allowLikes,
   onLikeToggle,
 }) => {
-  const repoLiked = likesGithub.find((r: RepoGithub) => r.id == repo.id);
+  const repoLiked = likes.find((r: RepoGithub) => r.id == repo.id);
   const numStars = repo?.stargazers_count || 0;
 
   return (
