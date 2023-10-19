@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
@@ -17,290 +18,300 @@ import {colors} from '../../colors';
 import {spacing} from '../../styles';
 import {GitHubRepo, ServerRepo} from '../../types';
 import {ListItem} from './ListItem';
-// import {useNavigation} from '@react-navigation/native';
+import {Observer, inject, observer} from 'mobx-react';
 
 type GithubListScreenProps = {
   navigation: any;
+  rootStore: any;
 };
 
-const GithubListScreen: React.FC<GithubListScreenProps> = ({navigation}) => {
-  // const navigation = useNavigation();
-  const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<any>(null);
-  const [inputValue, setInputValue] = useState<string>('web_smashed');
-  const [searchingValue, setSearchingValue] = useState<string>('web_smashed');
-  const [likes, setLikes] = useState<GitHubRepo[]>([]);
-  const [serverLikes, setServerLikes] = useState<ServerRepo[]>([]);
-  const [allowLikes, setAllowLikes] = useState<boolean>(true);
+const GithubListScreen: React.FC<GithubListScreenProps> = observer(
+  ({rootStore}) => {
+    if (!rootStore) return null; // Just a safety check
 
-  useEffect(() => {
-    console.log('serverLikes.length', serverLikes.length);
+    const {likesStore} = rootStore;
 
-    // @ts-ignore
-    const likesFromServerFormatted: GitHubRepo[] = serverLikes.map(
-      (repo: ServerRepo, index: number) => {
-        // @ts-ignore
-        const x: GitHubRepo = {
-          id: repo.id,
-          name: repo.fullName,
-          description: repo.description,
-          language: repo.language,
-          stargazers_count: repo.stargazersCount,
-        };
+    // Now you can use any values or actions from the likesStore
+    // const { searchResults, likes, allowLikes, setSearchResults } = likesStore;
 
-        console.log('index', index, 'x', x);
+    // const navigation = useNavigation();
+    const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<any>(null);
+    const [inputValue, setInputValue] = useState<string>('web_smashed');
+    const [searchingValue, setSearchingValue] = useState<string>('web_smashed');
+    const [likes, setLikes] = useState<GitHubRepo[]>([]);
+    const [serverLikes, setServerLikes] = useState<ServerRepo[]>([]);
+    const [allowLikes, setAllowLikes] = useState<boolean>(true);
 
-        return x;
-      },
-    );
+    useEffect(() => {
+      console.log('serverLikes.length', serverLikes.length);
 
-    setLikes(likesFromServerFormatted);
-  }, [serverLikes]);
+      // @ts-ignore
+      const likesFromServerFormatted: GitHubRepo[] = serverLikes.map(
+        (repo: ServerRepo, index: number) => {
+          // @ts-ignore
+          const x: GitHubRepo = {
+            id: repo.id,
+            name: repo.fullName,
+            description: repo.description,
+            language: repo.language,
+            stargazers_count: repo.stargazersCount,
+          };
 
-  useEffect(() => {
-    if (likes.length > 9) {
-      setAllowLikes(false);
-    } else {
-      setAllowLikes(true);
-    }
-  }, [likes]);
+          console.log('index', index, 'x', x);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setSearchingValue(inputValue);
-    }, 1000);
+          return x;
+        },
+      );
 
-    return () => {
-      clearTimeout(handler);
+      setLikes(likesFromServerFormatted);
+    }, [serverLikes]);
+
+    useEffect(() => {
+      if (likes.length > 9) {
+        setAllowLikes(false);
+      } else {
+        setAllowLikes(true);
+      }
+    }, [likes]);
+
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setSearchingValue(inputValue);
+      }, 1000);
+
+      return () => {
+        clearTimeout(handler);
+      };
+    }, [inputValue]);
+
+    const getRepositories = () => {
+      if (searchingValue) {
+        setIsLoading(true);
+        setSearchResults([]);
+
+        axios
+          .get(`https://api.github.com/search/repositories?q=${searchingValue}`)
+          .then(response => {
+            setSearchResults(response.data.items.slice(0, 10));
+          })
+          .catch(err => {
+            console.error(err);
+            setError('Error fetching GitHub repositories');
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      }
     };
-  }, [inputValue]);
 
-  const getRepositories = () => {
-    if (searchingValue) {
-      setIsLoading(true);
-      setSearchResults([]);
+    useEffect(() => {
+      if (searchingValue) {
+        getRepositories();
+      }
+    }, [searchingValue]);
 
+    const saveToServer = useCallback((repo: GitHubRepo) => {
       axios
-        .get(`https://api.github.com/search/repositories?q=${searchingValue}`)
-        .then(response => {
-          setSearchResults(response.data.items.slice(0, 10));
+        .post('http://192.168.1.19:8080/repo/', {
+          id: repo.id.toString(),
+          fullName: repo.full_name,
+          createdAt: repo.created_at,
+          stargazersCount: repo.stargazers_count,
+          language: repo.language,
+          url: repo.html_url,
         })
         .catch(err => {
-          console.error(err);
-          setError('Error fetching GitHub repositories');
-        })
-        .finally(() => {
-          setIsLoading(false);
+          console.error('Error saving repo to server:', err);
+          Alert.alert('Error', 'Failed to save repository to server.');
         });
-    }
-  };
+    }, []);
 
-  useEffect(() => {
-    if (searchingValue) {
-      getRepositories();
-    }
-  }, [searchingValue]);
-
-  const saveToServer = useCallback((repo: GitHubRepo) => {
-    axios
-      .post('http://192.168.1.19:8080/repo/', {
-        id: repo.id.toString(),
-        fullName: repo.full_name,
-        createdAt: repo.created_at,
-        stargazersCount: repo.stargazers_count,
-        language: repo.language,
-        url: repo.html_url,
-      })
-      .catch(err => {
-        console.error('Error saving repo to server:', err);
-        Alert.alert('Error', 'Failed to save repository to server.');
+    const deleteFromServer = useCallback((repoId: string) => {
+      axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
+        console.error('Error deleting repo from server:', err);
+        Alert.alert('Error', 'Failed to delete repository from server.');
       });
-  }, []);
+    }, []);
 
-  const deleteFromServer = useCallback((repoId: string) => {
-    axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
-      console.error('Error deleting repo from server:', err);
-      Alert.alert('Error', 'Failed to delete repository from server.');
-    });
-  }, []);
+    const fetchSavedRepos = useCallback(() => {
+      axios
+        .get('http://192.168.1.19:8080/repo/')
+        .then(response => {
+          if (response?.data?.repos && Array.isArray(response.data.repos)) {
+            setServerLikes(response.data.repos);
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching saved repos from server:', err);
+        });
+    }, []);
 
-  const fetchSavedRepos = useCallback(() => {
-    axios
-      .get('http://192.168.1.19:8080/repo/')
-      .then(response => {
-        if (response?.data?.repos && Array.isArray(response.data.repos)) {
-          setServerLikes(response.data.repos);
-        }
-      })
-      .catch(err => {
-        console.error('Error fetching saved repos from server:', err);
-      });
-  }, []);
+    useEffect(() => {
+      fetchSavedRepos();
+    }, [fetchSavedRepos]);
 
-  useEffect(() => {
-    fetchSavedRepos();
-  }, [fetchSavedRepos]);
-
-  return (
-    <KeyboardAvoidingView
-      style={{flex: 1}}
-      // keyboardVerticalOffset={72}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View style={{flex: 1, justifyContent: 'space-between'}}>
-        {error && <Text>Error: {error}</Text>}
-        {!error && (
-          <FlatList
-            data={searchResults}
-            refreshControl={
-              <RefreshControl
-                refreshing={isLoading}
-                onRefresh={getRepositories}
-              />
-            }
-            contentContainerStyle={{
-              marginTop: spacing.xxl,
-              width: '100%',
-            }}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({item: repo}) => (
-              <ListItem
-                repo={repo}
-                likes={likes}
-                allowLikes={allowLikes}
-                onLikeToggle={() => {
-                  const isThisLiked = likes.find(
-                    (r: GitHubRepo) => r.id === repo.id,
-                  );
-
-                  if (!isThisLiked && !allowLikes) {
-                    Alert.alert(
-                      'Maximum number of likes reached',
-                      'Please unlike some repositories to like more',
+    return (
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        // keyboardVerticalOffset={72}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <View style={{flex: 1, justifyContent: 'space-between'}}>
+          {error && <Text>Error: {error}</Text>}
+          {!error && (
+            <FlatList
+              data={searchResults}
+              refreshControl={
+                <RefreshControl
+                  refreshing={isLoading}
+                  onRefresh={getRepositories}
+                />
+              }
+              contentContainerStyle={{
+                marginTop: spacing.xxl,
+                width: '100%',
+              }}
+              keyExtractor={item => item.id.toString()}
+              renderItem={({item: repo}) => (
+                <ListItem
+                  repo={repo}
+                  likes={likes}
+                  allowLikes={allowLikes}
+                  onLikeToggle={() => {
+                    const isThisLiked = likes.find(
+                      (r: GitHubRepo) => r.id === repo.id,
                     );
-                    return;
-                  }
-                  const newLikes = [...likes];
-                  const likeFound = newLikes.findIndex(
-                    (r: GitHubRepo) => r.id === repo.id,
-                  );
-                  if (likeFound > -1) {
-                    newLikes.splice(likeFound, 1);
-                    deleteFromServer(repo.id.toString());
-                  } else {
-                    newLikes.push(repo);
-                    saveToServer(repo);
-                  }
-                  setLikes(newLikes);
-                }}
-              />
-            )}
-          />
-        )}
 
-        {/* ////////////////////////////////// */}
-        {/* SEARCH BAR */}
-        {/* ////////////////////////////////// */}
-        <View
-          style={{
-            borderTopWidth: 1,
-            borderTopColor: colors.palette.gray400,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: 0,
-          }}>
+                    if (!isThisLiked && !allowLikes) {
+                      Alert.alert(
+                        'Maximum number of likes reached',
+                        'Please unlike some repositories to like more',
+                      );
+                      return;
+                    }
+                    const newLikes = [...likes];
+                    const likeFound = newLikes.findIndex(
+                      (r: GitHubRepo) => r.id === repo.id,
+                    );
+                    if (likeFound > -1) {
+                      newLikes.splice(likeFound, 1);
+                      deleteFromServer(repo.id.toString());
+                    } else {
+                      newLikes.push(repo);
+                      saveToServer(repo);
+                    }
+                    setLikes(newLikes);
+                  }}
+                />
+              )}
+            />
+          )}
+
+          {/* ////////////////////////////////// */}
+          {/* SEARCH BAR */}
+          {/* ////////////////////////////////// */}
           <View
             style={{
-              width: '100%',
+              borderTopWidth: 1,
+              borderTopColor: colors.palette.gray400,
               display: 'flex',
-              flexDirection: 'row',
+              flexDirection: 'column',
               justifyContent: 'space-between',
               alignItems: 'center',
-              marginVertical: spacing.md,
+              marginTop: 0,
             }}>
-            <TouchableOpacity
-              activeOpacity={1}
+            <View
               style={{
-                marginHorizontal: spacing.md,
-                backgroundColor:
-                  likes.length > 0
-                    ? colors.palette.blue200
-                    : colors.palette.gray200,
+                width: '100%',
                 display: 'flex',
                 flexDirection: 'row',
-                justifyContent: 'center',
+                justifyContent: 'space-between',
                 alignItems: 'center',
-                borderRadius: spacing.sm,
-                padding: spacing.sm,
-                paddingHorizontal: spacing.md,
-              }}
-              // @ts-ignore
-              onPress={() => navigation.navigate('Likes')}>
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: 'bold',
-                  color:
-                    likes.length > 0
-                      ? colors.palette.blue600
-                      : colors.palette.gray400,
-                  fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
-                }}>
-                {likes.length}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: 'bold',
-                  color:
-                    likes.length > 0
-                      ? colors.palette.blue600
-                      : colors.palette.gray400,
-                }}>
-                {likes.length === 1 ? ' Like' : ' Likes'}
-              </Text>
-            </TouchableOpacity>
-            <Text
-              style={{
-                flex: 1,
-                textAlign: 'center',
-                fontSize: 22,
-                fontWeight: 'bold',
+                marginVertical: spacing.md,
               }}>
-              Search Repositories
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: spacing.xl,
-            }}>
-            <TextInput
+              <TouchableOpacity
+                activeOpacity={1}
+                style={{
+                  marginHorizontal: spacing.md,
+                  backgroundColor:
+                    likes.length > 0
+                      ? colors.palette.blue200
+                      : colors.palette.gray200,
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: spacing.sm,
+                  padding: spacing.sm,
+                  paddingHorizontal: spacing.md,
+                }}
+                // @ts-ignore
+                onPress={() => navigation.navigate('Likes')}>
+                <Text
+                  style={{
+                    fontSize: 22,
+                    fontWeight: 'bold',
+                    color:
+                      likes.length > 0
+                        ? colors.palette.blue600
+                        : colors.palette.gray400,
+                    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+                  }}>
+                  {likes.length}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 22,
+                    fontWeight: 'bold',
+                    color:
+                      likes.length > 0
+                        ? colors.palette.blue600
+                        : colors.palette.gray400,
+                  }}>
+                  {likes.length === 1 ? ' Like' : ' Likes'}
+                </Text>
+              </TouchableOpacity>
+              <Text
+                style={{
+                  flex: 1,
+                  textAlign: 'center',
+                  fontSize: 22,
+                  fontWeight: 'bold',
+                }}>
+                Search Repositories
+              </Text>
+            </View>
+            <View
               style={{
-                flex: 1,
-                height: 40,
-                borderColor: colors.palette.gray400,
-                borderWidth: 1,
-                borderRadius: spacing.sm,
-                paddingLeft: spacing.md,
-                paddingRight: spacing.md,
-                marginRight: spacing.md,
-                marginLeft: spacing.md,
-                paddingVertical: 0,
-              }}
-              placeholder="Search GitHub repositories..."
-              onChangeText={text => setInputValue(text)}
-              value={inputValue}
-            />
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: spacing.xl,
+              }}>
+              <TextInput
+                style={{
+                  flex: 1,
+                  height: 40,
+                  borderColor: colors.palette.gray400,
+                  borderWidth: 1,
+                  borderRadius: spacing.sm,
+                  paddingLeft: spacing.md,
+                  paddingRight: spacing.md,
+                  marginRight: spacing.md,
+                  marginLeft: spacing.md,
+                  paddingVertical: 0,
+                }}
+                placeholder="Search GitHub repositories..."
+                onChangeText={text => setInputValue(text)}
+                value={inputValue}
+              />
+            </View>
           </View>
         </View>
-      </View>
-    </KeyboardAvoidingView>
-  );
-};
+      </KeyboardAvoidingView>
+    );
+  },
+);
 
 export default GithubListScreen;
