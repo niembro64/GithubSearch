@@ -1,7 +1,10 @@
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable react/jsx-no-undef */
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import {Home} from '../screens/Home';
+import {Button} from 'react-native';
+import GithubListScreen from '../screens/Home/GithubListScreen';
 import LikesScreen from '../screens/Home/LikesScreen';
 
 const Stack = createNativeStackNavigator();
@@ -9,16 +12,32 @@ const Stack = createNativeStackNavigator();
 export const MainNavigator = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="Likes">
         <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{headerShown: false}}
+          name="Github"
+          component={GithubListScreen}
+          options={({navigation}) => ({
+            headerRight: () => (
+              <Button
+                onPress={() => navigation.navigate('Likes')}
+                title="Likes"
+                color="#000"
+              />
+            ),
+          })}
         />
         <Stack.Screen
           name="Likes"
           component={LikesScreen}
-          options={{headerShown: false}}
+          options={({navigation}) => ({
+            headerRight: () => (
+              <Button
+                onPress={() => navigation.navigate('Github')}
+                title="Github"
+                color="#000"
+              />
+            ),
+          })}
         />
       </Stack.Navigator>
     </NavigationContainer>

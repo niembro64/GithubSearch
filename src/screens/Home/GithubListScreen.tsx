@@ -19,7 +19,11 @@ import {GitHubRepo, ServerRepo} from '../../types';
 import {ListItem} from './ListItem';
 import {useNavigation} from '@react-navigation/native';
 
-export const Home = () => {
+type GithubListScreenProps = {
+  navigation: any;
+};
+
+const GithubListScreen: React.FC<GithubListScreenProps> = () => {
   const navigation = useNavigation();
   const [searchResults, setSearchResults] = useState<GitHubRepo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -269,3 +273,5 @@ export const Home = () => {
     </KeyboardAvoidingView>
   );
 };
+
+export default GithubListScreen;
