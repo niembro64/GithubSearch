@@ -51,10 +51,10 @@ const GithubListScreen = inject('rootStore')(
       console.log('serverLikes.length', likesServer.length);
 
       // @ts-ignore
-      const likesFromServerFormatted: RepoGithub[] = likesServer.map(
+      const newLikesGithub: RepoGithub[] = likesServer.map(
         (repo: RepoServer, index: number) => {
           // @ts-ignore
-          const x: RepoGithub = {
+          const newLikeGithub: RepoGithub = {
             id: repo.id,
             full_name: repo.fullName,
             description: repo.description,
@@ -62,13 +62,13 @@ const GithubListScreen = inject('rootStore')(
             stargazers_count: repo.stargazersCount,
           };
 
-          console.log('index', index, 'x', x);
+          console.log('index', index, 'x', newLikeGithub);
 
-          return x;
+          return newLikeGithub;
         },
       );
 
-      setLikesGithub(likesFromServerFormatted);
+      setLikesGithub(newLikesGithub);
     }, [likesServer]);
 
     useEffect(() => {
@@ -89,29 +89,32 @@ const GithubListScreen = inject('rootStore')(
       };
     }, [textInput]);
 
-    const getRepositories = useCallback(() => {
-      if (textQuery) {
-        setIsLoading(true);
-        setSearchResults([]);
-
-        axios
-          .get(`https://api.github.com/search/repositories?q=${textQuery}`)
-          .then(response => {
-            setSearchResults(response.data.items.slice(0, 10));
-          })
-          .catch(err => {
-            console.error(err);
-            setError('Error fetching GitHub repositories');
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
+    const getRespositoriesGithub = useCallback(() => {
+      if (!textQuery || textQuery === '') {
+        console.log('no textQuery');
+        return;
       }
+
+      setIsLoading(true);
+      setSearchResults([]);
+
+      axios
+        .get(`https://api.github.com/search/repositories?q=${textQuery}`)
+        .then(response => {
+          setSearchResults(response.data.items.slice(0, 10));
+        })
+        .catch(err => {
+          console.error(err);
+          setError('Error fetching GitHub repositories');
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }, [textQuery]);
 
     useEffect(() => {
       if (textQuery) {
-        getRepositories();
+        getRespositoriesGithub();
       }
     }, [textQuery]);
 
@@ -153,7 +156,7 @@ const GithubListScreen = inject('rootStore')(
 
     useEffect(() => {
       fetchSavedRepos();
-    }, [fetchSavedRepos]);
+    }, []);
 
     return (
       <KeyboardAvoidingView
@@ -169,7 +172,7 @@ const GithubListScreen = inject('rootStore')(
               refreshControl={
                 <RefreshControl
                   refreshing={isLoading}
-                  onRefresh={getRepositories}
+                  onRefresh={getRespositoriesGithub}
                 />
               }
               contentContainerStyle={{
