@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import {colors} from '../../colors';
 import {spacing} from '../../styles';
-import {GitHubRepo, ServerRepo} from '../../types';
+import {RepoGithub, RepoServer} from '../../types';
 import {ListItem} from './ListItem';
 import {inject, observer} from 'mobx-react';
 
@@ -37,20 +37,20 @@ const GithubListScreen = inject('rootStore')(
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<any>(null);
-    const [inputValue, setInputValue] = useState<string>('web_smashed');
-    const [searchingValue, setSearchingValue] = useState<string>('web_smashed');
-    const [likesGithub, setLikesGithub] = useState<GitHubRepo[]>([]);
-    const [serverLikes, setServerLikes] = useState<ServerRepo[]>([]);
+    const [textInput, setTextInput] = useState<string>('web_smashed');
+    const [textQuery, setTextQuery] = useState<string>('web_smashed');
+    const [likesGithub, setLikesGithub] = useState<RepoGithub[]>([]);
+    const [likesServer, setLikesServer] = useState<RepoServer[]>([]);
     const [allowLikes, setAllowLikes] = useState<boolean>(true);
 
     useEffect(() => {
-      console.log('serverLikes.length', serverLikes.length);
+      console.log('serverLikes.length', likesServer.length);
 
       // @ts-ignore
-      const likesFromServerFormatted: GitHubRepo[] = serverLikes.map(
-        (repo: ServerRepo, index: number) => {
+      const likesFromServerFormatted: RepoGithub[] = likesServer.map(
+        (repo: RepoServer, index: number) => {
           // @ts-ignore
-          const x: GitHubRepo = {
+          const x: RepoGithub = {
             id: repo.id,
             name: repo.fullName,
             description: repo.description,
@@ -65,7 +65,7 @@ const GithubListScreen = inject('rootStore')(
       );
 
       setLikesGithub(likesFromServerFormatted);
-    }, [serverLikes]);
+    }, [likesServer]);
 
     useEffect(() => {
       if (likesGithub.length > 9) {
@@ -77,21 +77,21 @@ const GithubListScreen = inject('rootStore')(
 
     useEffect(() => {
       const handler = setTimeout(() => {
-        setSearchingValue(inputValue);
+        setTextQuery(textInput);
       }, 1000);
 
       return () => {
         clearTimeout(handler);
       };
-    }, [inputValue]);
+    }, [textInput]);
 
     const getRepositories = () => {
-      if (searchingValue) {
+      if (textQuery) {
         setIsLoading(true);
         setSearchResults([]);
 
         axios
-          .get(`https://api.github.com/search/repositories?q=${searchingValue}`)
+          .get(`https://api.github.com/search/repositories?q=${textQuery}`)
           .then(response => {
             setSearchResults(response.data.items.slice(0, 10));
           })
@@ -106,12 +106,12 @@ const GithubListScreen = inject('rootStore')(
     };
 
     useEffect(() => {
-      if (searchingValue) {
+      if (textQuery) {
         getRepositories();
       }
-    }, [searchingValue]);
+    }, [textQuery]);
 
-    const saveToServer = useCallback((repo: GitHubRepo) => {
+    const saveToServer = useCallback((repo: RepoGithub) => {
       axios
         .post('http://192.168.1.19:8080/repo/', {
           id: repo.id.toString(),
@@ -139,7 +139,7 @@ const GithubListScreen = inject('rootStore')(
         .get('http://192.168.1.19:8080/repo/')
         .then(response => {
           if (response?.data?.repos && Array.isArray(response.data.repos)) {
-            setServerLikes(response.data.repos);
+            setLikesServer(response.data.repos);
           }
         })
         .catch(err => {
@@ -180,7 +180,7 @@ const GithubListScreen = inject('rootStore')(
                   allowLikes={allowLikes}
                   onLikeToggle={() => {
                     const isThisLiked = likesGithub.find(
-                      (r: GitHubRepo) => r.id === repo.id,
+                      (r: RepoGithub) => r.id === repo.id,
                     );
 
                     if (!isThisLiked && !allowLikes) {
@@ -192,7 +192,7 @@ const GithubListScreen = inject('rootStore')(
                     }
                     const newLikes = [...likesGithub];
                     const likeFound = newLikes.findIndex(
-                      (r: GitHubRepo) => r.id === repo.id,
+                      (r: RepoGithub) => r.id === repo.id,
                     );
                     if (likeFound > -1) {
                       newLikes.splice(likeFound, 1);
@@ -303,8 +303,8 @@ const GithubListScreen = inject('rootStore')(
                   paddingVertical: 0,
                 }}
                 placeholder="Search GitHub repositories..."
-                onChangeText={text => setInputValue(text)}
-                value={inputValue}
+                onChangeText={text => setTextInput(text)}
+                value={textInput}
               />
             </View>
           </View>

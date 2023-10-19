@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import {colors} from '../../colors';
 import {spacing} from '../../styles';
-import {GitHubRepo, ServerRepo} from '../../types';
+import {RepoGithub, RepoServer} from '../../types';
 import {ListItem} from './ListItem';
 // import {useNavigation} from '@react-navigation/native';
 
@@ -35,7 +35,7 @@ const LikesScreen = inject('rootStore')(
 
     // const [likesGithub, setLikesGithub] = useState<GitHubRepo[]>([]);
 
-    const [serverLikes, setServerLikes] = useState<ServerRepo[]>([]);
+    const [serverLikes, setServerLikes] = useState<RepoServer[]>([]);
 
     const deleteFromServer = useCallback((repoId: string) => {
       axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
@@ -45,10 +45,10 @@ const LikesScreen = inject('rootStore')(
     }, []);
 
     useEffect(() => {
-      const likesFromServerFormatted: GitHubRepo[] = serverLikes.map(
-        (repo: ServerRepo) => {
+      const likesFromServerFormatted: RepoGithub[] = serverLikes.map(
+        (repo: RepoServer) => {
           // @ts-ignore
-          const x: GitHubRepo = {
+          const x: RepoGithub = {
             id: repo.id,
             name: repo.fullName,
             description: repo.description,
@@ -101,7 +101,7 @@ const LikesScreen = inject('rootStore')(
               onLikeToggle={() => {
                 deleteFromServer(repo.id.toString());
                 const newLikes = likesGithub.filter(
-                  (r: GitHubRepo) => r.id !== repo.id,
+                  (r: RepoGithub) => r.id !== repo.id,
                 );
                 setLikesGithub(newLikes);
               }}

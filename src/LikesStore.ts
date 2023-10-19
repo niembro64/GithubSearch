@@ -1,19 +1,19 @@
 import {Instance, SnapshotOut, types} from 'mobx-state-tree';
-import {GitHubRepo, ServerRepo} from './types';
+import {RepoGithub, RepoServer} from './types';
 
 export const LikesStoreModel = types
   .model('LikesStore', {
-    likesGithub: types.optional(types.array(types.frozen<GitHubRepo>()), []),
-    serverLikes: types.optional(types.array(types.frozen<ServerRepo>()), []),
+    likesGithub: types.optional(types.array(types.frozen<RepoGithub>()), []),
+    likesServer: types.optional(types.array(types.frozen<RepoServer>()), []),
     allowLikes: types.optional(types.boolean, true),
-    searchResults: types.optional(types.array(types.frozen<ServerRepo>()), []),
+    searchResults: types.optional(types.array(types.frozen<RepoServer>()), []),
   })
   .actions(self => ({
-    setSearchResults(repos: GitHubRepo[]) {
+    setSearchResults(repos: RepoGithub[]) {
       // @ts-ignore
       self.searchResults = repos;
     },
-    addLike(newLike: GitHubRepo) {
+    addLike(newLike: RepoGithub) {
       self.likesGithub.push(newLike);
     },
     removeLike(likeId: string) {
@@ -22,21 +22,21 @@ export const LikesStoreModel = types
         self.likesGithub.splice(index, 1);
       }
     },
-    setLikesGithub(likes: GitHubRepo[]) {
+    setLikesGithub(likes: RepoGithub[]) {
       // @ts-ignore
       self.likesGithub = likes;
     },
-    addServerLike(newLike: ServerRepo) {
-      self.serverLikes.push(newLike);
+    addServerLike(newLike: RepoServer) {
+      self.likesServer.push(newLike);
     },
-    setServerLikes(likes: ServerRepo[]) {
+    setServerLikes(likes: RepoServer[]) {
       // @ts-ignore
-      self.serverLikes = likes;
+      self.likesServer = likes;
     },
     removeServerLike(likeId: string) {
-      const index = self.serverLikes.findIndex(like => like.id === likeId);
+      const index = self.likesServer.findIndex(like => like.id === likeId);
       if (index > -1) {
-        self.serverLikes.splice(index, 1);
+        self.likesServer.splice(index, 1);
       }
     },
     toggleAllowLikes() {

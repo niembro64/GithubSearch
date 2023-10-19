@@ -3,7 +3,7 @@
 ///////////////////////////////////////////////
 export type GitHubId = string;
 
-export type ServerRepo = {
+export type RepoServer = {
   id: GitHubId;
   fullName: string;
   description: string;
@@ -11,7 +11,7 @@ export type ServerRepo = {
   language: string;
 };
 
-export type GitHubRepo = {
+export type RepoGithub = {
   id: GitHubId;
   node_id: string;
   name: string;
