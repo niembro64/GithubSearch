@@ -2,14 +2,14 @@
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
 import {inject, observer} from 'mobx-react';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
   KeyboardAvoidingView,
+  Platform,
   Text,
   TouchableOpacity,
-  Platform,
   View,
 } from 'react-native';
 import {colors} from '../../colors';
@@ -33,16 +33,14 @@ const LikesScreen = inject('rootStore')(
       likesStore: {likesGithub, setLikesGithub},
     } = rootStore;
 
-    // const [likesGithub, setLikesGithub] = useState<GitHubRepo[]>([]);
-
     const [serverLikes, setServerLikes] = useState<RepoServer[]>([]);
 
-    const deleteFromServer = useCallback((repoId: string) => {
+    const deleteFromServer = (repoId: string) => {
       axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
         console.error('Error deleting repo from server:', err);
         Alert.alert('Error', 'Failed to delete repository from server.');
       });
-    }, []);
+    };
 
     useEffect(() => {
       const likesFromServerFormatted: RepoGithub[] = serverLikes.map(
@@ -61,7 +59,7 @@ const LikesScreen = inject('rootStore')(
       setLikesGithub(likesFromServerFormatted);
     }, [serverLikes]);
 
-    const fetchSavedRepos = useCallback(() => {
+    const fetchSavedRepos = () => {
       axios
         .get('http://192.168.1.19:8080/repo/')
         .then(response => {
@@ -72,7 +70,7 @@ const LikesScreen = inject('rootStore')(
         .catch(err => {
           console.error('Error fetching saved repos from server:', err);
         });
-    }, []);
+    };
 
     useEffect(() => {
       fetchSavedRepos();

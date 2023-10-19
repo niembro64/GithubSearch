@@ -2,7 +2,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
-import React, {useCallback, useEffect, useState} from 'react';
+import {inject, observer} from 'mobx-react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
@@ -18,7 +19,6 @@ import {colors} from '../../colors';
 import {spacing} from '../../styles';
 import {RepoGithub, RepoServer} from '../../types';
 import {ListItem} from './ListItem';
-import {inject, observer} from 'mobx-react';
 
 type GithubListScreenProps = {
   navigation: any;
@@ -32,16 +32,20 @@ const GithubListScreen = inject('rootStore')(
     }
 
     const {
-      likesStore: {searchResults, setSearchResults},
+      likesStore: {
+        searchResults,
+        setSearchResults,
+        likesGithub,
+        setLikesGithub,
+      },
     } = rootStore;
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<any>(null);
     const [textInput, setTextInput] = useState<string>('web_smashed');
     const [textQuery, setTextQuery] = useState<string>('web_smashed');
-    const [likesGithub, setLikesGithub] = useState<RepoGithub[]>([]);
     const [likesServer, setLikesServer] = useState<RepoServer[]>([]);
-    const [allowLikes, setAllowLikes] = useState<boolean>(true);
+    const [allowLikesGithub, setAllowLikesGithub] = useState<boolean>(true);
 
     useEffect(() => {
       console.log('serverLikes.length', likesServer.length);
@@ -52,7 +56,7 @@ const GithubListScreen = inject('rootStore')(
           // @ts-ignore
           const x: RepoGithub = {
             id: repo.id,
-            name: repo.fullName,
+            full_name: repo.fullName,
             description: repo.description,
             language: repo.language,
             stargazers_count: repo.stargazersCount,
@@ -69,9 +73,9 @@ const GithubListScreen = inject('rootStore')(
 
     useEffect(() => {
       if (likesGithub.length > 9) {
-        setAllowLikes(false);
+        setAllowLikesGithub(false);
       } else {
-        setAllowLikes(true);
+        setAllowLikesGithub(true);
       }
     }, [likesGithub]);
 
@@ -111,7 +115,7 @@ const GithubListScreen = inject('rootStore')(
       }
     }, [textQuery]);
 
-    const saveToServer = useCallback((repo: RepoGithub) => {
+    const saveToServer = (repo: RepoGithub) => {
       axios
         .post('http://192.168.1.19:8080/repo/', {
           id: repo.id.toString(),
@@ -125,16 +129,16 @@ const GithubListScreen = inject('rootStore')(
           console.error('Error saving repo to server:', err);
           Alert.alert('Error', 'Failed to save repository to server.');
         });
-    }, []);
+    };
 
-    const deleteFromServer = useCallback((repoId: string) => {
+    const deleteFromServer = (repoId: string) => {
       axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
         console.error('Error deleting repo from server:', err);
         Alert.alert('Error', 'Failed to delete repository from server.');
       });
-    }, []);
+    };
 
-    const fetchSavedRepos = useCallback(() => {
+    const fetchSavedRepos = () => {
       axios
         .get('http://192.168.1.19:8080/repo/')
         .then(response => {
@@ -145,7 +149,7 @@ const GithubListScreen = inject('rootStore')(
         .catch(err => {
           console.error('Error fetching saved repos from server:', err);
         });
-    }, []);
+    };
 
     useEffect(() => {
       fetchSavedRepos();
@@ -177,13 +181,13 @@ const GithubListScreen = inject('rootStore')(
                 <ListItem
                   repo={repo}
                   likesGithub={likesGithub}
-                  allowLikes={allowLikes}
+                  allowLikes={allowLikesGithub}
                   onLikeToggle={() => {
                     const isThisLiked = likesGithub.find(
                       (r: RepoGithub) => r.id === repo.id,
                     );
 
-                    if (!isThisLiked && !allowLikes) {
+                    if (!isThisLiked && !allowLikesGithub) {
                       Alert.alert(
                         'Maximum number of likesGithub reached',
                         'Please unlike some repositories to like more',
