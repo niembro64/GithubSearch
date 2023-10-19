@@ -48,7 +48,6 @@ const GithubListScreen = inject('rootStore')(
       // @ts-ignore
       const likesFromServerFormatted: RepoGithub[] = likesServer.map(
         (repo: RepoServer, index: number) => {
-          // @ts-ignore
           const x: RepoGithub = {
             id: repo.id,
             full_name: repo.fullName,
