@@ -32,9 +32,10 @@ const GithubListScreen = inject('rootStore')(
     }
 
     const {
-      likesStore: {searchResults, setSearchResults, isLoading, setIsLoading},
+      likesStore: {searchResults, setSearchResults},
     } = rootStore;
 
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<any>(null);
     const [inputValue, setInputValue] = useState<string>('web_smashed');
     const [searchingValue, setSearchingValue] = useState<string>('web_smashed');

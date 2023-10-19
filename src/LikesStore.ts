@@ -6,7 +6,6 @@ export const LikesStoreModel = types
     likesGithub: types.optional(types.array(types.frozen<GitHubRepo>()), []),
     serverLikes: types.optional(types.array(types.frozen<ServerRepo>()), []),
     allowLikes: types.optional(types.boolean, true),
-    isLoading: types.optional(types.boolean, false),
     searchResults: types.optional(types.array(types.frozen<ServerRepo>()), []),
   })
   .actions(self => ({
@@ -39,9 +38,6 @@ export const LikesStoreModel = types
       if (index > -1) {
         self.serverLikes.splice(index, 1);
       }
-    },
-    setIsLoading(isLoading: boolean) {
-      self.isLoading = isLoading;
     },
     toggleAllowLikes() {
       self.allowLikes = !self.allowLikes;
