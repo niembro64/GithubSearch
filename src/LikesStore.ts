@@ -14,10 +14,6 @@ export const LikesStoreModel = types
       // @ts-ignore
       self.searchResults = repos;
     },
-
-    toggleIsLoading() {
-      self.isLoading = !self.isLoading;
-    },
     addLike(newLike: GitHubRepo) {
       self.likes.push(newLike);
     },
@@ -39,6 +35,9 @@ export const LikesStoreModel = types
       if (index > -1) {
         self.serverLikes.splice(index, 1);
       }
+    },
+    setIsLoading(isLoading: boolean) {
+      self.isLoading = isLoading;
     },
     toggleAllowLikes() {
       self.allowLikes = !self.allowLikes;

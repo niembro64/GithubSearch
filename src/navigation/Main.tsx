@@ -21,7 +21,7 @@ export const MainNavigator: React.FC = () => {
         <Stack.Navigator initialRouteName="Github">
           <Stack.Screen
             name="Github"
-            component={GithubListScreen as any}
+            component={GithubListScreen}
             options={({navigation}) => ({
               /////////////////////////////////
               // NAV IS ACTING WONKY
