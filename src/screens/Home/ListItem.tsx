@@ -21,7 +21,7 @@ export const ListItem: React.FC<ListItemProps> = inject('rootStore')(
     }
 
     const {
-      likesStore: {likes, pressThumb},
+      likesStore: {likes, pressThumbBoth},
     } = rootStore;
 
     useEffect(() => {
@@ -121,7 +121,7 @@ export const ListItem: React.FC<ListItemProps> = inject('rootStore')(
             borderRadius: spacing.md,
           }}
           onPress={() => {
-            pressThumb(repo);
+            pressThumbBoth(repo);
           }}>
           <Image
             source={require('../../../assets/images/like-button.png')}

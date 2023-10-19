@@ -39,14 +39,13 @@ const GithubListScreen = inject('rootStore')(
         textQuery,
         setTextQuery,
         searchResults,
-        setSearchResults,
+        setSearchResultsApp,
         likes,
-        setLikes,
+        setLikesApp,
       },
     } = rootStore;
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [error, setError] = useState<any>(null);
 
     //////////////////////////////
     // POPULATE LIKES
@@ -54,7 +53,7 @@ const GithubListScreen = inject('rootStore')(
     useEffect(() => {
       (async () => {
         setIsLoading(true);
-        setLikes(await serverLikesGet());
+        setLikesApp(await serverLikesGet());
         setIsLoading(false);
       })();
     }, []);
@@ -66,7 +65,7 @@ const GithubListScreen = inject('rootStore')(
       if (textQuery) {
         (async () => {
           setIsLoading(true);
-          setSearchResults(await githubGetRepos(textQuery));
+          setSearchResultsApp(await githubGetRepos(textQuery));
           setIsLoading(false);
         })();
       }
@@ -92,8 +91,7 @@ const GithubListScreen = inject('rootStore')(
         keyboardVerticalOffset={72}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={{flex: 1, justifyContent: 'space-between'}}>
-          {error && <Text>Error: {error}</Text>}
-          {!error && (
+          {
             <FlatList
               data={searchResults}
               refreshControl={
@@ -102,7 +100,7 @@ const GithubListScreen = inject('rootStore')(
                   onRefresh={async () => {
                     if (textQuery) {
                       setIsLoading(true);
-                      setSearchResults(await githubGetRepos(textQuery));
+                      setSearchResultsApp(await githubGetRepos(textQuery));
                       setIsLoading(false);
                     }
                   }}
@@ -117,7 +115,7 @@ const GithubListScreen = inject('rootStore')(
                 <ListItem repo={repo} rootStore={rootStore} />
               )}
             />
-          )}
+          }
 
           {/* ////////////////////////////////// */}
           {/* SEARCH BAR */}

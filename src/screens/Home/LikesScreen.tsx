@@ -20,7 +20,7 @@ const LikesScreen = inject('rootStore')(
     }
 
     const {
-      likesStore: {likes, setLikes},
+      likesStore: {likes, setLikesApp},
     } = rootStore;
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,7 +31,7 @@ const LikesScreen = inject('rootStore')(
     useEffect(() => {
       (async () => {
         setIsLoading(true);
-        setLikes(await serverLikesGet());
+        setLikesApp(await serverLikesGet());
         setIsLoading(false);
       })();
     }, []);
