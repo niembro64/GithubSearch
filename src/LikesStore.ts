@@ -1,25 +1,25 @@
 import {Instance, SnapshotOut, types} from 'mobx-state-tree';
-import {RepoGithub} from './types';
+import {Repo} from './types';
 
 export const LikesStoreModel = types
   .model('LikesStore', {
-    searchResults: types.optional(types.array(types.frozen<RepoGithub>()), []),
-    likes: types.optional(types.array(types.frozen<RepoGithub>()), []),
+    searchResults: types.optional(types.array(types.frozen<Repo>()), []),
+    likes: types.optional(types.array(types.frozen<Repo>()), []),
   })
   .actions(self => ({
     ///////////////////////////////////////////////
     // SEARCH RESULTS
     ///////////////////////////////////////////////
-    setSearchResults(repos: RepoGithub[]) {
+    setSearchResults(repos: Repo[]) {
       self.searchResults.replace(repos);
     },
     ///////////////////////////////////////////////
     // LIKES GITHUB
     ///////////////////////////////////////////////
-    setLikes(likes: RepoGithub[]) {
+    setLikes(likes: Repo[]) {
       self.likes.replace(likes);
     },
-    addLike(newLike: RepoGithub) {
+    addLike(newLike: Repo) {
       self.likes.push(newLike);
     },
     removeLIke(likeId: string) {

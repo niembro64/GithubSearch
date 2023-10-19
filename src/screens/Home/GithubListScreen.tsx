@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import {colors} from '../../colors';
 import {spacing} from '../../styles';
-import {RepoGithub} from '../../types';
+import {Repo} from '../../types';
 import {ListItem} from './ListItem';
 
 type GithubListScreenProps = {
@@ -34,10 +34,6 @@ const GithubListScreen = inject('rootStore')(
     const {
       likesStore: {searchResults, setSearchResults, likes, setLikes},
     } = rootStore;
-
-    useEffect(() => {
-      console.log('XXXXX likes.length', likes.length);
-    }, [likes]);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<any>(null);
@@ -83,7 +79,7 @@ const GithubListScreen = inject('rootStore')(
       }
     }, [textQuery]);
 
-    const saveToServer = (repo: RepoGithub) => {
+    const saveToServer = (repo: Repo) => {
       axios
         .post('http://192.168.1.19:8080/repo/', {
           id: repo.id.toString(),
@@ -148,35 +144,32 @@ const GithubListScreen = inject('rootStore')(
               renderItem={({item: repo}) => (
                 <ListItem
                   repo={repo}
-                  likes={likes}
-                  allowLikes={likes.length < 10}
-                  onLikeToggle={() => {
-                    const exists = !!likes.find(
-                      (r: RepoGithub) => r.id === repo.id,
-                    );
+                  onLikeToggle={l => {
+                    console.log('XXXXX l', l);
+                    const exists = likes.some((r: Repo) => r.id === l.id);
 
-                    console.log('liked', exists);
-
-                    if (likes.length > 9 && !exists) {
-                      Alert.alert(
-                        'Maximum number of likes reached',
-                        'Please unlike some repositories to like more',
+                    if (exists) {
+                      // Unliking a repo
+                      const updatedLikes = likes.filter(
+                        (r: Repo) => r.id !== repo.id,
                       );
-                      return;
-                    }
-                    const newLikesGithub = [...likes];
-                    const likeGithubFound = likes.findIndex(
-                      (r: RepoGithub) => r.id === repo.id,
-                    );
-                    if (likeGithubFound > -1) {
-                      newLikesGithub.splice(likeGithubFound, 1);
+                      setLikes(updatedLikes);
                       deleteFromServer(repo.id.toString());
                     } else {
-                      newLikesGithub.push(repo);
+                      // Liking a repo
+                      if (likes.length >= 10) {
+                        Alert.alert(
+                          'Maximum number of likes reached',
+                          'Please unlike some repositories to like more',
+                        );
+                        return;
+                      }
+
+                      setLikes([...likes, repo]);
                       saveToServer(repo);
                     }
-                    setLikes(newLikesGithub);
                   }}
+                  rootStore={rootStore}
                 />
               )}
             />

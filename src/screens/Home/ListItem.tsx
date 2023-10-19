@@ -1,133 +1,152 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-native/no-inline-styles */
 // ListItem.tsx
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Image, Platform, Text, TouchableOpacity, View} from 'react-native';
 import {colors, getColorFromLanguage} from '../../colors';
 import {truncateString} from '../../helpers';
 import {spacing} from '../../styles';
-import {RepoGithub} from '../../types';
+import {Repo} from '../../types';
+import {inject, observer} from 'mobx-react';
 
 interface ListItemProps {
-  repo: RepoGithub;
-  likes: RepoGithub[];
-  allowLikes: boolean;
-  onLikeToggle: (repo: RepoGithub) => void;
+  repo: Repo;
+  rootStore: any;
+  onLikeToggle: (repo: Repo) => void;
 }
 
-export const ListItem: React.FC<ListItemProps> = ({
-  repo,
-  likes,
-  allowLikes,
-  onLikeToggle,
-}) => {
-  const repoLiked = likes.find((r: RepoGithub) => r.id == repo.id);
-  const numStars = repo?.stargazers_count || 0;
+export const ListItem: React.FC<ListItemProps> = inject('rootStore')(
+  observer(({repo, onLikeToggle, rootStore}) => {
+    const {
+      likesStore: {likes},
+    } = rootStore;
 
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: spacing.xs,
-        marginHorizontal: spacing.md,
-        borderRadius: spacing.md,
-        backgroundColor: colors.transparent,
-      }}>
+    const numStars = repo?.stargazers_count || 0;
+    const [allowLikes, setAllowLikes] = React.useState<boolean>(true);
+    const [repoLiked, setRepoLiked] = React.useState<boolean>(false);
+
+    useEffect(() => {
+      console.log('likes.length', likes.length);
+
+      if (likes.length < 10) {
+        setAllowLikes(true);
+      } else {
+        setAllowLikes(false);
+      }
+
+      const found = likes.find((l: Repo) => l.id === repo.id);
+      if (found) {
+        setRepoLiked(true);
+      } else {
+        setRepoLiked(false);
+      }
+    }, [likes, repo.id]);
+
+    return (
       <View
         style={{
-          flex: 1,
-          flexDirection: 'column',
+          flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
+          marginTop: spacing.xs,
+          marginHorizontal: spacing.md,
           borderRadius: spacing.md,
-          backgroundColor: colors.palette.slate300,
-          padding: spacing.md,
+          backgroundColor: colors.transparent,
         }}>
-        <Text style={{fontSize: 22, color: 'black'}}>
-          {truncateString(repo?.full_name, 20)}
-        </Text>
-        <Text
-          style={{
-            color: 'black',
-            marginTop: spacing.sm,
-          }}>
-          {truncateString(repo?.description, 30)}
-        </Text>
         <View
           style={{
-            marginTop: spacing.sm,
-            width: '100%',
-            flexDirection: 'row',
+            flex: 1,
+            flexDirection: 'column',
             justifyContent: 'space-between',
             alignItems: 'center',
+            borderRadius: spacing.md,
+            backgroundColor: colors.palette.slate300,
+            padding: spacing.md,
           }}>
+          <Text style={{fontSize: 22, color: 'black'}}>
+            {truncateString(repo?.full_name, 20)}
+          </Text>
+          <Text
+            style={{
+              color: 'black',
+              marginTop: spacing.sm,
+            }}>
+            {truncateString(repo?.description, 30)}
+          </Text>
           <View
             style={{
-              height: 35,
-              backgroundColor: getColorFromLanguage(repo?.language),
-              borderRadius: spacing.sm,
-              display: 'flex',
-              justifyContent: 'center',
-              paddingHorizontal: spacing.md,
+              marginTop: spacing.sm,
+              width: '100%',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}>
-            <Text
+            <View
               style={{
-                fontWeight: '600',
-                color: 'white',
-                fontSize: 16,
+                height: 35,
+                backgroundColor: getColorFromLanguage(repo?.language),
+                borderRadius: spacing.sm,
+                display: 'flex',
+                justifyContent: 'center',
+                paddingHorizontal: spacing.md,
               }}>
-              {repo?.language}
-            </Text>
-          </View>
-          <View
-            style={{
-              height: 35,
-              backgroundColor: colors.palette.blue600,
-              borderRadius: spacing.sm,
-              display: 'flex',
-              justifyContent: 'center',
-              paddingHorizontal: spacing.md,
-            }}>
-            <Text
+              <Text
+                style={{
+                  fontWeight: '600',
+                  color: 'white',
+                  fontSize: 16,
+                }}>
+                {repo?.language}
+              </Text>
+            </View>
+            <View
               style={{
-                fontWeight: '600',
-                color: 'white',
-                fontSize: 16,
-                fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+                height: 35,
+                backgroundColor: colors.palette.blue600,
+                borderRadius: spacing.sm,
+                display: 'flex',
+                justifyContent: 'center',
+                paddingHorizontal: spacing.md,
               }}>
-              {numStars + ' ' + '⭐'}
-            </Text>
+              <Text
+                style={{
+                  fontWeight: '600',
+                  color: 'white',
+                  fontSize: 16,
+                  fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+                }}>
+                {numStars + ' ' + '⭐'}
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      <TouchableOpacity
-        style={{
-          height: 80,
-          width: 80,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginLeft: spacing.md,
-          borderRadius: spacing.md,
-        }}
-        onPress={() => onLikeToggle(repo)}>
-        <Image
-          source={require('../../../assets/images/like-button.png')}
+        <TouchableOpacity
           style={{
-            width: 40,
-            height: 40,
-            tintColor: repoLiked
-              ? colors.palette.blue600
-              : allowLikes
-              ? colors.palette.gray300
-              : colors.palette.gray300,
+            height: 80,
+            width: 80,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginLeft: spacing.md,
+            borderRadius: spacing.md,
           }}
-        />
-      </TouchableOpacity>
-    </View>
-  );
-};
+          onPress={() => onLikeToggle(repo)}>
+          <Image
+            source={require('../../../assets/images/like-button.png')}
+            style={{
+              width: 40,
+              height: 40,
+              tintColor: repoLiked
+                ? colors.palette.blue600
+                : allowLikes
+                ? colors.palette.gray300
+                : colors.transparent,
+            }}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  }),
+);

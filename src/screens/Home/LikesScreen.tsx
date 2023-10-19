@@ -6,7 +6,7 @@ import {inject, observer} from 'mobx-react';
 import React, {useEffect, useState} from 'react';
 import {Alert, FlatList, KeyboardAvoidingView, Platform} from 'react-native';
 import {spacing} from '../../styles';
-import {RepoGithub} from '../../types';
+import {Repo} from '../../types';
 import {ListItem} from './ListItem';
 // import {useNavigation} from '@react-navigation/native';
 
@@ -24,10 +24,6 @@ const LikesScreen = inject('rootStore')(
     const {
       likesStore: {likes, setLikes},
     } = rootStore;
-
-    useEffect(() => {
-      console.log('XXXXX likes.length', likes.length);
-    }, [likes]);
 
     const deleteFromServer = (repoId: string) => {
       axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
@@ -71,15 +67,12 @@ const LikesScreen = inject('rootStore')(
           renderItem={({item: repo}) => (
             <ListItem
               repo={repo}
-              likes={likes}
-              allowLikes={likes.length < 10}
               onLikeToggle={() => {
                 deleteFromServer(repo.id.toString());
-                const newLikes = likes.filter(
-                  (r: RepoGithub) => r.id !== repo.id,
-                );
+                const newLikes = likes.filter((r: Repo) => r.id !== repo.id);
                 setLikes(newLikes);
               }}
+              rootStore={rootStore}
             />
           )}
         />

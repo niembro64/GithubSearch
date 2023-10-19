@@ -13,7 +13,7 @@ export type GitHubId = string;
 //   language: string;
 // };
 
-export type RepoGithub = {
+export type Repo = {
   id: GitHubId;
   full_name: string;
   description: string;
