@@ -82,14 +82,15 @@ export const LikesStoreModel = types
           ////////////////////
           // ADD LIKE
           ////////////////////
-          const res = await serverLikeSave(repo);
+          const likeWithLike = {...repo, like: true};
+          const res = await serverLikeSave(likeWithLike);
 
           if (!res) {
             Alert.alert('Error', 'Error saving like');
             return;
           }
 
-          this.setLikesApp([...self.likes, repo]);
+          this.setLikesApp([...self.likes, likeWithLike]);
         }
       })();
     },
