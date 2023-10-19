@@ -25,7 +25,11 @@ const LikesScreen = inject('rootStore')(
       likesStore: {likesGithub, setLikesGithub},
     } = rootStore;
 
-    const [serverLikes, setServerLikes] = useState<RepoServer[]>([]);
+    useEffect(() => {
+      console.log('XXXXX likesGithub.length', likesGithub.length);
+    }, [likesGithub]);
+
+    const [likesServer, setLikesServer] = useState<RepoServer[]>([]);
 
     const deleteFromServer = (repoId: string) => {
       axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
@@ -35,7 +39,7 @@ const LikesScreen = inject('rootStore')(
     };
 
     useEffect(() => {
-      const newLikesGithub: RepoGithub[] = serverLikes.map(
+      const newLikesGithub: RepoGithub[] = likesServer.map(
         (repo: RepoServer) => {
           if (!repo || repo.id === undefined || repo.id === null) {
             throw new Error('Repo id is undefined or null');
@@ -52,14 +56,14 @@ const LikesScreen = inject('rootStore')(
         },
       );
       setLikesGithub(newLikesGithub);
-    }, [serverLikes]);
+    }, [likesServer]);
 
     const fetchSavedRepos = () => {
       axios
         .get('http://192.168.1.19:8080/repo/')
         .then(response => {
           if (response?.data?.repos && Array.isArray(response.data.repos)) {
-            setServerLikes(response.data.repos);
+            setLikesServer(response.data.repos);
           }
         })
         .catch(err => {

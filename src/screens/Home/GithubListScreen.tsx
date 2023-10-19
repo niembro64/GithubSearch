@@ -40,6 +40,10 @@ const GithubListScreen = inject('rootStore')(
       },
     } = rootStore;
 
+    useEffect(() => {
+      console.log('XXXXX likesGithub.length', likesGithub.length);
+    }, [likesGithub]);
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<any>(null);
     const [textInput, setTextInput] = useState<string>('web_smashed');
@@ -48,8 +52,6 @@ const GithubListScreen = inject('rootStore')(
     const [allowLikesGithub, setAllowLikesGithub] = useState<boolean>(true);
 
     useEffect(() => {
-      console.log('serverLikes.length', likesServer.length);
-
       // @ts-ignore
       const newLikesGithub: RepoGithub[] = likesServer.map(
         (repo: RepoServer, index: number) => {
@@ -189,29 +191,31 @@ const GithubListScreen = inject('rootStore')(
                   likesGithub={likesGithub}
                   allowLikes={allowLikesGithub}
                   onLikeToggle={() => {
-                    const isThisLiked = likesGithub.find(
+                    const liked = !!likesGithub.find(
                       (r: RepoGithub) => r.id === repo.id,
                     );
 
-                    if (!isThisLiked && !allowLikesGithub) {
+                    console.log('liked', liked);
+
+                    if (!liked && !allowLikesGithub) {
                       Alert.alert(
                         'Maximum number of likesGithub reached',
                         'Please unlike some repositories to like more',
                       );
                       return;
                     }
-                    const newLikes = [...likesGithub];
-                    const likeFound = newLikes.findIndex(
+                    const newLikesGithub = [...likesGithub];
+                    const likeGithubFound = likesGithub.findIndex(
                       (r: RepoGithub) => r.id === repo.id,
                     );
-                    if (likeFound > -1) {
-                      newLikes.splice(likeFound, 1);
+                    if (likeGithubFound > -1) {
+                      newLikesGithub.splice(likeGithubFound, 1);
                       deleteFromServer(repo.id.toString());
                     } else {
-                      newLikes.push(repo);
+                      newLikesGithub.push(repo);
                       saveToServer(repo);
                     }
-                    setLikesGithub(newLikes);
+                    setLikesGithub(newLikesGithub);
                   }}
                 />
               )}

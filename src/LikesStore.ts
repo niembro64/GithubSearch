@@ -3,7 +3,7 @@ import {RepoGithub, RepoServer} from './types';
 
 export const LikesStoreModel = types
   .model('LikesStore', {
-    searchResults: types.optional(types.array(types.frozen<RepoServer>()), []),
+    searchResults: types.optional(types.array(types.frozen<RepoGithub>()), []),
     likesGithub: types.optional(types.array(types.frozen<RepoGithub>()), []),
     likesServer: types.optional(types.array(types.frozen<RepoServer>()), []),
     allowLikesGithub: types.optional(types.boolean, true),
@@ -13,15 +13,13 @@ export const LikesStoreModel = types
     // SEARCH RESULTS
     ///////////////////////////////////////////////
     setSearchResults(repos: RepoGithub[]) {
-      // @ts-ignore
-      self.searchResults = repos;
+      self.searchResults.replace(repos);
     },
     ///////////////////////////////////////////////
     // LIKES GITHUB
     ///////////////////////////////////////////////
     setLikesGithub(likes: RepoGithub[]) {
-      // @ts-ignore
-      self.likesGithub = likes;
+      self.likesGithub.replace(likes);
     },
     addLikeGithub(newLike: RepoGithub) {
       self.likesGithub.push(newLike);
@@ -33,15 +31,13 @@ export const LikesStoreModel = types
       }
     },
     setAllowLikesGithub(allowLikesGithub: boolean) {
-      // @ts-ignore
       self.allowLikesGithub = allowLikesGithub;
     },
     ///////////////////////////////////////////////
     // LIKES SERVER
     ///////////////////////////////////////////////
     setLikesServer(likes: RepoServer[]) {
-      // @ts-ignore
-      self.likesServer = likes;
+      self.likesServer.replace(likes);
     },
     addServerLike(newLike: RepoServer) {
       self.likesServer.push(newLike);
