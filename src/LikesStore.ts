@@ -3,44 +3,54 @@ import {RepoGithub, RepoServer} from './types';
 
 export const LikesStoreModel = types
   .model('LikesStore', {
+    searchResults: types.optional(types.array(types.frozen<RepoServer>()), []),
     likesGithub: types.optional(types.array(types.frozen<RepoGithub>()), []),
     likesServer: types.optional(types.array(types.frozen<RepoServer>()), []),
-    allowLikes: types.optional(types.boolean, true),
-    searchResults: types.optional(types.array(types.frozen<RepoServer>()), []),
+    allowLikesGithub: types.optional(types.boolean, true),
   })
   .actions(self => ({
+    ///////////////////////////////////////////////
+    // SEARCH RESULTS
+    ///////////////////////////////////////////////
     setSearchResults(repos: RepoGithub[]) {
       // @ts-ignore
       self.searchResults = repos;
     },
-    addLike(newLike: RepoGithub) {
+    ///////////////////////////////////////////////
+    // LIKES GITHUB
+    ///////////////////////////////////////////////
+    setLikesGithub(likes: RepoGithub[]) {
+      // @ts-ignore
+      self.likesGithub = likes;
+    },
+    addLikeGithub(newLike: RepoGithub) {
       self.likesGithub.push(newLike);
     },
-    removeLike(likeId: string) {
+    removeLikeGithub(likeId: string) {
       const index = self.likesGithub.findIndex(like => like.id === likeId);
       if (index > -1) {
         self.likesGithub.splice(index, 1);
       }
     },
-    setLikesGithub(likes: RepoGithub[]) {
+    setAllowLikesGithub(allowLikesGithub: boolean) {
       // @ts-ignore
-      self.likesGithub = likes;
+      self.allowLikesGithub = allowLikesGithub;
+    },
+    ///////////////////////////////////////////////
+    // LIKES SERVER
+    ///////////////////////////////////////////////
+    setLikesServer(likes: RepoServer[]) {
+      // @ts-ignore
+      self.likesServer = likes;
     },
     addServerLike(newLike: RepoServer) {
       self.likesServer.push(newLike);
-    },
-    setServerLikes(likes: RepoServer[]) {
-      // @ts-ignore
-      self.likesServer = likes;
     },
     removeServerLike(likeId: string) {
       const index = self.likesServer.findIndex(like => like.id === likeId);
       if (index > -1) {
         self.likesServer.splice(index, 1);
       }
-    },
-    toggleAllowLikes() {
-      self.allowLikes = !self.allowLikes;
     },
   }));
 
