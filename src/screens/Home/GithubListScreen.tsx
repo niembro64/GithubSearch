@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-import axios from 'axios';
 import {inject, observer} from 'mobx-react';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  Alert,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -16,10 +14,9 @@ import {
   View,
 } from 'react-native';
 import {colors} from '../../colors';
-import {spacing} from '../../styles';
-import {Repo} from '../../types';
-import {ListItem} from './ListItem';
 import {githubGetRepos, serverLikesGet} from '../../helpers';
+import {spacing} from '../../styles';
+import {ListItem} from './ListItem';
 
 type GithubListScreenProps = {
   navigation: any;
@@ -87,7 +84,9 @@ const GithubListScreen = inject('rootStore')(
     return (
       <KeyboardAvoidingView
         style={{flex: 1}}
+        //////////////////////////////
         // NEED TO ACCOUNT FOR HEADER BEING USED
+        //////////////////////////////
         keyboardVerticalOffset={72}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={{flex: 1, justifyContent: 'space-between'}}>
@@ -155,7 +154,6 @@ const GithubListScreen = inject('rootStore')(
                   padding: spacing.sm,
                   paddingHorizontal: spacing.md,
                 }}
-                // @ts-ignore
                 onPress={() => navigation.navigate('Likes')}>
                 <Text
                   style={{

@@ -38,7 +38,9 @@ const LikesScreen = inject('rootStore')(
     return (
       <KeyboardAvoidingView
         style={{flex: 1}}
+        //////////////////////////////
         // NEED TO ACCOUNT FOR HEADER BEING USED
+        //////////////////////////////
         keyboardVerticalOffset={72}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <FlatList
