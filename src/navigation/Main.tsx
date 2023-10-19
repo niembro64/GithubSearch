@@ -21,7 +21,7 @@ export const MainNavigator: React.FC = () => {
         <Stack.Navigator initialRouteName="Github">
           <Stack.Screen
             name="Github"
-            component={GithubListScreen}
+            component={GithubListScreen as any}
             options={({navigation}) => ({
               /////////////////////////////////
               // NAV IS ACTING WONKY
@@ -50,7 +50,7 @@ export const MainNavigator: React.FC = () => {
           />
           <Stack.Screen
             name="Likes"
-            component={LikesScreen}
+            component={LikesScreen as any}
             options={({navigation}) => ({
               headerLeft: () => (
                 /////////////////////////////////
