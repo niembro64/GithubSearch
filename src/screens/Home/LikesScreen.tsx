@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-import axios from 'axios';
 import {inject, observer} from 'mobx-react';
 import React, {useEffect, useState} from 'react';
-import {Alert, FlatList, KeyboardAvoidingView, Platform} from 'react-native';
+import {FlatList, KeyboardAvoidingView, Platform} from 'react-native';
+import {serverLikesGet} from '../../helpers';
 import {spacing} from '../../styles';
-import {Repo} from '../../types';
 import {ListItem} from './ListItem';
-// import {useNavigation} from '@react-navigation/native';
 
 type LikesScreenProps = {
   navigation: any;
@@ -25,28 +23,17 @@ const LikesScreen = inject('rootStore')(
       likesStore: {likes, setLikes},
     } = rootStore;
 
-    const deleteFromServer = (repoId: string) => {
-      axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
-        console.error('Error deleting repo from server:', err);
-        Alert.alert('Error', 'Failed to delete repository from server.');
-      });
-    };
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const fetchSavedRepos = () => {
-      axios
-        .get('http://192.168.1.19:8080/repo/')
-        .then(response => {
-          if (response?.data?.repos && Array.isArray(response.data.repos)) {
-            setLikes(response.data.repos);
-          }
-        })
-        .catch(err => {
-          console.error('Error fetching saved repos from server:', err);
-        });
-    };
-
+    //////////////////////////////
+    // POPULATE LIKES
+    //////////////////////////////
     useEffect(() => {
-      fetchSavedRepos();
+      (async () => {
+        setIsLoading(true);
+        setLikes(await serverLikesGet());
+        setIsLoading(false);
+      })();
     }, []);
     return (
       <KeyboardAvoidingView
@@ -65,15 +52,7 @@ const LikesScreen = inject('rootStore')(
           }}
           keyExtractor={item => item.id.toString()}
           renderItem={({item: repo}) => (
-            <ListItem
-              repo={repo}
-              onLikeToggle={() => {
-                deleteFromServer(repo.id.toString());
-                const newLikes = likes.filter((r: Repo) => r.id !== repo.id);
-                setLikes(newLikes);
-              }}
-              rootStore={rootStore}
-            />
+            <ListItem repo={repo} rootStore={rootStore} />
           )}
         />
       </KeyboardAvoidingView>

@@ -14,6 +14,7 @@ export type GitHubId = string;
 // };
 
 export type Repo = {
+  like?: boolean;
   id: GitHubId;
   full_name: string;
   description: string;

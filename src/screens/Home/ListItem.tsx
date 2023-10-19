@@ -1,46 +1,34 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-native/no-inline-styles */
 // ListItem.tsx
+import {inject, observer} from 'mobx-react';
 import React, {useEffect} from 'react';
 import {Image, Platform, Text, TouchableOpacity, View} from 'react-native';
 import {colors, getColorFromLanguage} from '../../colors';
 import {truncateString} from '../../helpers';
 import {spacing} from '../../styles';
 import {Repo} from '../../types';
-import {inject, observer} from 'mobx-react';
 
 interface ListItemProps {
   repo: Repo;
   rootStore: any;
-  onLikeToggle: (repo: Repo) => void;
 }
 
 export const ListItem: React.FC<ListItemProps> = inject('rootStore')(
-  observer(({repo, onLikeToggle, rootStore}) => {
+  observer(({repo, rootStore}) => {
+    if (!rootStore) {
+      return null;
+    }
+
     const {
-      likesStore: {likes},
+      likesStore: {likes, pressThumb},
     } = rootStore;
 
-    const numStars = repo?.stargazers_count || 0;
-    const [allowLikes, setAllowLikes] = React.useState<boolean>(true);
-    const [repoLiked, setRepoLiked] = React.useState<boolean>(false);
-
     useEffect(() => {
-      console.log('likes.length', likes.length);
+      console.log('repo.like', repo.like);
+    }, [repo]);
 
-      if (likes.length < 10) {
-        setAllowLikes(true);
-      } else {
-        setAllowLikes(false);
-      }
-
-      const found = likes.find((l: Repo) => l.id === repo.id);
-      if (found) {
-        setRepoLiked(true);
-      } else {
-        setRepoLiked(false);
-      }
-    }, [likes, repo.id]);
+    const numStars = repo?.stargazers_count || 0;
 
     return (
       <View
@@ -132,15 +120,17 @@ export const ListItem: React.FC<ListItemProps> = inject('rootStore')(
             marginLeft: spacing.md,
             borderRadius: spacing.md,
           }}
-          onPress={() => onLikeToggle(repo)}>
+          onPress={() => {
+            pressThumb(repo);
+          }}>
           <Image
             source={require('../../../assets/images/like-button.png')}
             style={{
               width: 40,
               height: 40,
-              tintColor: repoLiked
+              tintColor: repo?.like
                 ? colors.palette.blue600
-                : allowLikes
+                : likes.length < 10
                 ? colors.palette.gray300
                 : colors.transparent,
             }}

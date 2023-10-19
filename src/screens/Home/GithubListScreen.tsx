@@ -19,6 +19,7 @@ import {colors} from '../../colors';
 import {spacing} from '../../styles';
 import {Repo} from '../../types';
 import {ListItem} from './ListItem';
+import {githubGetRepos, serverLikesGet} from '../../helpers';
 
 type GithubListScreenProps = {
   navigation: any;
@@ -32,14 +33,48 @@ const GithubListScreen = inject('rootStore')(
     }
 
     const {
-      likesStore: {searchResults, setSearchResults, likes, setLikes},
+      likesStore: {
+        textInput,
+        setTextInput,
+        textQuery,
+        setTextQuery,
+        searchResults,
+        setSearchResults,
+        likes,
+        setLikes,
+      },
     } = rootStore;
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<any>(null);
-    const [textInput, setTextInput] = useState<string>('web_smashed');
-    const [textQuery, setTextQuery] = useState<string>('web_smashed');
 
+    //////////////////////////////
+    // POPULATE LIKES
+    //////////////////////////////
+    useEffect(() => {
+      (async () => {
+        setIsLoading(true);
+        setLikes(await serverLikesGet());
+        setIsLoading(false);
+      })();
+    }, []);
+
+    //////////////////////////////
+    // SEARCH RESULTS
+    //////////////////////////////
+    useEffect(() => {
+      if (textQuery) {
+        (async () => {
+          setIsLoading(true);
+          setSearchResults(await githubGetRepos(textQuery));
+          setIsLoading(false);
+        })();
+      }
+    }, [textQuery]);
+
+    //////////////////////////////
+    // TEXT DEBOUNCING
+    //////////////////////////////
     useEffect(() => {
       const handler = setTimeout(() => {
         setTextQuery(textInput);
@@ -49,75 +84,6 @@ const GithubListScreen = inject('rootStore')(
         clearTimeout(handler);
       };
     }, [textInput]);
-
-    const getRespositoriesGithub = useCallback(() => {
-      if (!textQuery || textQuery === '') {
-        console.log('no textQuery');
-        return;
-      }
-
-      setIsLoading(true);
-      setSearchResults([]);
-
-      axios
-        .get(`https://api.github.com/search/repositories?q=${textQuery}`)
-        .then(response => {
-          setSearchResults(response.data.items.slice(0, 10));
-        })
-        .catch(err => {
-          console.error(err);
-          setError('Error fetching GitHub repositories');
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }, [textQuery]);
-
-    useEffect(() => {
-      if (textQuery) {
-        getRespositoriesGithub();
-      }
-    }, [textQuery]);
-
-    const saveToServer = (repo: Repo) => {
-      axios
-        .post('http://192.168.1.19:8080/repo/', {
-          id: repo.id.toString(),
-          fullName: repo.full_name,
-          createdAt: repo.created_at,
-          stargazersCount: repo.stargazers_count,
-          language: repo.language,
-          url: repo.html_url,
-        })
-        .catch(err => {
-          console.error('Error saving repo to server:', err);
-          Alert.alert('Error', 'Failed to save repository to server.');
-        });
-    };
-
-    const deleteFromServer = (repoId: string) => {
-      axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
-        console.error('Error deleting repo from server:', err);
-        Alert.alert('Error', 'Failed to delete repository from server.');
-      });
-    };
-
-    const fetchSavedRepos = () => {
-      axios
-        .get('http://192.168.1.19:8080/repo/')
-        .then(response => {
-          if (response?.data?.repos && Array.isArray(response.data.repos)) {
-            setLikes(response.data.repos);
-          }
-        })
-        .catch(err => {
-          console.error('Error fetching saved repos from server:', err);
-        });
-    };
-
-    useEffect(() => {
-      fetchSavedRepos();
-    }, []);
 
     return (
       <KeyboardAvoidingView
@@ -133,7 +99,13 @@ const GithubListScreen = inject('rootStore')(
               refreshControl={
                 <RefreshControl
                   refreshing={isLoading}
-                  onRefresh={getRespositoriesGithub}
+                  onRefresh={async () => {
+                    if (textQuery) {
+                      setIsLoading(true);
+                      setSearchResults(await githubGetRepos(textQuery));
+                      setIsLoading(false);
+                    }
+                  }}
                 />
               }
               contentContainerStyle={{
@@ -142,35 +114,7 @@ const GithubListScreen = inject('rootStore')(
               }}
               keyExtractor={item => item.id.toString()}
               renderItem={({item: repo}) => (
-                <ListItem
-                  repo={repo}
-                  onLikeToggle={l => {
-                    console.log('XXXXX l', l);
-                    const exists = likes.some((r: Repo) => r.id === l.id);
-
-                    if (exists) {
-                      // Unliking a repo
-                      const updatedLikes = likes.filter(
-                        (r: Repo) => r.id !== repo.id,
-                      );
-                      setLikes(updatedLikes);
-                      deleteFromServer(repo.id.toString());
-                    } else {
-                      // Liking a repo
-                      if (likes.length >= 10) {
-                        Alert.alert(
-                          'Maximum number of likes reached',
-                          'Please unlike some repositories to like more',
-                        );
-                        return;
-                      }
-
-                      setLikes([...likes, repo]);
-                      saveToServer(repo);
-                    }
-                  }}
-                  rootStore={rootStore}
-                />
+                <ListItem repo={repo} rootStore={rootStore} />
               )}
             />
           )}
