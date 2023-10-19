@@ -6,13 +6,13 @@ import {Image, Platform, Text, TouchableOpacity, View} from 'react-native';
 import {colors, getColorFromLanguage} from '../../colors';
 import {truncateString} from '../../helpers';
 import {spacing} from '../../styles';
-import {GitHubRepo} from '../../types';
+import {RepoGithub} from '../../types';
 
 interface ListItemProps {
-  repo: GitHubRepo;
-  likesGithub: GitHubRepo[];
+  repo: RepoGithub;
+  likesGithub: RepoGithub[];
   allowLikes: boolean;
-  onLikeToggle: (repo: GitHubRepo) => void;
+  onLikeToggle: (repo: RepoGithub) => void;
 }
 
 export const ListItem: React.FC<ListItemProps> = ({
@@ -21,7 +21,7 @@ export const ListItem: React.FC<ListItemProps> = ({
   allowLikes,
   onLikeToggle,
 }) => {
-  const repoLiked = likesGithub.find((r: GitHubRepo) => r.id == repo.id);
+  const repoLiked = likesGithub.find((r: RepoGithub) => r.id == repo.id);
   const numStars = repo?.stargazers_count || 0;
 
   return (

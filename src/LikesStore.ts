@@ -1,20 +1,20 @@
 import {Instance, SnapshotOut, types} from 'mobx-state-tree';
-import {GitHubRepo, ServerRepo} from './types';
+import {RepoGithub, RepoServer} from './types';
 
 export const LikesStoreModel = types
   .model('LikesStore', {
-    likesGithub: types.optional(types.array(types.frozen<GitHubRepo>()), []),
-    serverLikes: types.optional(types.array(types.frozen<ServerRepo>()), []),
+    likesGithub: types.optional(types.array(types.frozen<RepoGithub>()), []),
+    serverLikes: types.optional(types.array(types.frozen<RepoServer>()), []),
     allowLikes: types.optional(types.boolean, true),
     isLoading: types.optional(types.boolean, false),
-    searchResults: types.optional(types.array(types.frozen<ServerRepo>()), []),
+    searchResults: types.optional(types.array(types.frozen<RepoServer>()), []),
   })
   .actions(self => ({
-    setSearchResults(repos: GitHubRepo[]) {
+    setSearchResults(repos: RepoGithub[]) {
       // @ts-ignore
       self.searchResults = repos;
     },
-    addLike(newLike: GitHubRepo) {
+    addLike(newLike: RepoGithub) {
       self.likesGithub.push(newLike);
     },
     removeLike(likeId: string) {
@@ -23,14 +23,14 @@ export const LikesStoreModel = types
         self.likesGithub.splice(index, 1);
       }
     },
-    setLikesGithub(likes: GitHubRepo[]) {
+    setLikesGithub(likes: RepoGithub[]) {
       // @ts-ignore
       self.likesGithub = likes;
     },
-    addServerLike(newLike: ServerRepo) {
+    addServerLike(newLike: RepoServer) {
       self.serverLikes.push(newLike);
     },
-    setServerLikes(likes: ServerRepo[]) {
+    setServerLikes(likes: RepoServer[]) {
       // @ts-ignore
       self.serverLikes = likes;
     },
