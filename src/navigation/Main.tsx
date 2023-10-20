@@ -5,20 +5,18 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Provider} from 'mobx-react';
 import React from 'react';
 import {Button} from 'react-native';
-// import {RootStoreModel} from '../RootStore';
-import {LikesStoreModel} from '../LikesStore';
+import {RootStoreModel} from '../RootStore';
 import {colors} from '../colors';
 import GithubListScreen from '../screens/Home/GithubListScreen';
 import LikesScreen from '../screens/Home/LikesScreen';
 
-// const rootStore = RootStoreModel.create();
-const likesStore = LikesStoreModel.create();
+const rootStore = RootStoreModel.create();
 
 const Stack = createNativeStackNavigator();
 
 export const MainNavigator: React.FC = () => {
   return (
-    <Provider likesStore={likesStore}>
+    <Provider rootStore={rootStore}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Github">
           <Stack.Screen
