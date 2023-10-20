@@ -11,19 +11,27 @@ import {Repo} from '~/types';
 
 type LikesScreenProps = {
   navigation: any;
-  rootStore: any;
+  likesStore: any;
 };
 
-const LikesScreen = inject('rootStore')(
-  observer(({navigation, rootStore}: LikesScreenProps) => {
-    if (!rootStore) {
+const LikesScreen = inject('likesStore')(
+  observer(({navigation, likesStore}: LikesScreenProps) => {
+    if (!likesStore) {
       return null;
     }
 
     const {
-      likesStore: {likes, setLikesApp, pressThumbBoth},
-    } = rootStore;
-
+      textInput,
+      setTextInput,
+      rootStore,
+      pressThumbBoth,
+      likes,
+      setLikesApp,
+      setSearchResultsApp,
+      textQuery,
+      searchResults,
+      setTextQuery,
+    } = likesStore;
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     //////////////////////////////

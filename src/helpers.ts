@@ -36,7 +36,7 @@ export const githubGetRepos = async (query: string): Promise<Repo[]> => {
 export const serverLikesGet = async (): Promise<Repo[]> => {
   let res = null;
   try {
-    res = await axios.get('http://192.168.1.19:8080/repo/');
+    res = await axios.get('http://192.168.86.28:8080/repo/');
   } catch (error) {
     console.log('serverLikesGet error', error);
     return [];
@@ -53,7 +53,7 @@ export const serverLikesGet = async (): Promise<Repo[]> => {
 export const serverLikeSave = async (repo: Repo): Promise<boolean> => {
   let res = null;
   try {
-    res = await axios.post('http://192.168.1.19:8080/repo/', {
+    res = await axios.post('http://192.168.86.28:8080/repo/', {
       id: repo.id.toString(),
       fullName: repo.full_name,
       createdAt: repo.created_at,
@@ -77,7 +77,7 @@ export const serverLikeSave = async (repo: Repo): Promise<boolean> => {
 };
 
 export const serverLikeDelete = async (repoId: string): Promise<boolean> => {
-  const res = await axios.delete(`http://192.168.1.19:8080/repo/${repoId}`);
+  const res = await axios.delete(`http://192.168.86.28:8080/repo/${repoId}`);
 
   if (res.status >= 200 && res.status < 300) {
     return true;

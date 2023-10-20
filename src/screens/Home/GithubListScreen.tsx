@@ -21,28 +21,27 @@ import {Repo} from '~/types';
 
 type GithubListScreenProps = {
   navigation: any;
-  rootStore: any;
+  likesStore: any;
 };
 
-const GithubListScreen = inject('rootStore')(
-  observer(({navigation, rootStore}: GithubListScreenProps) => {
-    if (!rootStore) {
+const GithubListScreen = inject('likesStore')(
+  observer(({navigation, likesStore}: GithubListScreenProps) => {
+    if (!likesStore) {
       return null;
     }
 
     const {
-      likesStore: {
-        textInput,
-        setTextInput,
-        textQuery,
-        setTextQuery,
-        searchResults,
-        setSearchResultsApp,
-        likes,
-        pressThumbBoth,
-        setLikesApp,
-      },
-    } = rootStore;
+      textInput,
+      setTextInput,
+      rootStore,
+      pressThumbBoth,
+      likes,
+      setLikesApp,
+      setSearchResultsApp,
+      textQuery,
+      searchResults,
+      setTextQuery,
+    } = likesStore;
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [renderHelper, setRenderHelper] = useState<boolean>(false);
