@@ -4,29 +4,29 @@
     X Dropdown items: Repository name, description, programming language, and star count.
     X Save and manage repositories using the reposerver API.
     X List view with sorting and management options.
-    App behavior on refresh.
+    X App behavior on refresh.
 
     User Interface:
-    Autocomplete dropdown for Github repository search.
+    ? Autocomplete dropdown for Github repository search.
 
     Server Interactions:
-    Understand and adhere to server limitations (e.g., in-memory storage).
-    Correct use of provided API endpoints.
+    X Understand and adhere to server limitations (e.g., in-memory storage).
+    X Correct use of provided API endpoints.
 
     Repository Object Structure:
-    Proper adherence to the expected data structure for repositories.
+    X Proper adherence to the expected data structure for repositories.
 
     App Usage and Setup:
-    Proper setup, starting of the API server, and development commands.
+    X Proper setup, starting of the API server, and development commands.
 
 2.  Clarity and Conciseness of the Code (20%):
-    Code readability.
-    Proper naming conventions.
-    Avoidance of overly complex solutions when simpler ones suffice.
+    X Code readability.
+    X Proper naming conventions.
+    X Avoidance of overly complex solutions when simpler ones suffice.
 3.  Avoidance of Common Mistakes (20%):
-    Proper error handling.
-    Efficient data structures and algorithms.
-    Avoidance of known anti-patterns.
+    X Proper error handling.
+    X Efficient data structures and algorithms.
+    X Avoidance of known anti-patterns.
 4.  Testing (10%):
     Implementation of unit tests.
     Test coverage for core functionalities.
@@ -34,14 +34,18 @@
 5.  Logical Code Organization (10%):
     Structuring of components, modules, or functions.
     Clear separation of concerns.
-    Intuitive directory and file naming.
+    X Intuitive directory and file naming.
+    
     Bonus Points:
+    
     Design-oriented enhancements such as:
-    Animations.
-    Visual cues or feedback mechanisms.
+    X Animations.
+    X Visual cues or feedback mechanisms.
+    
     Optional Integration:
+    
     If the developer wishes to incorporate state management:
-    Mention of internal preference for Jotai, but open to any state management the developer is comfortable with.
+    X Mention of internal preference for Jotai, but open to any state management the developer is comfortable with.
 
 ////////////////////////////////////////////
 

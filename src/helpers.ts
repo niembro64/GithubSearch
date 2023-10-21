@@ -15,14 +15,17 @@ export const sortResults = (
   r: RepoGithubSmall[],
   d: SortStars,
 ): RepoGithubSmall[] => {
+  //////////////////////////////////////////////
+  // SORTING IS HAPPENING FOR THE NEXT STATE
+  //////////////////////////////////////////////
   switch (d) {
     case 'none':
+      return r.sort((a, b) => a.stargazers_count - b.stargazers_count);
+    case 'asc':
+      return r.sort((a, b) => b.stargazers_count - a.stargazers_count);
+    case 'desc':
       // RANDOM SORT
       return r.sort((a, b) => 0.5 - Math.random());
-    case 'asc':
-      return r.sort((a, b) => a.stargazers_count - b.stargazers_count);
-    case 'desc':
-      return r.sort((a, b) => b.stargazers_count - a.stargazers_count);
     default:
       throw new Error('sortStars is not a valid value');
   }
