@@ -4,6 +4,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
 import {useAtom} from 'jotai';
+import {debounce} from 'lodash';
 import {observer} from 'mobx-react';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
@@ -15,23 +16,21 @@ import {
   RefreshControl,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
-import {myIp, maxLikes, maxResults} from '../../YOUR_IP_HERE';
+import {maxLikes, maxResults, myIp} from '../../YOUR_IP_HERE';
 import {colors} from '../../colors';
 import {ConfettiCannon} from '../../components/ConfettiCannon';
+import {keyboardVerticalOffsetIOS} from '../../helpers';
 import {
-  hasSeenMaxMessageAtom,
   likesAtom,
   resultsAtom,
   textInputAtom,
   textQueryAtom,
 } from '../../state';
 import {spacing} from '../../styles';
-import {ListItem} from './ListItem';
-import {keyboardVerticalOffsetIOS} from '../../helpers';
 import {NumLikesState, RepoGithub, RepoGithubFull} from '../../types';
+import {ListItem} from './ListItem';
 
 type GithubListScreenProps = {
   navigation: any;
@@ -45,9 +44,16 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   const [likes, setLikes] = useAtom(likesAtom);
   const [textInput, setTextInput] = useAtom(textInputAtom);
   const [textQuery, setTextQuery] = useAtom(textQueryAtom);
-  const [hasSeenMaxMessage, setHasSeenMaxMessage] = useAtom(
-    hasSeenMaxMessageAtom,
+  const debouncedSetQuery = useCallback(
+    debounce((newQuery: string | ((prev: string) => string)) => {
+      setTextQuery(newQuery);
+    }, 700),
+    [],
   );
+
+  useEffect(() => {
+    debouncedSetQuery(textInput);
+  }, [textInput, debouncedSetQuery]);
 
   //////////////////////////////////////////////////
   // STATES
@@ -111,59 +117,48 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
     outputRange: [colors.palette.gray300, colors.palette.gray500],
   });
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setTextQuery(textInput);
-    }, 1000);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [textInput]);
-
   const githubGetSearchResults = useCallback(async () => {
-    if (textQuery === '' || textInput === '') {
+    if (textQuery === '') {
       setResults([]);
-      return;
-    }
+    } else {
+      setIsLoading(true);
+      setResults([]);
 
-    setIsLoading(true);
-    setResults([]);
+      try {
+        const response = await axios.get(
+          `https://api.github.com/search/repositories?q=${textQuery}`,
+        );
 
-    try {
-      const response = await axios.get(
-        `https://api.github.com/search/repositories?q=${textQuery}`,
-      );
+        if (!response?.data?.items) {
+          setResults([]);
+          Alert.alert('Error', 'Failed to fetch GitHub repositories.');
+          return;
+        }
+        const resItems: RepoGithubFull[] = response.data.items.slice(
+          0,
+          maxResults,
+        );
 
-      if (!response?.data?.items) {
+        const smallerResItems: RepoGithub[] = resItems.map(
+          (item: RepoGithubFull) => {
+            return {
+              id: item.id,
+              full_name: item.full_name,
+              description: item.description,
+              language: item.language,
+              stargazers_count: item.stargazers_count,
+              isLiked: likes.some(like => '' + like.id === '' + item.id),
+            };
+          },
+        );
+
+        setResults(smallerResItems);
+      } catch (err) {
         setResults([]);
         Alert.alert('Error', 'Failed to fetch GitHub repositories.');
-        return;
+      } finally {
+        setIsLoading(false);
       }
-      const resItems: RepoGithubFull[] = response.data.items.slice(
-        0,
-        maxResults,
-      );
-
-      const smallerResItems: RepoGithub[] = resItems.map(
-        (item: RepoGithubFull) => {
-          return {
-            id: item.id,
-            full_name: item.full_name,
-            description: item.description,
-            language: item.language,
-            stargazers_count: item.stargazers_count,
-            isLiked: likes.some(like => '' + like.id === '' + item.id),
-          };
-        },
-      );
-
-      setResults(smallerResItems);
-    } catch (err) {
-      setResults([]);
-      Alert.alert('Error', 'Failed to fetch GitHub repositories.');
-    } finally {
-      setIsLoading(false);
     }
   }, [textQuery, setTextQuery, setResults]);
 
@@ -197,12 +192,6 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
         setNumLikesState('one');
         break;
       case maxLikes:
-        // celebration alert
-        Alert.alert(
-          'Congratulations!',
-          'You have reached the maximum number of likes.',
-        );
-
         setNumLikesState('max');
         break;
       default:
@@ -222,7 +211,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   }, [borderActive]);
 
   useEffect(() => {
-    if (textQuery !== textInput || !isLoading) {
+    if (textQuery !== textInput) {
       setBorderActive(true);
     } else {
       setBorderActive(false);
@@ -238,13 +227,6 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
         springNumber.start();
         break;
       case 'max':
-        if (!hasSeenMaxMessage) {
-          Alert.alert(
-            'Congratulations!',
-            'You have reached the maximum number of likes.',
-          );
-          setHasSeenMaxMessage(true);
-        }
         springNumber.start();
         break;
       default:
