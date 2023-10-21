@@ -112,7 +112,7 @@ const GithubListScreen = inject('rootStore')(
 
     const saveToServer = useCallback((repo: RepoGithub) => {
       axios
-        .post('http://${myIp}:8080/repo/', {
+        .post(`http://${myIp}:8080/repo/`, {
           id: repo?.id.toString() || '',
           fullName: repo?.full_name || '',
           createdAt: repo?.created_at || '',
@@ -135,7 +135,7 @@ const GithubListScreen = inject('rootStore')(
 
     const fetchSavedRepos = useCallback(() => {
       axios
-        .get('http://${myIp}:8080/repo/')
+        .get(`http://${myIp}:8080/repo/`)
         .then(response => {
           if (response?.data?.repos && Array.isArray(response.data.repos)) {
             setLikesServer(response.data.repos);
