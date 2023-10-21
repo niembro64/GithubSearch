@@ -42,7 +42,7 @@
   - If the developer wishes to incorporate state management:
     - 🟢 Use of Jotai, but open to other state management.
 
-## Developer Notes
+## My Notes
 
 - There is a discrepancy within the requirements document, which confuses whether the repo description should be included. The server does not support saving the description, however.
 - Jotai is awesome this is my first time using it, and I will be suggesting it for smaller projects in the future. MOBX was an absolute pain to try to get working from scratch (you can see it in my commit history)
