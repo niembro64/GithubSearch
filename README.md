@@ -3,7 +3,7 @@
     X Search Github repositories and display in a dropdown.
     X Dropdown items: Repository name, description, programming language, and star count.
     X Save and manage repositories using the reposerver API.
-    List view with sorting and management options.
+    X List view with sorting and management options.
     App behavior on refresh.
 
     User Interface:

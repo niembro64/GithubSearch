@@ -152,7 +152,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
 
         const smallerResItems: RepoGithubSmall[] = resItems.map(
           (item: RepoGithubFull) => {
-            return {
+            const obj: RepoGithubSmall = {
               id: item.id,
               full_name: item?.full_name || '',
               description: item?.description || '',
@@ -161,6 +161,8 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
               created_at: item?.created_at || '',
               html_url: item?.html_url || '',
             };
+
+            return obj;
           },
         );
 
@@ -189,17 +191,21 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
           return;
         }
 
+        console.log('response', JSON.stringify(response.data, null, 2));
+
         const smallerResItems: RepoGithubSmall[] = response.data.repos.map(
           (item: RepoServer) => {
-            return {
-              id: item.id,
-              full_name: item.fullName,
-              description: item.description,
-              language: item.language,
-              stargazers_count: item.stargazersCount,
-              html_url: item.html_url,
-              created_at: item.createdAt,
+            const obj: RepoGithubSmall = {
+              id: item.id.toString() || '',
+              full_name: item.fullName || '',
+              description: item?.description || 'no description',
+              language: item.language || '',
+              stargazers_count: item.stargazersCount || 0,
+              html_url: item.html_url || '',
+              created_at: item.createdAt || '',
             };
+
+            return obj;
           },
         );
 

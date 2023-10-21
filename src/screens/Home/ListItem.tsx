@@ -74,7 +74,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     const newObjectToServer: RepoServer = {
       id: repo?.id.toString() || '',
       fullName: repo?.full_name || '',
-      description: repo?.description || '',
+      description: repo?.description || 'no description',
       language: repo?.language || '',
       stargazersCount: repo?.stargazers_count || 0,
       createdAt: repo?.created_at || '',
@@ -86,7 +86,17 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
 
       console.log('res', res?.data);
 
-      setLikes([...likes, repo]);
+      const newObjectToLikes: RepoGithubSmall = {
+        id: repo?.id.toString() || '',
+        full_name: repo?.full_name || '',
+        description: repo?.description || 'no description',
+        language: repo?.language || '',
+        stargazers_count: repo?.stargazers_count || 0,
+        created_at: repo?.created_at || '',
+        html_url: repo?.html_url || '',
+      };
+
+      setLikes([...likes, newObjectToLikes]);
     } catch (err) {
       console.error('Error saving repo to server:', err);
       Alert.alert('Error', 'Failed to save repository to server.');
