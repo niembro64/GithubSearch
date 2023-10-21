@@ -81,7 +81,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   const getSearchResults = () => {
     console.log('textQuery', textQuery);
 
-    if (textQuery === '') {
+    if (textQuery === '' || textQuery === null || textQuery === undefined) {
       setSearchResults([]);
     } else {
       setIsLoading(true);

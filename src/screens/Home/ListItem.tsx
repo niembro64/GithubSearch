@@ -69,15 +69,19 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     [likes, setLikes],
   );
 
-  const onLikeToggle = useCallback(
+  const onThumbPress = useCallback(
     (repo: RepoGithub) => {
       if (repoLiked) {
+        //////////////////////////
         // remove from likes
+        //////////////////////////
         const newLikes = likes.filter(like => like.id !== repo.id);
         setLikes(newLikes);
         deleteFromServer(repo.id.toString());
       } else {
+        //////////////////////////
         // add to likes
+        //////////////////////////
         if (likes.length < 10) {
           saveToServer(repo);
         } else if (likes.length >= 10) {
@@ -178,16 +182,16 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
 
       <TouchableOpacity
         style={{
-          height: 80,
-          width: 80,
+          height: 100,
+          width: 100,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
           marginLeft: spacing.md,
-          borderRadius: spacing.md,
+          borderRadius: 50,
         }}
-        onPress={() => onLikeToggle(repo)}>
+        onPress={() => onThumbPress(repo)}>
         <Image
           source={require('../../../assets/images/like-button.png')}
           style={{
