@@ -40,6 +40,8 @@ const GithubListScreen = inject('rootStore')(
         setSearchResultsApp,
         likes,
         pressThumbBoth,
+        storeNumber,
+        setStoreNumber,
         setLikesApp,
       },
     } = rootStore;
@@ -121,11 +123,20 @@ const GithubListScreen = inject('rootStore')(
                   pressThumbBoth={async function (r: Repo): Promise<void> {
                     await pressThumbBoth(repo);
                     setRenderHelper(!renderHelper);
+                    setStoreNumber(storeNumber + 1);
                   }}
                 />
               )}
             />
           }
+
+          <Text
+            style={{
+              color: 'black',
+              marginTop: spacing.sm,
+            }}>
+            {storeNumber}
+          </Text>
 
           {/* ////////////////////////////////// */}
           {/* SEARCH BAR */}

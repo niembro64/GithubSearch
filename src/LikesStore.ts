@@ -9,6 +9,7 @@ export const LikesStoreModel = types
     textQuery: types.optional(types.string, 'web_smashed'),
     searchResults: types.optional(types.array(types.frozen<Repo>()), []),
     likes: types.optional(types.array(types.frozen<Repo>()), []),
+    storeNumber: types.optional(types.number, 0),
   })
   .actions(self => ({
     ///////////////////////////////////////////////
@@ -22,7 +23,8 @@ export const LikesStoreModel = types
         return {...repo, like: isLiked};
       });
 
-      self.searchResults.replace(newSearchResults);
+      // @ts-ignore
+      self.searchResults = newSearchResults;
     },
     ///////////////////////////////////////////////
     // LIKES GITHUB
@@ -36,7 +38,17 @@ export const LikesStoreModel = types
         };
       });
 
-      self.likes.replace(likesPlusLike);
+      console.log('---');
+      self.likes.forEach(l => {
+        console.log('LIKES BEFORE REPLACE', l?.like);
+      });
+      console.log('---');
+      // @ts-ignore
+      self.likes = likesPlusLike;
+      self.likes.forEach(l => {
+        console.log('LIKES AFTER REPLACE', l?.like);
+      });
+      console.log('---');
 
       // Update search results with new likes
       const newSearchResults = self.searchResults.map(repo => {
@@ -44,7 +56,8 @@ export const LikesStoreModel = types
         return {...repo, isLiked};
       });
 
-      self.searchResults.replace(newSearchResults);
+      // @ts-ignore
+      self.searchResults = newSearchResults;
     },
     addLikeBoth(newLike: Repo) {
       (async () => {
@@ -82,7 +95,12 @@ export const LikesStoreModel = types
           ////////////////////
           // ADD LIKE
           ////////////////////
+
+          console.log('REPO BEFORE LIKE', repo?.like);
+
           const likeWithLike = {...repo, like: true};
+
+          console.log('REPO AFTER LIKE', likeWithLike?.like);
           const res = await serverLikeSave(likeWithLike);
 
           if (!res) {
@@ -92,6 +110,16 @@ export const LikesStoreModel = types
 
           this.setLikesApp([...self.likes, likeWithLike]);
         }
+
+        // Update search results with new likes
+        const newSearchResults = self.searchResults.map(repo => {
+          const isLiked =
+            self.likes.findIndex(like => like.id === repo.id) > -1;
+          return {...repo, isLiked};
+        });
+
+        // @ts-ignore
+        self.searchResults = newSearchResults;
       })();
     },
     removeLikeBoth(likeId: string) {
@@ -107,7 +135,8 @@ export const LikesStoreModel = types
         if (index > -1) {
           const newLikes = self.likes.filter(like => like.id !== likeId);
 
-          self.likes.replace(newLikes);
+          // @ts-ignore
+          self.likes = newLikes;
         }
       })();
     },
@@ -116,6 +145,9 @@ export const LikesStoreModel = types
     },
     setTextQuery(text: string) {
       self.textQuery = text;
+    },
+    setStoreNumber(num: number) {
+      self.storeNumber = num;
     },
   }));
 

@@ -2,7 +2,7 @@
 /* eslint-disable react-native/no-inline-styles */
 // ListItem.tsx
 import {inject, observer} from 'mobx-react';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Image, Platform, Text, TouchableOpacity, View} from 'react-native';
 import {colors, getColorFromLanguage} from '../../colors';
 import {truncateString} from '../../helpers';
@@ -22,8 +22,14 @@ export const ListItem: React.FC<ListItemProps> = inject('rootStore')(
       return null;
     }
 
+    const [forceRender, setForceRender] = useState<number>(0);
+
+    const [internalRepo, setInternalRepo] = useState<Repo>(repo);
+
     useEffect(() => {
       console.log('repo.like', repo.like);
+      setForceRender(prev => (prev += 1));
+      setInternalRepo(repo);
     }, [repo]);
 
     const numStars = repo?.stargazers_count || 0;
@@ -50,14 +56,18 @@ export const ListItem: React.FC<ListItemProps> = inject('rootStore')(
             padding: spacing.md,
           }}>
           <Text style={{fontSize: 22, color: 'black'}}>
-            {truncateString(repo?.full_name, 20)}
+            {internalRepo.like ? '❤️' : '🤍'}
+          </Text>
+          <Text style={{fontSize: 22, color: 'black'}}>{forceRender}</Text>
+          <Text style={{fontSize: 22, color: 'black'}}>
+            {truncateString(internalRepo?.full_name, 20)}
           </Text>
           <Text
             style={{
               color: 'black',
               marginTop: spacing.sm,
             }}>
-            {truncateString(repo?.description, 30)}
+            {truncateString(internalRepo?.description, 30)}
           </Text>
           <View
             style={{
@@ -70,7 +80,7 @@ export const ListItem: React.FC<ListItemProps> = inject('rootStore')(
             <View
               style={{
                 height: 35,
-                backgroundColor: getColorFromLanguage(repo?.language),
+                backgroundColor: getColorFromLanguage(internalRepo?.language),
                 borderRadius: spacing.sm,
                 display: 'flex',
                 justifyContent: 'center',
@@ -82,7 +92,7 @@ export const ListItem: React.FC<ListItemProps> = inject('rootStore')(
                   color: 'white',
                   fontSize: 16,
                 }}>
-                {repo?.language}
+                {internalRepo?.language}
               </Text>
             </View>
             <View
@@ -119,14 +129,14 @@ export const ListItem: React.FC<ListItemProps> = inject('rootStore')(
             borderRadius: spacing.md,
           }}
           onPress={() => {
-            pressThumbBoth(repo);
+            pressThumbBoth(internalRepo);
           }}>
           <Image
             source={require('../../../assets/images/like-button.png')}
             style={{
               width: 40,
               height: 40,
-              tintColor: repo?.like
+              tintColor: internalRepo.like
                 ? colors.palette.blue600
                 : likes.length < 10
                 ? colors.palette.gray300
