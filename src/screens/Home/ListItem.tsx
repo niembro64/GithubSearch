@@ -3,7 +3,7 @@
 // ListItem.tsx
 import axios from 'axios';
 import {useAtom} from 'jotai';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Alert,
   Image,
@@ -25,12 +25,14 @@ interface ListItemProps {
 
 export const ListItem: React.FC<ListItemProps> = ({repo}) => {
   const [repoIsLiked, setRepoIsLiked] = useState<boolean>(false);
+  const isLoadingRef = useRef(false);
 
   const [results, setResults] = useAtom(resultsAtom);
   const [likes, setLikes] = useAtom(likesAtom);
   const numStars = repo?.stargazers_count || 0;
 
   const deleteLike = useCallback(async () => {
+    isLoadingRef.current = true;
     let res = null;
 
     try {
@@ -42,10 +44,13 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     } catch (err) {
       console.error('Error deleting repo from server:', err);
       Alert.alert('Error', 'Failed to delete repository from server.');
+    } finally {
+      isLoadingRef.current = false;
     }
   }, [likes, setLikes, repo]);
 
   const addLike = useCallback(async () => {
+    isLoadingRef.current = true;
     let res = null;
 
     const newObjectToServer: RepoServer = {
@@ -65,10 +70,17 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     } catch (err) {
       console.error('Error saving repo to server:', err);
       Alert.alert('Error', 'Failed to save repository to server.');
+    } finally {
+      isLoadingRef.current = false;
     }
   }, [likes, setLikes, repo]);
 
   const onThumbPress = useCallback(() => {
+    if (isLoadingRef.current) {
+      Alert.alert('Error', 'Please wait for the previous action to complete.');
+      return;
+    }
+
     console.log(
       'repo',
       repo.full_name,
@@ -82,7 +94,10 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
       if (likes.length < maxLikes) {
         addLike();
       } else if (likes.length >= maxLikes) {
-        Alert.alert('Error', 'You can only like 10 repositories.');
+        Alert.alert(
+          'Error',
+          'You can only like ' + maxLikes + ' repositories.',
+        );
       }
     }
   }, [repo.full_name, repoIsLiked, deleteLike, likes.length, addLike]);
@@ -100,6 +115,12 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
   useEffect(() => {
     console.log('repo', JSON.stringify(repo, null, 2));
   }, [repo]);
+
+  useEffect(() => {
+    if (isLoadingRef.current === false) {
+      return;
+    }
+  }, [isLoadingRef]);
 
   return (
     <View
