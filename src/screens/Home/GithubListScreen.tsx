@@ -1,3 +1,4 @@
+/* eslint-disable no-trailing-spaces */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
@@ -28,6 +29,7 @@ import {spacing} from '../../styles';
 import {RepoGithub} from '../../types';
 import {ListItem} from './ListItem';
 import {ConfettiCannon} from '../../components/ConfettiCannon';
+import {joinJsonPath} from 'mobx-state-tree';
 
 type GithubListScreenProps = {
   navigation: any;
@@ -35,12 +37,13 @@ type GithubListScreenProps = {
 
 const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   const [likes, setLikes] = useAtom(likesGithubAtom);
+
   const [searchResults, setSearchResults] = useAtom(searchResultsAtom);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>(null);
   const [textInput, setTextInput] = useAtom(textInputAtom);
-  const [textQuery, setTextQuery] = useState(textQueryAtom);
+  const [textQuery, setTextQuery] = useAtom(textQueryAtom);
 
   useEffect(() => {
     if (likes.length === 10) {
@@ -75,8 +78,10 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
     };
   }, [textInput]);
 
-  const getRepositories = () => {
-    if (!textQuery) {
+  const getSearchResults = () => {
+    console.log('textQuery', textQuery);
+
+    if (textQuery === '') {
       setSearchResults([]);
     } else {
       setIsLoading(true);
@@ -97,7 +102,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   };
 
   useEffect(() => {
-    getRepositories();
+    getSearchResults();
   }, [textQuery]);
 
   const fetchSavedRepos = useCallback(() => {
@@ -132,7 +137,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
               refreshControl={
                 <RefreshControl
                   refreshing={isLoading}
-                  onRefresh={getRepositories}
+                  onRefresh={getSearchResults}
                 />
               }
               contentContainerStyle={{
