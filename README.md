@@ -1,3 +1,49 @@
+1.  Adherence to Challenge Requirements (40%):
+    React Native Application Features:
+
+        X Search Github repositories and display in a dropdown.
+        X Dropdown items: Repository name, description, programming language, and star count.
+        X Save and manage repositories using the reposerver API.
+        List view with sorting and management options.
+        App behavior on refresh.
+
+    User Interface:
+
+        Autocomplete dropdown for Github repository search.
+        Server Interactions:
+
+Understand and adhere to server limitations (e.g., in-memory storage).
+Correct use of provided API endpoints.
+Repository Object Structure: Proper adherence to the expected data structure for repositories.
+
+App Usage and Setup: Proper setup, starting of the API server, and development commands.
+
+2. Clarity and Conciseness of the Code (20%):
+   Code readability.
+   Proper naming conventions.
+   Avoidance of overly complex solutions when simpler ones suffice.
+3. Avoidance of Common Mistakes (20%):
+   Proper error handling.
+   Efficient data structures and algorithms.
+   Avoidance of known anti-patterns.
+4. Testing (10%):
+   Implementation of unit tests.
+   Test coverage for core functionalities.
+   (Note: This criterion may be waived depending on the context.)
+5. Logical Code Organization (10%):
+   Structuring of components, modules, or functions.
+   Clear separation of concerns.
+   Intuitive directory and file naming.
+   Bonus Points:
+   Design-oriented enhancements such as:
+   Animations.
+   Visual cues or feedback mechanisms.
+   Optional Integration:
+   If the developer wishes to incorporate state management:
+   Mention of internal preference for Jotai, but open to any state management the developer is comfortable with.
+
+////////////////////////////////////////////
+
 # React Native Engineer Challenge (2-5 hrs)
 
 Thanks for trying our development challenge! Let's get started.
@@ -7,18 +53,18 @@ Thanks for trying our development challenge! Let's get started.
 We ask that you write a React Native application capable of the following:
 
 - Search your favorite repositories from Github and select them from a dropdown
-    - List item should have name, description, language, and stars visible
+  - List item should have name, description, language, and stars visible
 - Save them to the server by using the `reposerver` API
 - App should have a list view where you are able to sort your favorites by stars (`stargazers_count`)
-    - Up to 10 repositories may be saved for a user
-    - Repositories should be removable or added
+  - Up to 10 repositories may be saved for a user
+  - Repositories should be removable or added
 - If the app is refreshed, the saved repositories should populate the list so long as the server is running.
 
 GitHub API (https://developer.github.com/v3/)
 
 UX Requirements:
-- Search input for Github repositories should be an autocomplete dropdown
 
+- Search input for Github repositories should be an autocomplete dropdown
 
 **NOTE** Please treat this as an opportunity to show off, and let us see how you would write and visually present something that you'd be proud of! There is no one "correct" answer.
 
@@ -33,8 +79,7 @@ UX Requirements:
 - `DELETE repo/[repoID]` delete a repo
 - `POST repo` create a repository
 
-
-*Please make sure to add a trailing forward slash (`/`) at the end of every point except for /health (e.g. `curl http://localhost:8080/repo/`)*
+_Please make sure to add a trailing forward slash (`/`) at the end of every point except for /health (e.g. `curl http://localhost:8080/repo/`)_
 
 #### The Repository object
 
@@ -45,18 +90,17 @@ UX Requirements:
 - url: https://api.github.com/repos/ethereum/go-ethereum (string, required) - URL of the repository
 - createdAt: 2013-12-26T13:05:46Z (string, required) - CreatedAt of repository
 
-
 #### JSON
 
 ```json
-    {
-      "id": "15452919",
-      "fullName": "ethereum/go-ethereum",
-      "createdAt": "2013-12-26T13:05:46Z",
-      "stargazersCount": 26012,
-      "language": "Go",
-      "url": "https://api.github.com/repos/ethereum/go-ethereum"
-    }
+{
+  "id": "15452919",
+  "fullName": "ethereum/go-ethereum",
+  "createdAt": "2013-12-26T13:05:46Z",
+  "stargazersCount": 26012,
+  "language": "Go",
+  "url": "https://api.github.com/repos/ethereum/go-ethereum"
+}
 ```
 
 ## Using this app
@@ -118,6 +162,7 @@ What we will look for:
 - What kind of documentation did you ship with your code?
 
 ### Housekeeping notes
+
 - If you run into any issues building the GCR image, **please contact us immediately**
 - Please feel free to make assumptions, but ensure to note what they were and how you adapted to them.
 
