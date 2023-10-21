@@ -17,7 +17,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {myIp, numAllowedLikes, numSearchResults} from '../../YOUR_IP_HERE';
+import {myIp, maxLikes, maxResults} from '../../YOUR_IP_HERE';
 import {colors} from '../../colors';
 import {ConfettiCannon} from '../../components/ConfettiCannon';
 import {
@@ -75,7 +75,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
         }
         const resItems: RepoGithubFull[] = response.data.items.slice(
           0,
-          numSearchResults,
+          maxResults,
         );
 
         const smallerResItems: RepoGithub[] = resItems.map(
@@ -129,7 +129,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
       case 1:
         setNumLikesState('one');
         break;
-      case numAllowedLikes:
+      case maxLikes:
         setNumLikesState('max');
         break;
       default:
@@ -224,7 +224,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                         : colors.palette.green600,
                     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
                   }}>
-                  {likes.length === numAllowedLikes ? '' : likes.length}
+                  {likes.length === maxLikes ? '' : likes.length}
                 </Text>
                 <Text
                   style={{
@@ -255,7 +255,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                   fontSize: 22,
                   fontWeight: 'bold',
                 }}>
-                Search Repositories
+                Search Github
               </Text>
             </View>
             <View
@@ -269,8 +269,11 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                 style={{
                   flex: 1,
                   height: 40,
-                  borderColor: colors.palette.gray400,
-                  borderWidth: 1,
+                  borderColor:
+                    textQuery === textInput && !isLoading
+                      ? colors.palette.blue300
+                      : colors.palette.gray400,
+                  borderWidth: 2,
                   borderRadius: spacing.sm,
                   paddingLeft: spacing.md,
                   paddingRight: spacing.md,
@@ -278,7 +281,8 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                   marginLeft: spacing.md,
                   paddingVertical: 0,
                 }}
-                placeholder="Search GitHub repositories..."
+                placeholder="Enter a Github repo name..."
+                placeholderTextColor={colors.palette.gray400}
                 onChangeText={text => setTextInput(text)}
                 value={textInput}
               />
@@ -286,7 +290,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
           </View>
         </View>
       </KeyboardAvoidingView>
-      {likes?.length === 10 && <ConfettiCannon />}
+      {likes?.length === maxLikes && <ConfettiCannon />}
     </>
   );
 });

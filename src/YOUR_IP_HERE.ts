@@ -3,8 +3,8 @@
 // You can change the number of allowed likes
 // and the number of search results here
 ///////////////////////////////////////////////
-export const numAllowedLikes = 2;
-export const numSearchResults = 3;
+export const maxLikes = 2;
+export const maxResults = 3;
 
 ///////////////////////////////////////////////
 // Change "myIp" to your machine's local IP address

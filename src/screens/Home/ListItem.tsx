@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {myIp, numAllowedLikes} from '../../YOUR_IP_HERE';
+import {myIp, maxLikes} from '../../YOUR_IP_HERE';
 import {colors, getColorFromLanguage} from '../../colors';
 import {truncateString} from '../../helpers';
 import {likesGithubAtom} from '../../state';
@@ -71,9 +71,9 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     if (repoLiked) {
       deleteLike();
     } else {
-      if (likes.length < numAllowedLikes) {
+      if (likes.length < maxLikes) {
         addLike();
-      } else if (likes.length >= numAllowedLikes) {
+      } else if (likes.length >= maxLikes) {
         Alert.alert('Error', 'You can only like 10 repositories.');
       }
     }
@@ -192,7 +192,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
             height: 40,
             tintColor: repoLiked
               ? colors.palette.blue600
-              : likes.length < numAllowedLikes
+              : likes.length < maxLikes
               ? colors.palette.gray300
               : colors.transparent,
           }}
