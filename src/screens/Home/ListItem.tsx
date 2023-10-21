@@ -60,6 +60,12 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
   //////////////////////////////////////////////////
   // FUNCTIONS
   //////////////////////////////////////////////////
+  const formatDate = (dateString: string) => {
+    const options = {year: 'numeric', month: 'short', day: 'numeric'};
+    // @ts-ignore
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   const openGitHubURL = () => {
     if (repo?.html_url) {
       Linking.openURL(repo.html_url).catch(err =>
@@ -93,7 +99,6 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     const newObjectToServer: RepoServer = {
       id: repo?.id.toString() || '',
       fullName: repo?.full_name || '',
-      description: repo?.description || 'no description',
       language: repo?.language || '',
       stargazersCount: repo?.stargazers_count || 0,
       createdAt: repo?.created_at || '',
@@ -108,7 +113,6 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
       const newObjectToLikes: RepoGithubSmall = {
         id: repo?.id.toString() || '',
         full_name: repo?.full_name || '',
-        description: repo?.description || 'no description',
         language: repo?.language || '',
         stargazers_count: repo?.stargazers_count || 0,
         created_at: repo?.created_at || '',
@@ -248,15 +252,19 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
           backgroundColor: colors.palette.slate300,
           padding: spacing.md,
         }}>
-        <Text style={{fontSize: 22, color: 'black'}}>
-          {truncateString(repo?.full_name, 20)}
-        </Text>
         <Text
           style={{
             color: 'black',
-            marginTop: spacing.sm,
           }}>
-          {truncateString(repo?.description, 30)}
+          {formatDate(repo?.created_at)}
+        </Text>
+        <Text
+          style={{
+            fontSize: 22,
+            color: 'black',
+            marginBottom: spacing.sm,
+          }}>
+          {truncateString(repo?.full_name, 20)}
         </Text>
         <View
           style={{

@@ -11,33 +11,33 @@ export type GitHubId = string;
 export type RepoServer = {
   id: GitHubId;
   fullName: string;
-  description: string;
   language: string;
   stargazersCount: number;
-  createdAt: string;
   html_url: string;
+  createdAt: string;
 };
 
 export type RepoGithubSmall = {
   id: GitHubId;
   full_name: string;
-  description: string;
   language: string;
   stargazers_count: number;
-  created_at: string;
   html_url: string;
+  created_at: string;
 };
 
 export type RepoGithubFull = {
   id: GitHubId;
   full_name: string;
-  description: string;
   language: string;
   stargazers_count: number;
+  html_url?: string;
+  created_at?: string;
 
   //////////////////////////
   // OTHER
   //////////////////////////
+  description?: string;
   node_id?: string;
   name?: string;
   private?: boolean;
@@ -61,7 +61,6 @@ export type RepoGithubFull = {
     type?: string;
     site_admin?: boolean;
   };
-  html_url?: string;
   fork?: boolean;
   url?: string;
   forks_url?: string;
@@ -100,7 +99,6 @@ export type RepoGithubFull = {
   labels_url?: string;
   releases_url?: string;
   deployments_url?: string;
-  created_at?: string;
   updated_at?: string;
   pushed_at?: string;
   git_url?: string;

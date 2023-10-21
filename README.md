@@ -45,11 +45,12 @@
 ## Developer Notes
 
 - Jotai is awesome this is my first time using it, and I will be suggesting it for smaller projects in the future. MOBX was an absolute pain to try to get working from scratch (you can see it in my commit history)
-- I was clear to use the requirements type description even if the naming scheme was different than what github gives you
+- I was clear to use the requirements type description even if the naming scheme was different than what github gives you. Once again full use of TypeScript typings made this no problem.
   - full_name vs fullName
   - stargazers_count vs stargazersCount
   - created_at vs createdAt
 - ID (string) vs ID (number) mismatch: For quite a while I was getting errors regarding string vs numbers for IDs, and I was confused because I was using the same data structure as the example. I eventually realized that the example id and github id differ in type.
+- It was fun to set up Docker, which I had not used before. It was a good learning experience and something I've wanted to touch for quite some time.
 
 ////////////////////////////////////////////
 

@@ -160,7 +160,6 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
             const obj: RepoGithubSmall = {
               id: item.id,
               full_name: item?.full_name || '',
-              description: item?.description || '',
               language: item?.language || '',
               stargazers_count: item?.stargazers_count || 0,
               created_at: item?.created_at || '',
@@ -204,7 +203,6 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
             const obj: RepoGithubSmall = {
               id: item.id.toString() || '',
               full_name: item.fullName || '',
-              description: item?.description || 'no description',
               language: item.language || '',
               stargazers_count: item.stargazersCount || 0,
               html_url: item.html_url || '',
