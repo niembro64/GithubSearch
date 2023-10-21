@@ -29,7 +29,7 @@ import {
 import {spacing} from '../../styles';
 import {ListItem} from './ListItem';
 import {keyboardVerticalOffsetIOS} from '../../helpers';
-import {NumLikesState} from '../../types';
+import {NumLikesState, RepoGithub, RepoGithubFull} from '../../types';
 
 type GithubListScreenProps = {
   navigation: any;
@@ -73,7 +73,24 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
           Alert.alert('Error', 'Failed to fetch GitHub repositories.');
           return;
         }
-        setSearchResults(response.data.items.slice(0, numSearchResults));
+        const resItems: RepoGithubFull[] = response.data.items.slice(
+          0,
+          numSearchResults,
+        );
+
+        const smallerResItems: RepoGithub[] = resItems.map(
+          (item: RepoGithubFull) => {
+            return {
+              id: item.id,
+              full_name: item.full_name,
+              description: item.description,
+              language: item.language,
+              stargazers_count: item.stargazers_count,
+            };
+          },
+        );
+
+        setSearchResults(smallerResItems);
       } catch (err) {
         setSearchResults([]);
         Alert.alert('Error', 'Failed to fetch GitHub repositories.');

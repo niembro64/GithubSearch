@@ -34,9 +34,9 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     try {
       res = await axios.delete(`http://${myIp}:8080/repo/${repo.id}`);
 
-      if (res?.data) {
-        setLikes([...likes.filter(like => like.id !== repo.id)]);
-      }
+      console.log('res', res?.data);
+
+      setLikes([...likes.filter(like => like.id !== repo.id)]);
     } catch (err) {
       console.error('Error deleting repo from server:', err);
       Alert.alert('Error', 'Failed to delete repository from server.');
@@ -58,10 +58,9 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
       // console.log('saving newObject', newObject);
       res = await axios.post(`http://${myIp}:8080/repo/`, newObject);
 
-      // console.log('res?.data', res?.data);
-      if (res?.data) {
-        setLikes([...likes, repo]);
-      }
+      console.log('res', res?.data);
+
+      setLikes([...likes, repo]);
     } catch (err) {
       console.error('Error saving repo to server:', err);
       Alert.alert('Error', 'Failed to save repository to server.');
