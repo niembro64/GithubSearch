@@ -31,7 +31,9 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
 
   const [results, setResults] = useAtom(resultsAtom);
   const [likes, setLikes] = useAtom(likesAtom);
-  const numStars = repo?.stargazers_count || 0;
+  const numStarsTotal = repo?.stargazers_count || 0;
+  const incrementAmount = Math.ceil(numStarsTotal / 100);
+  const [numStars, setNumStars] = useState<number>(0);
 
   const springNumber: any = Animated.spring(scaleValue, {
     toValue: 1,
@@ -40,6 +42,23 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     tension: 200,
     useNativeDriver: true,
   });
+
+  useEffect(() => {
+    // Define the interval function here
+    const incrementStars = () => {
+      if (numStars < numStarsTotal) {
+        setNumStars(prev => prev + incrementAmount);
+      } else {
+        clearInterval(interval);
+      }
+    };
+
+    // Set the interval
+    const interval = setInterval(incrementStars, 3); // adjust the interval time (50ms) as needed
+
+    // Clear the interval when component unmounts or numStars reaches numStarsTotal
+    return () => clearInterval(interval);
+  }, [numStars, incrementAmount, numStarsTotal]);
 
   const openGitHubURL = () => {
     if (repo?.html_url) {
