@@ -76,9 +76,10 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   }, [textInput]);
 
   const getRepositories = () => {
-    if (textQuery) {
+    if (!textQuery) {
+      setSearchResults([]);
+    } else {
       setIsLoading(true);
-      // setSearchResults([]);
 
       axios
         .get(`https://api.github.com/search/repositories?q=${textQuery}`)
@@ -96,9 +97,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   };
 
   useEffect(() => {
-    if (textQuery) {
-      getRepositories();
-    }
+    getRepositories();
   }, [textQuery]);
 
   const fetchSavedRepos = useCallback(() => {
