@@ -49,7 +49,7 @@
   - full_name vs fullName
   - stargazers_count vs stargazersCount
   - created_at vs createdAt
-- For quite a while I was getting errors regarding string vs numbers for IDs, and I was confused because I was using the same data structure as the example. I eventually realized that the example was wrong and the ID should be a string.
+- ID (string) vs ID (number) mismatch: For quite a while I was getting errors regarding string vs numbers for IDs, and I was confused because I was using the same data structure as the example. I eventually realized that the example id and github id differ in type.
 
 ////////////////////////////////////////////
 
