@@ -25,25 +25,29 @@ interface ListItemProps {
 }
 
 export const ListItem: React.FC<ListItemProps> = ({repo}) => {
-  const scaleValue = new Animated.Value(1);
-  const [repoIsLiked, setRepoIsLiked] = useState<boolean>(false);
-  const isLoadingRef = useRef(false);
-
+  //////////////////////////////////////////////////
+  // STORES
+  //////////////////////////////////////////////////
   const [results, setResults] = useAtom(resultsAtom);
   const [likes, setLikes] = useAtom(likesAtom);
+
+  //////////////////////////////////////////////////
+  // STATES
+  //////////////////////////////////////////////////
+  const [numStars, setNumStars] = useState<number>(0);
+  const [repoIsLiked, setRepoIsLiked] = useState<boolean>(false);
   const [numStarsTotal, setNumStarsTotal] = useState<number | null>(null);
   const [incrementAmount, setIncrementAmount] = useState<number>(999);
-  const [numStars, setNumStars] = useState<number>(0);
 
-  useEffect(() => {
-    setNumStarsTotal(repo?.stargazers_count || 0);
-  }, [repo]);
+  //////////////////////////////////////////////////
+  // REFS
+  //////////////////////////////////////////////////
+  const isLoadingRef = useRef(false);
 
-  useEffect(() => {
-    if (numStarsTotal !== null) {
-      setIncrementAmount(Math.ceil(numStarsTotal / 10));
-    }
-  }, [numStarsTotal]);
+  //////////////////////////////////////////////////
+  // ANIMATIONS
+  //////////////////////////////////////////////////
+  const scaleValue = new Animated.Value(1);
 
   const springNumber: any = Animated.spring(scaleValue, {
     toValue: 1,
@@ -53,24 +57,9 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     useNativeDriver: true,
   });
 
-  useEffect(() => {
-    // Define the interval function here
-    const incrementStars = () => {
-      if (numStars < (numStarsTotal || 0)) {
-        setNumStars(prev => prev + incrementAmount);
-      } else {
-        clearInterval(interval);
-        setNumStars(numStarsTotal || 0);
-      }
-    };
-
-    // Set the interval
-    const interval = setInterval(incrementStars, 100); // adjust the interval time (50ms) as needed
-
-    // Clear the interval when component unmounts or numStars reaches numStarsTotal
-    return () => clearInterval(interval);
-  }, [numStars, incrementAmount, numStarsTotal]);
-
+  //////////////////////////////////////////////////
+  // FUNCTIONS
+  //////////////////////////////////////////////////
   const openGitHubURL = () => {
     if (repo?.html_url) {
       Linking.openURL(repo.html_url).catch(err =>
@@ -185,6 +174,37 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     likes.length,
     addLike,
   ]);
+
+  //////////////////////////////////////////////////
+  // EFFECTS
+  //////////////////////////////////////////////////
+  useEffect(() => {
+    setNumStarsTotal(repo?.stargazers_count || 0);
+  }, [repo]);
+
+  useEffect(() => {
+    if (numStarsTotal !== null) {
+      setIncrementAmount(Math.ceil(numStarsTotal / 10));
+    }
+  }, [numStarsTotal]);
+
+  useEffect(() => {
+    // Define the interval function here
+    const incrementStars = () => {
+      if (numStars < (numStarsTotal || 0)) {
+        setNumStars(prev => prev + incrementAmount);
+      } else {
+        clearInterval(interval);
+        setNumStars(numStarsTotal || 0);
+      }
+    };
+
+    // Set the interval
+    const interval = setInterval(incrementStars, 100); // adjust the interval time (50ms) as needed
+
+    // Clear the interval when component unmounts or numStars reaches numStarsTotal
+    return () => clearInterval(interval);
+  }, [numStars, incrementAmount, numStarsTotal]);
 
   useEffect(() => {
     const found = likes.find(like => '' + like.id === '' + repo.id);

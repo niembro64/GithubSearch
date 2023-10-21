@@ -14,6 +14,9 @@ import {SortRepoState} from '~/types';
 const Stack = createNativeStackNavigator();
 
 export const MainNavigator: React.FC = () => {
+  //////////////////////////////////////////////////
+  // STORES
+  //////////////////////////////////////////////////
   const [sortStars, setSortStars] = useAtom(sortStarsAtom);
 
   const arrow =

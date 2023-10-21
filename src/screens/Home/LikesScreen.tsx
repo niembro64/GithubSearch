@@ -6,7 +6,6 @@ import React, {useEffect} from 'react';
 import {FlatList, KeyboardAvoidingView, Platform} from 'react-native';
 import {spacing} from '../../styles';
 import {ListItem} from './ListItem';
-// import {useNavigation} from '@react-navigation/native';
 import {useAtom} from 'jotai';
 import {keyboardVerticalOffsetIOS, sortResults} from '../../helpers';
 import {likesAtom, sortStarsAtom} from '../../state';
@@ -16,9 +15,15 @@ type LikesScreenProps = {
 };
 
 const LikesScreen = observer(({navigation}: LikesScreenProps) => {
+  //////////////////////////////////////////////////
+  // STORES
+  //////////////////////////////////////////////////
   const [likes, setLikes] = useAtom(likesAtom);
   const [sortStars, setSortStars] = useAtom(sortStarsAtom);
 
+  //////////////////////////////////////////////////
+  // EFFECTS
+  //////////////////////////////////////////////////
   useEffect(() => {
     sortResults(likes, sortStars);
   }, [sortStars]);
