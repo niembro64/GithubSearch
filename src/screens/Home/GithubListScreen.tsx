@@ -2,6 +2,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
+import {useAtom} from 'jotai';
+import {observer} from 'mobx-react';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
@@ -14,12 +16,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {myIp} from '../../YOUR_IP_HERE';
 import {colors} from '../../colors';
+import {likesGithubAtom} from '../../state';
 import {spacing} from '../../styles';
 import {RepoGithub, RepoServer} from '../../types';
 import {ListItem} from './ListItem';
-import {inject, observer} from 'mobx-react';
-import {myIp} from '../../YOUR_IP_HERE';
 
 type GithubListScreenProps = {
   navigation: any;
@@ -32,7 +34,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   const [error, setError] = useState<any>(null);
   const [inputValue, setInputValue] = useState<string>('web_smashed');
   const [searchingValue, setSearchingValue] = useState<string>('web_smashed');
-  const [likesGithub, setLikesGithub] = useState<RepoGithub[]>([]);
+  const [likesGithub, setLikesGithub] = useAtom(likesGithubAtom);
   const [likesServer, setLikesServer] = useState<RepoServer[]>([]);
   const [allowLikes, setAllowLikes] = useState<boolean>(true);
 

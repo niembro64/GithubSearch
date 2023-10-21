@@ -18,13 +18,15 @@ import {spacing} from '../../styles';
 import {RepoGithub, RepoServer} from '../../types';
 import {ListItem} from './ListItem';
 // import {useNavigation} from '@react-navigation/native';
+import {useAtom} from 'jotai';
+import {likesGithubAtom} from '../../state';
 
 type LikesScreenProps = {
   navigation: any;
 };
 
 const LikesScreen = observer(({navigation}: LikesScreenProps) => {
-  const [likesGithub, setLikesGithub] = React.useState<RepoGithub[]>([]);
+  const [likesGithub, setLikesGithub] = useAtom(likesGithubAtom);
   const [likesServer, setLikesServer] = React.useState<RepoServer[]>([]);
 
   const deleteFromServer = useCallback((repoId: string) => {
