@@ -105,8 +105,6 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   }, []);
 
   useEffect(() => {
-    console.log('likes', likes);
-
     switch (likes.length) {
       case 0:
         setNumLikesState('zero');

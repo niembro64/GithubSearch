@@ -12,6 +12,14 @@ export type RepoGithub = {
   description: string;
   language: string;
   stargazers_count: number;
+};
+
+export type RepoGithubFull = {
+  id: GitHubId;
+  full_name: string;
+  description: string;
+  language: string;
+  stargazers_count: number;
 
   //////////////////////////
   // OTHER

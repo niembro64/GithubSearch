@@ -26,10 +26,6 @@ type LikesScreenProps = {
 const LikesScreen = observer(({navigation}: LikesScreenProps) => {
   const [likes, setLikes] = useAtom(likesGithubAtom);
 
-  useEffect(() => {
-    console.log('likes', likes);
-  }, [likes]);
-
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}

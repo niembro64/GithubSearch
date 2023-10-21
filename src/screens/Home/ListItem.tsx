@@ -28,23 +28,20 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
   const [likes, setLikes] = useAtom(likesGithubAtom);
   const [repoLiked, setRepoLiked] = useState<boolean>(false);
 
-  const deleteLike = useCallback(
-    async (repoId: string) => {
-      let res = null;
+  const deleteLike = useCallback(async () => {
+    let res = null;
 
-      try {
-        res = await axios.delete(`http://${myIp}:8080/repo/${repoId}`);
+    try {
+      res = await axios.delete(`http://${myIp}:8080/repo/${repo.id}`);
 
-        if (res?.data) {
-          setLikes([...likes.filter(like => like.id !== repo.id)]);
-        }
-      } catch (err) {
-        console.error('Error deleting repo from server:', err);
-        Alert.alert('Error', 'Failed to delete repository from server.');
+      if (res?.data) {
+        setLikes([...likes.filter(like => like.id !== repo.id)]);
       }
-    },
-    [likes, setLikes, repo],
-  );
+    } catch (err) {
+      console.error('Error deleting repo from server:', err);
+      Alert.alert('Error', 'Failed to delete repository from server.');
+    }
+  }, [likes, setLikes, repo]);
 
   const addLike = useCallback(async () => {
     let res = null;
@@ -58,10 +55,10 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     };
 
     try {
-      console.log('saving newObject', newObject);
+      // console.log('saving newObject', newObject);
       res = await axios.post(`http://${myIp}:8080/repo/`, newObject);
 
-      console.log('res?.data', res?.data);
+      // console.log('res?.data', res?.data);
       if (res?.data) {
         setLikes([...likes, repo]);
       }
@@ -73,7 +70,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
 
   const onThumbPress = useCallback(() => {
     if (repoLiked) {
-      deleteLike(repo.id.toString());
+      deleteLike();
     } else {
       if (likes.length < numAllowedLikes) {
         addLike();
@@ -81,18 +78,22 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
         Alert.alert('Error', 'You can only like 10 repositories.');
       }
     }
-  }, [likes, repoLiked, repo, deleteLike, addLike]);
+  }, [likes, repoLiked, deleteLike, addLike]);
 
   useEffect(() => {
     const found = likes.find(like => like.id === repo.id);
 
-    console.log('found', found?.id, found?.full_name);
+    // console.log('found', found?.id, found?.full_name);
     if (found) {
       setRepoLiked(true);
     } else {
       setRepoLiked(false);
     }
   }, [repo, likes]);
+
+  useEffect(() => {
+    console.log('repo', JSON.stringify(repo, null, 2));
+  }, [repo]);
 
   return (
     <View
