@@ -153,7 +153,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
               language: item?.language || '',
               stargazers_count: item?.stargazers_count || 0,
               created_at: item?.created_at || '',
-              url: item?.url || '',
+              html_url: item?.html_url || '',
             };
           },
         );
@@ -190,7 +190,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
               description: item.description,
               language: item.language,
               stargazers_count: item.stargazersCount,
-              url: item.url,
+              html_url: item.html_url,
               created_at: item.createdAt,
             };
           },

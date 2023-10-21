@@ -8,6 +8,7 @@ import {
   Alert,
   Animated,
   Platform,
+  Linking,
   Text,
   TouchableOpacity,
   View,
@@ -40,6 +41,14 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     useNativeDriver: true,
   });
 
+  const openGitHubURL = () => {
+    if (repo?.html_url) {
+      Linking.openURL(repo.html_url).catch(err =>
+        console.error("Couldn't load page", err),
+      );
+    }
+  };
+
   const deleteLike = useCallback(async () => {
     isLoadingRef.current = true;
     let res = null;
@@ -69,7 +78,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
       language: repo?.language || '',
       stargazersCount: repo?.stargazers_count || 0,
       createdAt: repo?.created_at || '',
-      url: repo?.url || '',
+      html_url: repo?.html_url || '',
     };
 
     try {
@@ -152,7 +161,8 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
         borderRadius: spacing.md,
         backgroundColor: colors.transparent,
       }}>
-      <View
+      <TouchableOpacity
+        onPress={openGitHubURL}
         style={{
           flex: 1,
           flexDirection: 'column',
@@ -218,7 +228,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
             </Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
 
       <TouchableOpacity
         style={{

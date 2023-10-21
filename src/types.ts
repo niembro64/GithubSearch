@@ -13,7 +13,7 @@ export type RepoServer = {
   language: string;
   stargazersCount: number;
   createdAt: string;
-  url: string;
+  html_url: string;
 };
 
 export type RepoGithubSmall = {
@@ -23,7 +23,7 @@ export type RepoGithubSmall = {
   language: string;
   stargazers_count: number;
   created_at: string;
-  url: string;
+  html_url: string;
 };
 
 export type RepoGithubFull = {
