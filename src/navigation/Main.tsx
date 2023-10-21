@@ -9,13 +9,19 @@ import GithubListScreen from '../screens/Home/GithubListScreen';
 import LikesScreen from '../screens/Home/LikesScreen';
 import {sortStarsAtom} from '../state';
 import {useAtom} from 'jotai';
+import {SortRepoState} from '~/types';
 
 const Stack = createNativeStackNavigator();
 
 export const MainNavigator: React.FC = () => {
   const [sortStars, setSortStars] = useAtom(sortStarsAtom);
 
-  const arrow = sortStars === 'none' ? '↕️' : sortStars === 'asc' ? '⬆️' : '⬇️';
+  const arrow =
+    sortStars === ('star-random' as SortRepoState)
+      ? '↕️'
+      : sortStars === ('star-asc' as SortRepoState)
+      ? '⬆️'
+      : '⬇️';
 
   return (
     <NavigationContainer>
@@ -28,14 +34,14 @@ export const MainNavigator: React.FC = () => {
               <Button
                 onPress={() => {
                   switch (sortStars) {
-                    case 'none':
-                      setSortStars('asc');
+                    case 'star-random' as SortRepoState:
+                      setSortStars('star-asc' as SortRepoState);
                       break;
-                    case 'asc':
-                      setSortStars('desc');
+                    case 'star-asc' as SortRepoState:
+                      setSortStars('star-desc' as SortRepoState);
                       break;
-                    case 'desc':
-                      setSortStars('none');
+                    case 'star-desc' as SortRepoState:
+                      setSortStars('star-random' as SortRepoState);
                       break;
                     default:
                       throw new Error('sortStars is not a valid value');
@@ -83,14 +89,14 @@ export const MainNavigator: React.FC = () => {
               <Button
                 onPress={() => {
                   switch (sortStars) {
-                    case 'none':
-                      setSortStars('asc');
+                    case 'star-random' as SortRepoState:
+                      setSortStars('star-asc' as SortRepoState);
                       break;
-                    case 'asc':
-                      setSortStars('desc');
+                    case 'star-asc' as SortRepoState:
+                      setSortStars('star-desc' as SortRepoState);
                       break;
-                    case 'desc':
-                      setSortStars('none');
+                    case 'star-desc' as SortRepoState:
+                      setSortStars('star-random' as SortRepoState);
                       break;
                     default:
                       throw new Error('sortStars is not a valid value');

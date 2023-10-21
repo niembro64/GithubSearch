@@ -35,7 +35,7 @@ import {
   RepoGithubSmall,
   RepoGithubFull,
   RepoServer,
-  SortStars,
+  SortRepoState,
 } from '../../types';
 import {ListItem} from './ListItem';
 

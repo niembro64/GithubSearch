@@ -4,7 +4,7 @@
 // and the number of search results here
 ///////////////////////////////////////////////
 export const maxLikes = 10;
-export const maxResults = 8;
+export const maxResults = 16;
 
 ///////////////////////////////////////////////
 // Change "myIp" to your machine's local IP address

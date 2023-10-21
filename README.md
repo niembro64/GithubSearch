@@ -7,7 +7,7 @@
     X App behavior on refresh.
 
     User Interface:
-    ? Autocomplete dropdown for Github repository search.
+    X Autocomplete dropdown for Github repository search.
 
     Server Interactions:
     X Understand and adhere to server limitations (e.g., in-memory storage).
