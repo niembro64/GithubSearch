@@ -85,12 +85,12 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(fadeAnim, {
-          toValue: 1,
+          toValue: 0.2,
           duration: 100,
           useNativeDriver: true,
         }),
         Animated.timing(fadeAnim, {
-          toValue: 0,
+          toValue: 0.1,
           duration: 100,
           useNativeDriver: true,
         }),
@@ -103,7 +103,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
       fadeInOut();
     } else {
       // Reset the opacity to 0 when isLoading becomes false
-      fadeAnim.setValue(0);
+      fadeAnim.setValue(1);
     }
   }, [isLoading]);
 
@@ -422,7 +422,14 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                     : 'Max Likes'}
                 </Text>
               </Animated.View>
-              <Animated.Text style={{opacity: fadeAnim}}>
+              <Animated.Text
+                style={{
+                  flex: 2,
+                  textAlign: 'center',
+                  fontSize: 22,
+                  fontWeight: 'bold',
+                  opacity: fadeAnim,
+                }}>
                 Search Github
               </Animated.Text>
             </View>
