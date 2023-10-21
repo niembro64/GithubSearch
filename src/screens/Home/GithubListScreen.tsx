@@ -78,7 +78,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   // ANIMATION
   //////////////////////////////////////////////////
   const scaleValue = new Animated.Value(1);
-  const colorBlue = new Animated.Value(0);
+
   const colorGray = new Animated.Value(0);
 
   const springNumber: any = Animated.spring(scaleValue, {
@@ -89,43 +89,24 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
     useNativeDriver: true,
   });
 
-  const loopRed: any = Animated.loop(
-    Animated.sequence([
-      Animated.timing(colorBlue, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: false,
-      }),
-      Animated.timing(colorBlue, {
-        toValue: 0,
-        duration: 100,
-        useNativeDriver: false,
-      }),
-    ]),
-  );
-
   const loopGray: any = Animated.loop(
     Animated.sequence([
       Animated.timing(colorGray, {
         toValue: 1,
-        duration: 1000,
-        useNativeDriver: false,
+        duration: 100,
+        useNativeDriver: true,
       }),
       Animated.timing(colorGray, {
         toValue: 0,
-        duration: 1000,
-        useNativeDriver: false,
+        duration: 100,
+        useNativeDriver: true,
       }),
     ]),
   );
 
-  const interpolatedBlue = colorBlue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [colors.palette.blue400, colors.palette.blue600],
-  });
   const interpolatedGray = colorGray.interpolate({
     inputRange: [0, 1],
-    outputRange: [colors.palette.gray300, colors.palette.gray500],
+    outputRange: [0, 1],
   });
 
   const githubGetSearchResults = useCallback(async () => {
@@ -242,19 +223,35 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   }, [likes]);
 
   useEffect(() => {
+    let t: string | number | NodeJS.Timeout | null | undefined = null;
+
     if (borderActive) {
-      loopGray.stop();
-      loopRed.start();
-    } else {
-      loopRed.stop();
       loopGray.start();
+    } else {
+      t = setTimeout(() => {
+        loopGray.stop();
+      }, 300);
     }
+
+    return () => {
+      if (t) {
+        clearTimeout(t);
+      }
+    };
   }, [borderActive]);
 
   useEffect(() => {
     if (textQuery !== textInput) {
+      if (borderActive) {
+        return;
+      }
+      console.log('setting border active true');
       setBorderActive(true);
     } else {
+      if (!borderActive) {
+        return;
+      }
+      console.log('setting border active false');
       setBorderActive(false);
     }
   }, [textInput, textQuery, isLoading]);
@@ -401,7 +398,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                 alignItems: 'center',
                 marginBottom: spacing.xl,
               }}>
-              <Animated.View
+              <View
                 style={[
                   {
                     flex: 1,
@@ -413,9 +410,12 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                     paddingLeft: spacing.md,
                     paddingRight: spacing.md,
                   },
-                  !borderActive
-                    ? {borderColor: interpolatedGray}
-                    : {borderColor: interpolatedBlue},
+
+                  {
+                    borderColor: borderActive
+                      ? colors.palette.blue600
+                      : colors.palette.gray400,
+                  },
                 ]}>
                 <TextInput
                   style={{
@@ -429,7 +429,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                   onChangeText={text => setTextInput(text)}
                   value={textInput}
                 />
-              </Animated.View>
+              </View>
             </View>
           </View>
         </View>
