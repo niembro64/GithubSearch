@@ -42,6 +42,15 @@
   - If the developer wishes to incorporate state management:
     - 🟢 Use of Jotai, but open to other state management.
 
+## Developer Notes
+
+- Jotai is awesome this is my first time using it, and I will be suggesting it for smaller projects in the future. MOBX was an absolute pain to try to get working from scratch (you can see it in my commit history)
+- I was clear to use the requirements type description even if the naming scheme was different than what github gives you
+  - full_name vs fullName
+  - stargazers_count vs stargazersCount
+  - created_at vs createdAt
+- For quite a while I was getting errors regarding string vs numbers for IDs, and I was confused because I was using the same data structure as the example. I eventually realized that the example was wrong and the ID should be a string.
+
 ////////////////////////////////////////////
 
 # React Native Engineer Challenge (2-5 hrs)
