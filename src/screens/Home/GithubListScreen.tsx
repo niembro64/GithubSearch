@@ -16,7 +16,6 @@ import {
   RefreshControl,
   Text,
   TextInput,
-  Vibration,
   View,
 } from 'react-native';
 import {maxLikes, maxResults, myIp} from '../../YOUR_IP_HERE';
@@ -25,7 +24,6 @@ import {ConfettiCannon} from '../../components/ConfettiCannon';
 import {
   keyboardVerticalOffsetIOS,
   sortResults,
-  vibrationComplex,
   vibrationDouble,
 } from '../../helpers';
 import {
@@ -38,10 +36,9 @@ import {
 import {spacing} from '../../styles';
 import {
   NumLikesState,
-  RepoGithubSmall,
   RepoGithubFull,
+  RepoGithubSmall,
   RepoServer,
-  SortRepoState,
 } from '../../types';
 import {ListItem} from './ListItem';
 
@@ -59,8 +56,6 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   const [textInput, setTextInput] = useAtom(textInputAtom);
   const [textQuery, setTextQuery] = useAtom(textQueryAtom);
 
-  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
-
   //////////////////////////////////////////////////
   // STATES
   //////////////////////////////////////////////////
@@ -72,16 +67,11 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   //////////////////////////////////////////////////
   // ANIMATION
   //////////////////////////////////////////////////
-
-  const debouncedSetQuery = useCallback(
-    debounce((newQuery: string | ((prev: string) => string)) => {
-      setTextQuery(newQuery);
-    }, 700),
-    [],
-  );
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleValue = new Animated.Value(1);
+  const colorGray = new Animated.Value(0);
 
   const fadeInOut = () => {
-    // This will fade the text in and then out continuously as long as isLoading is true
     Animated.loop(
       Animated.sequence([
         Animated.timing(fadeAnim, {
@@ -98,25 +88,12 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
     ).start();
   };
 
-  useEffect(() => {
-    if (isLoading) {
-      fadeInOut();
-    } else {
-      // Reset the opacity to 0 when isLoading becomes false
-      fadeAnim.setValue(1);
-    }
-  }, [isLoading]);
-
-  useEffect(() => {
-    debouncedSetQuery(textInput);
-  }, [textInput, debouncedSetQuery]);
-
-  useEffect(() => {
-    sortResults(results, sortStars);
-  }, [sortStars]);
-  const scaleValue = new Animated.Value(1);
-
-  const colorGray = new Animated.Value(0);
+  const debouncedSetQuery = useCallback(
+    debounce((newQuery: string | ((prev: string) => string)) => {
+      setTextQuery(newQuery);
+    }, 700),
+    [],
+  );
 
   const springNumber: any = Animated.spring(scaleValue, {
     toValue: 1,
@@ -146,6 +123,9 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
     outputRange: [0, 1],
   });
 
+  //////////////////////////////////////////////////
+  // FUNCTIONS
+  //////////////////////////////////////////////////
   const githubGetSearchResults = useCallback(async () => {
     if (textQuery === '') {
       setResults([]);
@@ -234,6 +214,26 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
         console.error('Error fetching saved repos from server:', err);
       });
   };
+
+  /////////////////////////////////////////////////
+  // EFFECTS
+  /////////////////////////////////////////////////
+  useEffect(() => {
+    if (isLoading) {
+      fadeInOut();
+    } else {
+      // Reset the opacity to 0 when isLoading becomes false
+      fadeAnim.setValue(1);
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    debouncedSetQuery(textInput);
+  }, [textInput, debouncedSetQuery]);
+
+  useEffect(() => {
+    sortResults(results, sortStars);
+  }, [sortStars]);
 
   useEffect(() => {
     githubGetSearchResults();
