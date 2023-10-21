@@ -3,7 +3,7 @@
 // ListItem.tsx
 import axios from 'axios';
 import {useAtom} from 'jotai';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {
   Alert,
   Image,
@@ -12,21 +12,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {myIp, maxLikes} from '../../YOUR_IP_HERE';
+import {maxLikes, myIp} from '../../YOUR_IP_HERE';
 import {colors, getColorFromLanguage} from '../../colors';
 import {truncateString} from '../../helpers';
-import {likesGithubAtom} from '../../state';
+import {likesAtom, resultsAtom} from '../../state';
 import {spacing} from '../../styles';
-import {RepoGithub} from '../../types';
+import {RepoGithub, RepoServer} from '../../types';
 
 interface ListItemProps {
   repo: RepoGithub;
 }
 
 export const ListItem: React.FC<ListItemProps> = ({repo}) => {
+  const [results, setResults] = useAtom(resultsAtom);
+  const [likes, setLikes] = useAtom(likesAtom);
   const numStars = repo?.stargazers_count || 0;
-  const [likes, setLikes] = useAtom(likesGithubAtom);
-  const [repoLiked, setRepoLiked] = useState<boolean>(false);
 
   const deleteLike = useCallback(async () => {
     let res = null;
@@ -36,7 +36,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
 
       console.log('res', res?.data);
 
-      setLikes([...likes.filter(like => like.id !== repo.id)]);
+      setLikes([...likes.filter(like => like.id != repo.id)]);
     } catch (err) {
       console.error('Error deleting repo from server:', err);
       Alert.alert('Error', 'Failed to delete repository from server.');
@@ -46,17 +46,16 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
   const addLike = useCallback(async () => {
     let res = null;
 
-    const newObject = {
+    const newObjectToServer: RepoServer = {
       id: repo?.id.toString() || '',
-      full_name: repo?.full_name || '',
+      fullName: repo?.full_name || '',
       description: repo?.description || '',
       language: repo?.language || '',
-      stargazers_count: repo?.stargazers_count || 0,
+      stargazersCount: repo?.stargazers_count || 0,
     };
 
     try {
-      // console.log('saving newObject', newObject);
-      res = await axios.post(`http://${myIp}:8080/repo/`, newObject);
+      res = await axios.post(`http://${myIp}:8080/repo/`, newObjectToServer);
 
       console.log('res', res?.data);
 
@@ -68,7 +67,14 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
   }, [likes, setLikes, repo]);
 
   const onThumbPress = useCallback(() => {
-    if (repoLiked) {
+    console.log(
+      'repo',
+      repo.full_name,
+      'repoLiked',
+      repo?.isLiked ? '___YES___' : '___NO___',
+    );
+
+    if (repo?.isLiked) {
       deleteLike();
     } else {
       if (likes.length < maxLikes) {
@@ -77,18 +83,49 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
         Alert.alert('Error', 'You can only like 10 repositories.');
       }
     }
-  }, [likes, repoLiked, deleteLike, addLike]);
+  }, [repo, deleteLike, likes.length, addLike]);
 
   useEffect(() => {
-    const found = likes.find(like => like.id === repo.id);
+    let repoHasChanged = false;
+    const found = likes.find(like => like.id == repo.id);
 
-    // console.log('found', found?.id, found?.full_name);
     if (found) {
-      setRepoLiked(true);
+      const newResults = results.map(result => {
+        if (result.id == repo.id) {
+          if (result?.isLiked !== repo?.isLiked) {
+            repoHasChanged = true;
+          }
+
+          return {
+            ...result,
+            isLiked: true,
+          };
+        }
+        return result;
+      });
+
+      if (repoHasChanged) {
+        setResults(newResults);
+      }
     } else {
-      setRepoLiked(false);
+      const newResults = results.map(result => {
+        if (result.id == repo.id) {
+          if (result?.isLiked !== repo?.isLiked) {
+            repoHasChanged = true;
+          }
+          return {
+            ...result,
+            isLiked: false,
+          };
+        }
+        return result;
+      });
+
+      if (repoHasChanged) {
+        setResults(newResults);
+      }
     }
-  }, [repo, likes]);
+  }, [repo, likes, results, setResults]);
 
   useEffect(() => {
     console.log('repo', JSON.stringify(repo, null, 2));
@@ -190,7 +227,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
           style={{
             width: 40,
             height: 40,
-            tintColor: repoLiked
+            tintColor: repo?.isLiked
               ? colors.palette.blue600
               : likes.length < maxLikes
               ? colors.palette.gray300

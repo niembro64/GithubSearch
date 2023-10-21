@@ -16,7 +16,7 @@ import {spacing} from '../../styles';
 import {ListItem} from './ListItem';
 // import {useNavigation} from '@react-navigation/native';
 import {useAtom} from 'jotai';
-import {likesGithubAtom, searchResultsAtom} from '../../state';
+import {likesAtom, resultsAtom} from '../../state';
 import {keyboardVerticalOffsetIOS} from '../../helpers';
 
 type LikesScreenProps = {
@@ -24,7 +24,7 @@ type LikesScreenProps = {
 };
 
 const LikesScreen = observer(({navigation}: LikesScreenProps) => {
-  const [likes, setLikes] = useAtom(likesGithubAtom);
+  const [likes, setLikes] = useAtom(likesAtom);
 
   return (
     <KeyboardAvoidingView

@@ -6,7 +6,16 @@ export type NumLikesState = 'zero' | 'one' | 'many' | 'max';
 
 export type GitHubId = string;
 
+export type RepoServer = {
+  id: GitHubId;
+  fullName: string;
+  description: string;
+  language: string;
+  stargazersCount: number;
+};
+
 export type RepoGithub = {
+  isLiked: boolean;
   id: GitHubId;
   full_name: string;
   description: string;

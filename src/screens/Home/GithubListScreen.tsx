@@ -21,8 +21,8 @@ import {myIp, maxLikes, maxResults} from '../../YOUR_IP_HERE';
 import {colors} from '../../colors';
 import {ConfettiCannon} from '../../components/ConfettiCannon';
 import {
-  likesGithubAtom,
-  searchResultsAtom,
+  likesAtom,
+  resultsAtom,
   textInputAtom,
   textQueryAtom,
 } from '../../state';
@@ -36,10 +36,10 @@ type GithubListScreenProps = {
 };
 
 const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
-  const [likes, setLikes] = useAtom(likesGithubAtom);
+  const [results, setResults] = useAtom(resultsAtom);
+  const [likes, setLikes] = useAtom(likesAtom);
   const [numLikesState, setNumLikesState] = useState<NumLikesState>('zero');
 
-  const [searchResults, setSearchResults] = useAtom(searchResultsAtom);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>(null);
@@ -58,10 +58,10 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
 
   const githubGetSearchResults = useCallback(async () => {
     if (textQuery === '') {
-      setSearchResults([]);
+      setResults([]);
     } else {
       setIsLoading(true);
-      setSearchResults([]);
+      setResults([]);
 
       try {
         const response = await axios.get(
@@ -69,7 +69,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
         );
 
         if (!response?.data?.items) {
-          setSearchResults([]);
+          setResults([]);
           Alert.alert('Error', 'Failed to fetch GitHub repositories.');
           return;
         }
@@ -86,19 +86,20 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
               description: item.description,
               language: item.language,
               stargazers_count: item.stargazers_count,
+              isLiked: likes.some(like => like.id == item.id),
             };
           },
         );
 
-        setSearchResults(smallerResItems);
+        setResults(smallerResItems);
       } catch (err) {
-        setSearchResults([]);
+        setResults([]);
         Alert.alert('Error', 'Failed to fetch GitHub repositories.');
       } finally {
         setIsLoading(false);
       }
     }
-  }, [textQuery, setTextQuery, setSearchResults]);
+  }, [textQuery, setTextQuery, setResults]);
 
   const serverGetLikes = () => {
     axios
@@ -149,7 +150,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
           {error && <Text>Error: {error}</Text>}
           {!error && (
             <FlatList
-              data={searchResults}
+              data={results}
               refreshControl={
                 <RefreshControl
                   refreshing={isLoading}
