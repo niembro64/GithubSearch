@@ -143,11 +143,10 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
           (item: RepoGithubFull) => {
             return {
               id: item.id,
-              full_name: item.full_name,
-              description: item.description,
-              language: item.language,
-              stargazers_count: item.stargazers_count,
-              isLiked: likes.some(like => '' + like.id === '' + item.id),
+              full_name: item?.full_name || '',
+              description: item?.description || '',
+              language: item?.language || '',
+              stargazers_count: item?.stargazers_count || 0,
             };
           },
         );
@@ -170,9 +169,25 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
     axios
       .get(`http://${myIp}:8080/repo/`)
       .then(response => {
-        if (response?.data?.repos && Array.isArray(response.data.repos)) {
-          setLikes(response.data.repos);
+        if (!response?.data?.repos) {
+          setLikes([]);
+          Alert.alert('Error', 'Failed to fetch saved repositories.');
+          return;
         }
+
+        const smallerResItems: RepoGithub[] = response.data.repos.map(
+          (item: RepoGithubFull) => {
+            return {
+              id: item.id,
+              full_name: item.full_name,
+              description: item.description,
+              language: item.language,
+              stargazers_count: item.stargazers_count,
+            };
+          },
+        );
+
+        setLikes(response.data.repos);
       })
       .catch(err => {
         console.error('Error fetching saved repos from server:', err);
