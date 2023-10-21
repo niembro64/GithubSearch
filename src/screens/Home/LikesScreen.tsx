@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-import axios from 'axios';
 import {observer} from 'mobx-react';
-import React, {useCallback} from 'react';
+import React from 'react';
 import {
-  Alert,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -12,10 +10,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {myIp} from '../../YOUR_IP_HERE';
 import {colors} from '../../colors';
 import {spacing} from '../../styles';
-import {RepoGithub} from '../../types';
 import {ListItem} from './ListItem';
 // import {useNavigation} from '@react-navigation/native';
 import {useAtom} from 'jotai';
@@ -26,14 +22,8 @@ type LikesScreenProps = {
 };
 
 const LikesScreen = observer(({navigation}: LikesScreenProps) => {
-  const [likesGithub, setLikesGithub] = useAtom(likesGithubAtom);
-
-  const deleteFromServer = useCallback((repoId: string) => {
-    axios.delete(`http://${myIp}:8080/repo/${repoId}`).catch(err => {
-      console.error('Error deleting repo from server:', err);
-      Alert.alert('Error', 'Failed to delete repository from server.');
-    });
-  }, []);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [likes, setLikes] = useAtom(likesGithubAtom);
 
   return (
     <KeyboardAvoidingView
@@ -42,7 +32,7 @@ const LikesScreen = observer(({navigation}: LikesScreenProps) => {
       keyboardVerticalOffset={72}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <FlatList
-        data={likesGithub}
+        data={likes}
         style={{
           width: '100%',
         }}
@@ -51,20 +41,7 @@ const LikesScreen = observer(({navigation}: LikesScreenProps) => {
           width: '100%',
         }}
         keyExtractor={item => item.id.toString()}
-        renderItem={({item: repo}) => (
-          <ListItem
-            repo={repo}
-            likesGithub={likesGithub}
-            allowLikes={false}
-            onLikeToggle={() => {
-              deleteFromServer(repo.id.toString());
-              const newLikes = likesGithub.filter(
-                (r: RepoGithub) => r.id !== repo.id,
-              );
-              setLikesGithub(newLikes);
-            }}
-          />
-        )}
+        renderItem={({item: repo}) => <ListItem repo={repo} />}
       />
       {/* ////////////////////////////////// */}
       {/* SEARCH BAR */}

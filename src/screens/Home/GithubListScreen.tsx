@@ -22,28 +22,37 @@ import {likesGithubAtom} from '../../state';
 import {spacing} from '../../styles';
 import {RepoGithub} from '../../types';
 import {ListItem} from './ListItem';
+import {ConfettiCannon} from '../../components/ConfettiCannon';
 
 type GithubListScreenProps = {
   navigation: any;
 };
 
 const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
-  const [likesGithub, setLikesGithub] = useAtom(likesGithubAtom);
+  const [likes, setLikes] = useAtom(likesGithubAtom);
   const [searchResults, setSearchResults] = useState<RepoGithub[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>(null);
   const [inputValue, setInputValue] = useState<string>('web_smashed');
   const [searchingValue, setSearchingValue] = useState<string>('web_smashed');
 
-  const [allowLikes, setAllowLikes] = useState<boolean>(true);
-
   useEffect(() => {
-    if (likesGithub.length > 9) {
-      setAllowLikes(false);
-    } else {
-      setAllowLikes(true);
+    if (likes.length === 10) {
+      Alert.alert(
+        'Congratulations!',
+        'You have liked 10 repositories! 🎉',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              // console.log('OK Pressed');
+            },
+          },
+        ],
+        {cancelable: false},
+      );
     }
-  }, [likesGithub]);
+  }, [likes]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -81,34 +90,12 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
     }
   }, [searchingValue]);
 
-  const saveToServer = useCallback((repo: RepoGithub) => {
-    axios
-      .post(`http://${myIp}:8080/repo/`, {
-        id: repo?.id.toString() || '',
-        full_name: repo?.full_name || '',
-        description: repo?.description || '',
-        language: repo?.language || '',
-        stargazers_count: repo?.stargazers_count || 0,
-      })
-      .catch(err => {
-        console.error('Error saving repo to server:', err);
-        Alert.alert('Error', 'Failed to save repository to server.');
-      });
-  }, []);
-
-  const deleteFromServer = useCallback((repoId: string) => {
-    axios.delete(`http://${myIp}:8080/repo/${repoId}`).catch(err => {
-      console.error('Error deleting repo from server:', err);
-      Alert.alert('Error', 'Failed to delete repository from server.');
-    });
-  }, []);
-
   const fetchSavedRepos = useCallback(() => {
     axios
       .get(`http://${myIp}:8080/repo/`)
       .then(response => {
         if (response?.data?.repos && Array.isArray(response.data.repos)) {
-          setLikesGithub(response.data.repos);
+          setLikes(response.data.repos);
         }
       })
       .catch(err => {
@@ -121,164 +108,136 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   }, [fetchSavedRepos]);
 
   return (
-    <KeyboardAvoidingView
-      style={{flex: 1}}
-      // NEED TO ACCOUNT FOR HEADER BEING USED
-      keyboardVerticalOffset={72}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View style={{flex: 1, justifyContent: 'space-between'}}>
-        {error && <Text>Error: {error}</Text>}
-        {!error && (
-          <FlatList
-            data={searchResults}
-            refreshControl={
-              <RefreshControl
-                refreshing={isLoading}
-                onRefresh={getRepositories}
-              />
-            }
-            contentContainerStyle={{
-              marginTop: spacing.xxl,
-              width: '100%',
-            }}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({item: repo}) => (
-              <ListItem
-                repo={repo}
-                likesGithub={likesGithub}
-                allowLikes={allowLikes}
-                onLikeToggle={() => {
-                  const isThisLiked = likesGithub.find(
-                    (r: RepoGithub) => r.id === repo.id,
-                  );
+    <>
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        // NEED TO ACCOUNT FOR HEADER BEING USED
+        keyboardVerticalOffset={72}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <View style={{flex: 1, justifyContent: 'space-between'}}>
+          {error && <Text>Error: {error}</Text>}
+          {!error && (
+            <FlatList
+              data={searchResults}
+              refreshControl={
+                <RefreshControl
+                  refreshing={isLoading}
+                  onRefresh={getRepositories}
+                />
+              }
+              contentContainerStyle={{
+                marginTop: spacing.xxl,
+                width: '100%',
+              }}
+              keyExtractor={item => item.id.toString()}
+              renderItem={({item: repo}) => <ListItem repo={repo} />}
+            />
+          )}
 
-                  if (!isThisLiked && !allowLikes) {
-                    Alert.alert(
-                      'Maximum number of likesGithub reached',
-                      'Please unlike some repositories to like more',
-                    );
-                    return;
-                  }
-                  const newLikes = [...likesGithub];
-                  const likeFound = newLikes.findIndex(
-                    (r: RepoGithub) => r.id === repo.id,
-                  );
-                  if (likeFound > -1) {
-                    newLikes.splice(likeFound, 1);
-                    deleteFromServer(repo.id.toString());
-                  } else {
-                    newLikes.push(repo);
-                    saveToServer(repo);
-                  }
-                  setLikesGithub(newLikes);
-                }}
-              />
-            )}
-          />
-        )}
-
-        {/* ////////////////////////////////// */}
-        {/* SEARCH BAR */}
-        {/* ////////////////////////////////// */}
-        <View
-          style={{
-            borderTopWidth: 1,
-            borderTopColor: colors.palette.gray400,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: 0,
-          }}>
+          {/* ////////////////////////////////// */}
+          {/* SEARCH BAR */}
+          {/* ////////////////////////////////// */}
           <View
             style={{
-              width: '100%',
+              borderTopWidth: 1,
+              borderTopColor: colors.palette.gray400,
               display: 'flex',
-              flexDirection: 'row',
+              flexDirection: 'column',
               justifyContent: 'space-between',
               alignItems: 'center',
-              marginVertical: spacing.md,
+              marginTop: 0,
             }}>
-            <TouchableOpacity
-              activeOpacity={1}
+            <View
               style={{
-                marginHorizontal: spacing.md,
-                backgroundColor:
-                  likesGithub.length > 0
-                    ? colors.palette.blue200
-                    : colors.palette.gray200,
+                width: '100%',
                 display: 'flex',
                 flexDirection: 'row',
-                justifyContent: 'center',
+                justifyContent: 'space-between',
                 alignItems: 'center',
-                borderRadius: spacing.sm,
-                padding: spacing.sm,
-                paddingHorizontal: spacing.md,
-              }}
-              // @ts-ignore
-              onPress={() => navigation.navigate('Likes')}>
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: 'bold',
-                  color:
-                    likesGithub.length > 0
-                      ? colors.palette.blue600
-                      : colors.palette.gray400,
-                  fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
-                }}>
-                {likesGithub.length}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: 'bold',
-                  color:
-                    likesGithub.length > 0
-                      ? colors.palette.blue600
-                      : colors.palette.gray400,
-                }}>
-                {likesGithub.length === 1 ? ' Like' : ' Likes'}
-              </Text>
-            </TouchableOpacity>
-            <Text
-              style={{
-                flex: 1,
-                textAlign: 'center',
-                fontSize: 22,
-                fontWeight: 'bold',
+                marginVertical: spacing.md,
               }}>
-              Search Repositories
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: spacing.xl,
-            }}>
-            <TextInput
+              <TouchableOpacity
+                activeOpacity={1}
+                style={{
+                  marginHorizontal: spacing.md,
+                  backgroundColor:
+                    likes.length > 0
+                      ? colors.palette.blue200
+                      : colors.palette.gray200,
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: spacing.sm,
+                  padding: spacing.sm,
+                  paddingHorizontal: spacing.md,
+                }}
+                // @ts-ignore
+                onPress={() => navigation.navigate('Likes')}>
+                <Text
+                  style={{
+                    fontSize: 22,
+                    fontWeight: 'bold',
+                    color:
+                      likes.length > 0
+                        ? colors.palette.blue600
+                        : colors.palette.gray400,
+                    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+                  }}>
+                  {likes.length}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 22,
+                    fontWeight: 'bold',
+                    color:
+                      likes.length > 0
+                        ? colors.palette.blue600
+                        : colors.palette.gray400,
+                  }}>
+                  {likes.length === 1 ? ' Like' : ' Likes'}
+                </Text>
+              </TouchableOpacity>
+              <Text
+                style={{
+                  flex: 1,
+                  textAlign: 'center',
+                  fontSize: 22,
+                  fontWeight: 'bold',
+                }}>
+                Search Repositories
+              </Text>
+            </View>
+            <View
               style={{
-                flex: 1,
-                height: 40,
-                borderColor: colors.palette.gray400,
-                borderWidth: 1,
-                borderRadius: spacing.sm,
-                paddingLeft: spacing.md,
-                paddingRight: spacing.md,
-                marginRight: spacing.md,
-                marginLeft: spacing.md,
-                paddingVertical: 0,
-              }}
-              placeholder="Search GitHub repositories..."
-              onChangeText={text => setInputValue(text)}
-              value={inputValue}
-            />
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: spacing.xl,
+              }}>
+              <TextInput
+                style={{
+                  flex: 1,
+                  height: 40,
+                  borderColor: colors.palette.gray400,
+                  borderWidth: 1,
+                  borderRadius: spacing.sm,
+                  paddingLeft: spacing.md,
+                  paddingRight: spacing.md,
+                  marginRight: spacing.md,
+                  marginLeft: spacing.md,
+                  paddingVertical: 0,
+                }}
+                placeholder="Search GitHub repositories..."
+                onChangeText={text => setInputValue(text)}
+                value={inputValue}
+              />
+            </View>
           </View>
         </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+      {likes?.length === 10 && <ConfettiCannon />}
+    </>
   );
 });
 
