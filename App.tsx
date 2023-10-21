@@ -4,15 +4,18 @@
  *
  * @format
  */
-
+import {RootStoreModel} from './src/RootStore';
+// import {Provider} from 'jotai';
 import React from 'react';
-import { Provider } from 'jotai';
-import { MainNavigator } from './src/navigation/Main';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {MainNavigator} from './src/navigation/Main';
+import {Provider} from 'mobx-react';
+
+const rootStore = RootStoreModel.create();
 
 function App(): JSX.Element {
   return (
-    <Provider>
+    <Provider rootStore={rootStore}>
       <SafeAreaProvider>
         <MainNavigator />
       </SafeAreaProvider>

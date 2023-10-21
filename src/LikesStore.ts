@@ -23,7 +23,6 @@ export const LikesStoreModel = types
         return {...repo, like: isLiked};
       });
 
-      // @ts-ignore
       self.searchResults = newSearchResults;
     },
     ///////////////////////////////////////////////
@@ -43,7 +42,7 @@ export const LikesStoreModel = types
         console.log('LIKES BEFORE REPLACE', l?.like);
       });
       console.log('---');
-      // @ts-ignore
+
       self.likes = likesPlusLike;
       self.likes.forEach(l => {
         console.log('LIKES AFTER REPLACE', l?.like);
@@ -56,7 +55,6 @@ export const LikesStoreModel = types
         return {...repo, isLiked};
       });
 
-      // @ts-ignore
       self.searchResults = newSearchResults;
     },
     addLikeBoth(newLike: Repo) {
@@ -118,7 +116,6 @@ export const LikesStoreModel = types
           return {...repo, isLiked};
         });
 
-        // @ts-ignore
         self.searchResults = newSearchResults;
       })();
     },
@@ -135,7 +132,6 @@ export const LikesStoreModel = types
         if (index > -1) {
           const newLikes = self.likes.filter(like => like.id !== likeId);
 
-          // @ts-ignore
           self.likes = newLikes;
         }
       })();

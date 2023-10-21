@@ -13,11 +13,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {Repo} from '~/types';
 import {colors} from '../../colors';
 import {githubGetRepos, serverLikesGet} from '../../helpers';
 import {spacing} from '../../styles';
 import {ListItem} from './ListItem';
-import {Repo} from '~/types';
 
 type GithubListScreenProps = {
   navigation: any;
