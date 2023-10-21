@@ -6,7 +6,7 @@ import axios from 'axios';
 import {useAtom} from 'jotai';
 import {debounce} from 'lodash';
 import {observer} from 'mobx-react';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Alert,
   Animated,
@@ -58,20 +58,9 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   const [likes, setLikes] = useAtom(likesAtom);
   const [textInput, setTextInput] = useAtom(textInputAtom);
   const [textQuery, setTextQuery] = useAtom(textQueryAtom);
-  const debouncedSetQuery = useCallback(
-    debounce((newQuery: string | ((prev: string) => string)) => {
-      setTextQuery(newQuery);
-    }, 700),
-    [],
-  );
 
-  useEffect(() => {
-    debouncedSetQuery(textInput);
-  }, [textInput, debouncedSetQuery]);
+  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
 
-  useEffect(() => {
-    sortResults(results, sortStars);
-  }, [sortStars]);
   //////////////////////////////////////////////////
   // STATES
   //////////////////////////////////////////////////
@@ -83,6 +72,48 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   //////////////////////////////////////////////////
   // ANIMATION
   //////////////////////////////////////////////////
+
+  const debouncedSetQuery = useCallback(
+    debounce((newQuery: string | ((prev: string) => string)) => {
+      setTextQuery(newQuery);
+    }, 700),
+    [],
+  );
+
+  const fadeInOut = () => {
+    // This will fade the text in and then out continuously as long as isLoading is true
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+  };
+
+  useEffect(() => {
+    if (isLoading) {
+      fadeInOut();
+    } else {
+      // Reset the opacity to 0 when isLoading becomes false
+      fadeAnim.setValue(0);
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    debouncedSetQuery(textInput);
+  }, [textInput, debouncedSetQuery]);
+
+  useEffect(() => {
+    sortResults(results, sortStars);
+  }, [sortStars]);
   const scaleValue = new Animated.Value(1);
 
   const colorGray = new Animated.Value(0);
@@ -391,15 +422,9 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                     : 'Max Likes'}
                 </Text>
               </Animated.View>
-              <Text
-                style={{
-                  flex: 2,
-                  textAlign: 'center',
-                  fontSize: 22,
-                  fontWeight: 'bold',
-                }}>
+              <Animated.Text style={{opacity: fadeAnim}}>
                 Search Github
-              </Text>
+              </Animated.Text>
             </View>
             <View
               style={{
