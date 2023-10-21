@@ -31,9 +31,21 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
 
   const [results, setResults] = useAtom(resultsAtom);
   const [likes, setLikes] = useAtom(likesAtom);
-  const numStarsTotal = repo?.stargazers_count || 0;
-  const incrementAmount = Math.ceil(numStarsTotal / 100);
+  const [numStarsTotal, setNumStarsTotal] = useState<number>(0);
+  const [incrementAmount, setIncrementAmount] = useState<number>(0);
   const [numStars, setNumStars] = useState<number>(0);
+
+  useEffect(() => {
+    setNumStarsTotal(repo?.stargazers_count || 0);
+  }, [repo]);
+
+  useEffect(() => {
+    if (numStarsTotal > 0) {
+      setIncrementAmount(Math.ceil(numStarsTotal / 100));
+    } else {
+      setIncrementAmount(0);
+    }
+  }, [numStarsTotal]);
 
   const springNumber: any = Animated.spring(scaleValue, {
     toValue: 1,
@@ -50,11 +62,12 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
         setNumStars(prev => prev + incrementAmount);
       } else {
         clearInterval(interval);
+        setNumStars(numStarsTotal);
       }
     };
 
     // Set the interval
-    const interval = setInterval(incrementStars, 3); // adjust the interval time (50ms) as needed
+    const interval = setInterval(incrementStars, 5); // adjust the interval time (50ms) as needed
 
     // Clear the interval when component unmounts or numStars reaches numStarsTotal
     return () => clearInterval(interval);
@@ -126,7 +139,10 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
 
   const onThumbPress = useCallback(async () => {
     if (isLoadingRef.current) {
-      Alert.alert('Error', 'Please wait for the previous action to complete.');
+      Alert.alert(
+        'Slow Down!',
+        'Please wait for the previous action to complete.',
+      );
       return;
     }
 
