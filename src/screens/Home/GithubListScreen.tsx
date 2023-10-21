@@ -8,6 +8,7 @@ import {observer} from 'mobx-react';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
+  Animated,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -44,6 +45,34 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   const [error, setError] = useState<any>(null);
   const [textInput, setTextInput] = useAtom(textInputAtom);
   const [textQuery, setTextQuery] = useAtom(textQueryAtom);
+
+  const borderColorAnim = useState(new Animated.Value(0))[0];
+
+  useEffect(() => {
+    if (textQuery === textInput && !isLoading) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(borderColorAnim, {
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: false,
+          }),
+          Animated.timing(borderColorAnim, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: false,
+          }),
+        ]),
+      ).start();
+    } else {
+      borderColorAnim.setValue(0);
+    }
+  }, [textQuery, textInput, isLoading, borderColorAnim]);
+
+  const interpolatedBorderColor = borderColorAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [colors.palette.blue500, 'white'],
+  });
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -265,27 +294,34 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                 alignItems: 'center',
                 marginBottom: spacing.xl,
               }}>
-              <TextInput
+              <Animated.View
                 style={{
                   flex: 1,
-                  height: 40,
+                  height: 50,
                   borderColor:
                     textQuery === textInput && !isLoading
                       ? colors.palette.gray400
-                      : colors.palette.blue500,
+                      : interpolatedBorderColor,
                   borderWidth: 2,
                   borderRadius: spacing.sm,
-                  paddingLeft: spacing.md,
-                  paddingRight: spacing.md,
                   marginRight: spacing.md,
                   marginLeft: spacing.md,
-                  paddingVertical: 0,
-                }}
-                placeholder="Enter a Github repo name..."
-                placeholderTextColor={colors.palette.gray400}
-                onChangeText={text => setTextInput(text)}
-                value={textInput}
-              />
+                  paddingLeft: spacing.md,
+                  paddingRight: spacing.md,
+                }}>
+                <TextInput
+                  style={{
+                    flex: 1,
+                    fontSize: 18,
+                    borderRadius: spacing.sm,
+                    paddingVertical: 0,
+                  }}
+                  placeholder="Enter a Github repo name..."
+                  placeholderTextColor={colors.palette.gray400}
+                  onChangeText={text => setTextInput(text)}
+                  value={textInput}
+                />
+              </Animated.View>
             </View>
           </View>
         </View>
