@@ -11,7 +11,7 @@ export const LikesStoreModel = types
     likes: types.optional(types.array(types.frozen<Repo>()), []),
     storeNumber: types.optional(types.number, 0),
   })
-  .actions(self => ({
+  .actions(store => ({
     ///////////////////////////////////////////////
     // SEARCH RESULTS
     ///////////////////////////////////////////////
@@ -19,11 +19,11 @@ export const LikesStoreModel = types
       // Add isLiked property to each repo
       const newSearchResults = repos.map(repo => {
         const isLiked: boolean =
-          self.likes.findIndex(like => like.id === repo.id) > -1;
+          store.likes.findIndex(like => like.id === repo.id) > -1;
         return {...repo, like: isLiked};
       });
 
-      self.searchResults.replace(newSearchResults);
+      this.setSearchResults(newSearchResults);
     },
     ///////////////////////////////////////////////
     // LIKES GITHUB
@@ -38,23 +38,23 @@ export const LikesStoreModel = types
       });
 
       console.log('---');
-      self.likes.forEach(l => {
+      store.likes.forEach(l => {
         console.log('LIKES BEFORE REPLACE', l?.like);
       });
       console.log('---');
-      self.likes.replace(likesPlusLike);
-      self.likes.forEach(l => {
+      store.likes.replace(likesPlusLike);
+      store.likes.forEach(l => {
         console.log('LIKES AFTER REPLACE', l?.like);
       });
       console.log('---');
 
       // Update search results with new likes
-      const newSearchResults = self.searchResults.map(repo => {
-        const isLiked = self.likes.findIndex(like => like.id === repo.id) > -1;
+      const newSearchResults = store.searchResults.map(repo => {
+        const isLiked = store.likes.findIndex(like => like.id === repo.id) > -1;
         return {...repo, isLiked};
       });
 
-      self.searchResults.replace(newSearchResults);
+      this.setSearchResults(newSearchResults);
     },
     addLikeBoth(newLike: Repo) {
       (async () => {
@@ -64,11 +64,11 @@ export const LikesStoreModel = types
           Alert.alert('Error', 'Error saving like');
           return;
         }
-        self.likes.push(newLike);
+        store.likes.push(newLike);
       })();
     },
-    replaceSearchResults(repos: Repo[]) {
-      self.searchResults.replace(repos);
+    setSearchResults(repos: Repo[]) {
+      store.searchResults = repos;
     },
     pressThumbBoth(repo: Repo) {
       (async () => {
@@ -84,10 +84,10 @@ export const LikesStoreModel = types
             return;
           }
 
-          const index = self.likes.findIndex(like => like.id === repo.id);
+          const index = store.likes.findIndex(like => like.id === repo.id);
 
           if (index > -1) {
-            const newLikes = self.likes.filter(like => like.id !== repo.id);
+            const newLikes = store.likes.filter(like => like.id !== repo.id);
 
             this.setLikesApp(newLikes);
           }
@@ -108,17 +108,17 @@ export const LikesStoreModel = types
             return;
           }
 
-          this.setLikesApp([...self.likes, likeWithLike]);
+          this.setLikesApp([...store.likes, likeWithLike]);
         }
 
         // Update search results with new likes
-        const newSearchResults = self.searchResults.map(repo => {
+        const newSearchResults = store.searchResults.map(repo => {
           const isLiked =
-            self.likes.findIndex(like => like.id === repo.id) > -1;
+            store.likes.findIndex(like => like.id === repo.id) > -1;
           return {...repo, isLiked};
         });
 
-        self.searchResults.replace(newSearchResults);
+        store.searchResults.replace(newSearchResults);
       })();
     },
 
@@ -131,22 +131,22 @@ export const LikesStoreModel = types
           return;
         }
 
-        const index = self.likes.findIndex(like => like.id === likeId);
+        const index = store.likes.findIndex(like => like.id === likeId);
         if (index > -1) {
-          const newLikes = self.likes.filter(like => like.id !== likeId);
+          const newLikes = store.likes.filter(like => like.id !== likeId);
 
-          self.likes.replace(newLikes);
+          store.likes.replace(newLikes);
         }
       })();
     },
     setTextInput(text: string) {
-      self.textInput = text;
+      store.textInput = text;
     },
     setTextQuery(text: string) {
-      self.textQuery = text;
+      store.textQuery = text;
     },
     setStoreNumber(num: number) {
-      self.storeNumber = num;
+      store.storeNumber = num;
     },
   }));
 

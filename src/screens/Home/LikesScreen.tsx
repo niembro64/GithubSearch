@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-import {inject, observer} from 'mobx-react';
-import React, {useEffect, useState} from 'react';
+import { observer } from 'mobx-react-lite';
+import React, { useEffect, useState } from 'react';
 import {FlatList, KeyboardAvoidingView, Platform} from 'react-native';
 import {serverLikesGet} from '../../helpers';
 import {spacing} from '../../styles';
@@ -14,7 +14,7 @@ type LikesScreenProps = {
   rootStore: any;
 };
 
-const LikesScreen = inject('rootStore')(
+const LikesScreen = (
   observer(({navigation, rootStore}: LikesScreenProps) => {
     if (!rootStore) {
       return null;
