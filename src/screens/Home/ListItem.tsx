@@ -109,7 +109,20 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     );
 
     if (repoIsLiked) {
-      await deleteLike();
+      // This is the new part, prompting the user
+      Alert.alert(
+        'Confirmation',
+        'Are you sure you want to remove this like?',
+        [
+          {text: 'Cancel', style: 'cancel'},
+          {
+            text: 'Yes',
+            onPress: async () => {
+              await deleteLike();
+            },
+          },
+        ],
+      );
     } else {
       if (likes.length < maxLikes) {
         springNumber.start();
