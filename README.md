@@ -1,52 +1,60 @@
+# React Native Engineer Challenge (2-5 hrs)
+# Grading Rubric
+
 1.  Adherence to Challenge Requirements (40%):
     React Native Application Features:
-    X Search Github repositories and display in a dropdown.
-    X Dropdown items: Repository name, description, programming language, and star count.
-    X Save and manage repositories using the reposerver API.
-    X List view with sorting and management options.
-    X App behavior on refresh.
+    🟢 Search Github repositories and display in a dropdown.
+    🟢 Dropdown items: Repository name, description, programming language, and star count.
+    🟢 Save and manage repositories using the reposerver API.
+    🟢 List view with sorting and management options.
+    🟢 App behavior on refresh.
 
     User Interface:
-    X Autocomplete dropdown for Github repository search.
+    🟢 Autocomplete dropdown for Github repository search.
 
     Server Interactions:
-    X Understand and adhere to server limitations (e.g., in-memory storage).
-    X Correct use of provided API endpoints.
+    🟢 Understand and adhere to server limitations (e.g., in-memory storage).
+    🟢 Correct use of provided API endpoints.
 
     Repository Object Structure:
-    X Proper adherence to the expected data structure for repositories.
+    🟢 Proper adherence to the expected data structure for repositories.
 
     App Usage and Setup:
-    X Proper setup, starting of the API server, and development commands.
+    🟢 Proper setup, starting of the API server, and development commands.
 
 2.  Clarity and Conciseness of the Code (20%):
-    X Code readability.
-    X Proper naming conventions.
-    X Avoidance of overly complex solutions when simpler ones suffice.
+    🟢 Code readability.
+    🟢 Proper naming conventions.
+    🟢 Avoidance of overly complex solutions when simpler ones suffice.
 3.  Avoidance of Common Mistakes (20%):
-    X Proper error handling.
-    X Efficient data structures and algorithms.
-    X Avoidance of known anti-patterns.
+    🟢 Proper error handling.
+    🟢 Efficient data structures and algorithms.
+    🟢 Avoidance of known anti-patterns.
 4.  Testing (10%):
-    Implementation of unit tests.
-    Test coverage for core functionalities.
+    🔴 Implementation of unit tests.
+    🔴 Test coverage for core functionalities.
     (Note: This criterion may be waived depending on the context.)
 5.  Logical Code Organization (10%):
-    Structuring of components, modules, or functions.
-    Clear separation of concerns.
-    X Intuitive directory and file naming.
-    
-    Bonus Points:
-    
-    Design-oriented enhancements such as:
-    X Animations.
-    X Visual cues or feedback mechanisms.
-    
-    Optional Integration:
-    
-    If the developer wishes to incorporate state management:
-    X Mention of internal preference for Jotai, but open to any state management the developer is comfortable with.
+    🟢 Structuring of components, modules, or functions.
+    🟢 Clear separation of concerns.
+    🟢 Intuitive directory and file naming.
 
+    Bonus Points:
+
+    Design-oriented enhancements such as:
+    🟢 Animations.
+    🟢 Visual cues or feedback mechanisms.
+
+    Optional Integration:
+
+    If the developer wishes to incorporate state management:
+    🟢 Use of Jotai, but open to other state management.
+
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
 ////////////////////////////////////////////
 
 # React Native Engineer Challenge (2-5 hrs)
