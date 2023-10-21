@@ -7,8 +7,8 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Alert,
   Animated,
-  Platform,
   Linking,
+  Platform,
   Text,
   TouchableOpacity,
   View,
@@ -31,8 +31,8 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
 
   const [results, setResults] = useAtom(resultsAtom);
   const [likes, setLikes] = useAtom(likesAtom);
-  const [numStarsTotal, setNumStarsTotal] = useState<number>(0);
-  const [incrementAmount, setIncrementAmount] = useState<number>(0);
+  const [numStarsTotal, setNumStarsTotal] = useState<number | null>(null);
+  const [incrementAmount, setIncrementAmount] = useState<number>(999);
   const [numStars, setNumStars] = useState<number>(0);
 
   useEffect(() => {
@@ -40,10 +40,8 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
   }, [repo]);
 
   useEffect(() => {
-    if (numStarsTotal > 0) {
-      setIncrementAmount(Math.ceil(numStarsTotal / 100));
-    } else {
-      setIncrementAmount(0);
+    if (numStarsTotal !== null) {
+      setIncrementAmount(Math.ceil(numStarsTotal / 10));
     }
   }, [numStarsTotal]);
 
@@ -58,16 +56,16 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
   useEffect(() => {
     // Define the interval function here
     const incrementStars = () => {
-      if (numStars < numStarsTotal) {
+      if (numStars < (numStarsTotal || 0)) {
         setNumStars(prev => prev + incrementAmount);
       } else {
         clearInterval(interval);
-        setNumStars(numStarsTotal);
+        setNumStars(numStarsTotal || 0);
       }
     };
 
     // Set the interval
-    const interval = setInterval(incrementStars, 5); // adjust the interval time (50ms) as needed
+    const interval = setInterval(incrementStars, 100); // adjust the interval time (50ms) as needed
 
     // Clear the interval when component unmounts or numStars reaches numStarsTotal
     return () => clearInterval(interval);
