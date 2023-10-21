@@ -1,3 +1,7 @@
+///////////////////////////////////////////////
+// You can change the number of allowed likes
+// and the number of search results here
+///////////////////////////////////////////////
 export const numAllowedLikes = 2;
 export const numSearchResults = 3;
 
