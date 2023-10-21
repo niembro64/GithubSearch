@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import {observer} from 'mobx-react';
@@ -15,15 +16,15 @@ import {spacing} from '../../styles';
 import {ListItem} from './ListItem';
 // import {useNavigation} from '@react-navigation/native';
 import {useAtom} from 'jotai';
-import {likesGithubAtom} from '../../state';
+import {likesGithubAtom, searchResultsAtom} from '../../state';
 
 type LikesScreenProps = {
   navigation: any;
 };
 
 const LikesScreen = observer(({navigation}: LikesScreenProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [likes, setLikes] = useAtom(likesGithubAtom);
+  const [searchResults, setSearchResults] = useAtom(searchResultsAtom);
 
   return (
     <KeyboardAvoidingView

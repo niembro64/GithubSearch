@@ -18,7 +18,12 @@ import {
 } from 'react-native';
 import {myIp} from '../../YOUR_IP_HERE';
 import {colors} from '../../colors';
-import {likesGithubAtom} from '../../state';
+import {
+  likesGithubAtom,
+  searchResultsAtom,
+  textInputAtom,
+  textQueryAtom,
+} from '../../state';
 import {spacing} from '../../styles';
 import {RepoGithub} from '../../types';
 import {ListItem} from './ListItem';
@@ -30,11 +35,12 @@ type GithubListScreenProps = {
 
 const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   const [likes, setLikes] = useAtom(likesGithubAtom);
-  const [searchResults, setSearchResults] = useState<RepoGithub[]>([]);
+  const [searchResults, setSearchResults] = useAtom(searchResultsAtom);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>(null);
-  const [inputValue, setInputValue] = useState<string>('web_smashed');
-  const [searchingValue, setSearchingValue] = useState<string>('web_smashed');
+  const [textInput, setTextInput] = useAtom(textInputAtom);
+  const [textQuery, setTextQuery] = useState(textQueryAtom);
 
   useEffect(() => {
     if (likes.length === 10) {
@@ -55,22 +61,27 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   }, [likes]);
 
   useEffect(() => {
+    console.log('searchResults', searchResults);
+  }, [searchResults]);
+
+  useEffect(() => {
     const handler = setTimeout(() => {
-      setSearchingValue(inputValue);
+      // @ts-ignore
+      setTextQuery(textInput);
     }, 1000);
 
     return () => {
       clearTimeout(handler);
     };
-  }, [inputValue]);
+  }, [textInput]);
 
   const getRepositories = () => {
-    if (searchingValue) {
+    if (textQuery) {
       setIsLoading(true);
-      setSearchResults([]);
+      // setSearchResults([]);
 
       axios
-        .get(`https://api.github.com/search/repositories?q=${searchingValue}`)
+        .get(`https://api.github.com/search/repositories?q=${textQuery}`)
         .then(response => {
           setSearchResults(response.data.items.slice(0, 10));
         })
@@ -85,10 +96,10 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   };
 
   useEffect(() => {
-    if (searchingValue) {
+    if (textQuery) {
       getRepositories();
     }
-  }, [searchingValue]);
+  }, [textQuery]);
 
   const fetchSavedRepos = useCallback(() => {
     axios
@@ -229,8 +240,8 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                   paddingVertical: 0,
                 }}
                 placeholder="Search GitHub repositories..."
-                onChangeText={text => setInputValue(text)}
-                value={inputValue}
+                onChangeText={text => setTextInput(text)}
+                value={textInput}
               />
             </View>
           </View>

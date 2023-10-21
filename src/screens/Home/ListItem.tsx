@@ -24,32 +24,73 @@ interface ListItemProps {
 
 export const ListItem: React.FC<ListItemProps> = ({repo}) => {
   const numStars = repo?.stargazers_count || 0;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [likes, setLikes] = useAtom(likesGithubAtom);
   const [repoLiked, setRepoLiked] = useState<boolean>(false);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const deleteFromServer = useCallback((repoId: string) => {
-    axios.delete(`http://${myIp}:8080/repo/${repoId}`).catch(err => {
-      console.error('Error deleting repo from server:', err);
-      Alert.alert('Error', 'Failed to delete repository from server.');
-    });
-  }, []);
+  // const deleteFromServer = useCallback((repoId: string) => {
+  //   axios.delete(`http://${myIp}:8080/repo/${repoId}`).catch(err => {
+  //     console.error('Error deleting repo from server:', err);
+  //     Alert.alert('Error', 'Failed to delete repository from server.');
+  //   });
+  // }, []);
 
-  const saveToServer = useCallback((repo: RepoGithub) => {
-    axios
-      .post(`http://${myIp}:8080/repo/`, {
-        id: repo?.id.toString() || '',
-        full_name: repo?.full_name || '',
-        description: repo?.description || '',
-        language: repo?.language || '',
-        stargazers_count: repo?.stargazers_count || 0,
-      })
-      .catch(err => {
+  const deleteFromServer = useCallback(
+    async (repoId: string) => {
+      let res = null;
+
+      try {
+        res = await axios.delete(`http://${myIp}:8080/repo/${repoId}`);
+
+        if (res?.data) {
+          setLikes([...likes.filter(like => like.id !== repo.id)]);
+        }
+      } catch (err) {
+        console.error('Error deleting repo from server:', err);
+        Alert.alert('Error', 'Failed to delete repository from server.');
+      }
+    },
+    [likes, setLikes, repo.id],
+  );
+
+  // const saveToServer = useCallback((repo: RepoGithub) => {
+  //   axios
+  //     .post(`http://${myIp}:8080/repo/`, {
+  //       id: repo?.id.toString() || '',
+  //       full_name: repo?.full_name || '',
+  //       description: repo?.description || '',
+  //       language: repo?.language || '',
+  //       stargazers_count: repo?.stargazers_count || 0,
+  //     })
+  //     .catch(err => {
+  //       console.error('Error saving repo to server:', err);
+  //       Alert.alert('Error', 'Failed to save repository to server.');
+  //     });
+  // }, []);
+
+  const saveToServer = useCallback(
+    async (repo: RepoGithub) => {
+      let res = null;
+
+      try {
+        res = await axios.post(`http://${myIp}:8080/repo/`, {
+          id: repo?.id.toString() || '',
+          full_name: repo?.full_name || '',
+          description: repo?.description || '',
+          language: repo?.language || '',
+          stargazers_count: repo?.stargazers_count || 0,
+        });
+
+        if (res?.data) {
+          setLikes([...likes, repo]);
+        }
+      } catch (err) {
         console.error('Error saving repo to server:', err);
         Alert.alert('Error', 'Failed to save repository to server.');
-      });
-  }, []);
+      }
+    },
+    [likes, setLikes],
+  );
 
   const onLikeToggle = useCallback(
     (repo: RepoGithub) => {
@@ -61,8 +102,6 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
       } else {
         // add to likes
         if (likes.length < 10) {
-          const newLikes = [...likes, repo];
-          setLikes(newLikes);
           saveToServer(repo);
         } else if (likes.length >= 10) {
           Alert.alert('Error', 'You can only like 10 repositories.');
