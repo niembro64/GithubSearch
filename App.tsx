@@ -11,6 +11,9 @@ import {MainNavigator} from './src/navigation/Main';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 function App(): JSX.Element {
+  // @ts-ignore
+  console.disableYellowBox = true;
+
   return (
     <Provider>
       <SafeAreaProvider>

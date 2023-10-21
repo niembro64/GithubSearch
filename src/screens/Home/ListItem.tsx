@@ -254,7 +254,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
         }}>
         <Text
           style={{
-            color: 'black',
+            color: colors.palette.gray700,
           }}>
           {formatDate(repo?.created_at)}
         </Text>
@@ -273,6 +273,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
+            flexWrap: 'wrap',
           }}>
           <View
             style={{
@@ -336,7 +337,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
               ? colors.palette.blue600
               : likes.length < maxLikes
               ? colors.palette.gray300
-              : colors.transparent,
+              : colors.palette.red200,
           }}
         />
       </TouchableOpacity>
