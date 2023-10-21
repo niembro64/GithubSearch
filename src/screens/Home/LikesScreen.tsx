@@ -17,6 +17,7 @@ import {ListItem} from './ListItem';
 // import {useNavigation} from '@react-navigation/native';
 import {useAtom} from 'jotai';
 import {likesGithubAtom, searchResultsAtom} from '../../state';
+import {keyboardVerticalOffsetIOS} from '~/helpers';
 
 type LikesScreenProps = {
   navigation: any;
@@ -24,13 +25,12 @@ type LikesScreenProps = {
 
 const LikesScreen = observer(({navigation}: LikesScreenProps) => {
   const [likes, setLikes] = useAtom(likesGithubAtom);
-  const [searchResults, setSearchResults] = useAtom(searchResultsAtom);
 
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
       // NEED TO ACCOUNT FOR HEADER BEING USED
-      keyboardVerticalOffset={72}
+      keyboardVerticalOffset={keyboardVerticalOffsetIOS}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <FlatList
         data={likes}

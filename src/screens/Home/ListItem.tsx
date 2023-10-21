@@ -12,12 +12,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {myIp} from '../../YOUR_IP_HERE';
+import {myIp, numAllowedLikes} from '../../YOUR_IP_HERE';
 import {colors, getColorFromLanguage} from '../../colors';
 import {truncateString} from '../../helpers';
 import {likesGithubAtom} from '../../state';
 import {spacing} from '../../styles';
 import {RepoGithub} from '../../types';
+
 interface ListItemProps {
   repo: RepoGithub;
 }
@@ -42,58 +43,50 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
         Alert.alert('Error', 'Failed to delete repository from server.');
       }
     },
-    [likes, setLikes, repo.id],
+    [likes, setLikes, repo],
   );
 
-  const saveToServer = useCallback(
-    async (repo: RepoGithub) => {
-      let res = null;
+  const saveToServer = useCallback(async () => {
+    let res = null;
 
-      try {
-        res = await axios.post(`http://${myIp}:8080/repo/`, {
-          id: repo?.id.toString() || '',
-          full_name: repo?.full_name || '',
-          description: repo?.description || '',
-          language: repo?.language || '',
-          stargazers_count: repo?.stargazers_count || 0,
-        });
+    const newObject = {
+      id: repo?.id.toString() || '',
+      full_name: repo?.full_name || '',
+      description: repo?.description || '',
+      language: repo?.language || '',
+      stargazers_count: repo?.stargazers_count || 0,
+    };
 
-        if (res?.data) {
-          setLikes([...likes, repo]);
-        }
-      } catch (err) {
-        console.error('Error saving repo to server:', err);
-        Alert.alert('Error', 'Failed to save repository to server.');
+    try {
+      console.log('saving newObject', newObject);
+      res = await axios.post(`http://${myIp}:8080/repo/`, newObject);
+
+      console.log('res?.data', res?.data);
+      if (res?.data) {
+        setLikes([...likes, repo]);
       }
-    },
-    [likes, setLikes],
-  );
+    } catch (err) {
+      console.error('Error saving repo to server:', err);
+      Alert.alert('Error', 'Failed to save repository to server.');
+    }
+  }, [likes, setLikes, repo]);
 
-  const onThumbPress = useCallback(
-    (repo: RepoGithub) => {
-      if (repoLiked) {
-        //////////////////////////
-        // remove from likes
-        //////////////////////////
-        const newLikes = likes.filter(like => like.id !== repo.id);
-        setLikes(newLikes);
-        deleteFromServer(repo.id.toString());
-      } else {
-        //////////////////////////
-        // add to likes
-        //////////////////////////
-        if (likes.length < 10) {
-          saveToServer(repo);
-        } else if (likes.length >= 10) {
-          Alert.alert('Error', 'You can only like 10 repositories.');
-        }
+  const onThumbPress = useCallback(() => {
+    if (repoLiked) {
+      deleteFromServer(repo.id.toString());
+    } else {
+      if (likes.length < numAllowedLikes) {
+        saveToServer();
+      } else if (likes.length >= numAllowedLikes) {
+        Alert.alert('Error', 'You can only like 10 repositories.');
       }
-    },
-    [likes, repoLiked, deleteFromServer, saveToServer, setLikes],
-  );
+    }
+  }, [likes, repoLiked, repo, deleteFromServer, saveToServer]);
 
   useEffect(() => {
     const found = likes.find(like => like.id === repo.id);
+
+    console.log('found', found?.id, found?.full_name);
     if (found) {
       setRepoLiked(true);
     } else {
@@ -191,7 +184,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
           marginLeft: spacing.md,
           borderRadius: 50,
         }}
-        onPress={() => onThumbPress(repo)}>
+        onPress={onThumbPress}>
         <Image
           source={require('../../../assets/images/like-button.png')}
           style={{
@@ -199,7 +192,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
             height: 40,
             tintColor: repoLiked
               ? colors.palette.blue600
-              : likes.length < 10
+              : likes.length < numAllowedLikes
               ? colors.palette.gray300
               : colors.transparent,
           }}

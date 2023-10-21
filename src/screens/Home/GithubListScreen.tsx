@@ -17,8 +17,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {myIp} from '../../YOUR_IP_HERE';
+import {myIp, numAllowedLikes, numSearchResults} from '../../YOUR_IP_HERE';
 import {colors} from '../../colors';
+import {ConfettiCannon} from '../../components/ConfettiCannon';
 import {
   likesGithubAtom,
   searchResultsAtom,
@@ -26,10 +27,8 @@ import {
   textQueryAtom,
 } from '../../state';
 import {spacing} from '../../styles';
-import {RepoGithub} from '../../types';
 import {ListItem} from './ListItem';
-import {ConfettiCannon} from '../../components/ConfettiCannon';
-import {joinJsonPath} from 'mobx-state-tree';
+import {keyboardVerticalOffsetIOS} from '~/helpers';
 
 type GithubListScreenProps = {
   navigation: any;
@@ -46,10 +45,10 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   const [textQuery, setTextQuery] = useAtom(textQueryAtom);
 
   useEffect(() => {
-    if (likes.length === 10) {
+    if (likes.length === numAllowedLikes) {
       Alert.alert(
         'Congratulations!',
-        'You have liked 10 repositories! 🎉',
+        `You have liked ${numAllowedLikes} repositories! 🎉`,
         [
           {
             text: 'OK',
@@ -61,15 +60,10 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
         {cancelable: false},
       );
     }
-  }, [likes]);
-
-  useEffect(() => {
-    console.log('searchResults', searchResults);
-  }, [searchResults]);
+  }, [likes.length]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      // @ts-ignore
       setTextQuery(textInput);
     }, 1000);
 
@@ -78,34 +72,34 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
     };
   }, [textInput]);
 
-  const getSearchResults = () => {
-    console.log('textQuery', textQuery);
-
-    if (textQuery === '' || textQuery === null || textQuery === undefined) {
+  const getSearchResults = useCallback(async () => {
+    if (textQuery === '') {
       setSearchResults([]);
     } else {
       setIsLoading(true);
+      setSearchResults([]);
 
-      axios
-        .get(`https://api.github.com/search/repositories?q=${textQuery}`)
-        .then(response => {
-          setSearchResults(response.data.items.slice(0, 10));
-        })
-        .catch(err => {
-          console.error(err);
-          setError('Error fetching GitHub repositories');
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+      try {
+        const response = await axios.get(
+          `https://api.github.com/search/repositories?q=${textQuery}`,
+        );
+
+        if (!response?.data?.items) {
+          setSearchResults([]);
+          Alert.alert('Error', 'Failed to fetch GitHub repositories.');
+          return;
+        }
+        setSearchResults(response.data.items.slice(0, numSearchResults));
+      } catch (err) {
+        setSearchResults([]);
+        Alert.alert('Error', 'Failed to fetch GitHub repositories.');
+      } finally {
+        setIsLoading(false);
+      }
     }
-  };
+  }, [textQuery, setTextQuery, setSearchResults]);
 
-  useEffect(() => {
-    getSearchResults();
-  }, [textQuery]);
-
-  const fetchSavedRepos = useCallback(() => {
+  const fetchSavedRepos = () => {
     axios
       .get(`http://${myIp}:8080/repo/`)
       .then(response => {
@@ -116,18 +110,22 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
       .catch(err => {
         console.error('Error fetching saved repos from server:', err);
       });
-  }, []);
+  };
+
+  useEffect(() => {
+    getSearchResults();
+  }, [textQuery]);
 
   useEffect(() => {
     fetchSavedRepos();
-  }, [fetchSavedRepos]);
+  }, []);
 
   return (
     <>
       <KeyboardAvoidingView
         style={{flex: 1}}
         // NEED TO ACCOUNT FOR HEADER BEING USED
-        keyboardVerticalOffset={72}
+        keyboardVerticalOffset={keyboardVerticalOffsetIOS}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={{flex: 1, justifyContent: 'space-between'}}>
           {error && <Text>Error: {error}</Text>}

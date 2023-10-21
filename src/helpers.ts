@@ -5,3 +5,5 @@ export const truncateString = (str: any, maxLength: number) => {
 
   return str.length > maxLength ? str.substring(0, maxLength - 3) + '...' : str;
 };
+
+export const keyboardVerticalOffsetIOS = 72;
