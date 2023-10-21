@@ -1,15 +1,10 @@
 ///////////////////////////////////////////////
 // THIS DIFFERS FROM THE GITHUB API RESPONSE
 ///////////////////////////////////////////////
-export type GitHubId = string;
 
-// export type RepoServer = {
-//   id: GitHubId;
-//   fullName: string;
-//   description: string;
-//   stargazersCount: number;
-//   language: string;
-// };
+export type NumLikesState = 'zero' | 'one' | 'many' | 'max';
+
+export type GitHubId = string;
 
 export type RepoGithub = {
   id: GitHubId;

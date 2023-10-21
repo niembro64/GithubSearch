@@ -28,7 +28,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
   const [likes, setLikes] = useAtom(likesGithubAtom);
   const [repoLiked, setRepoLiked] = useState<boolean>(false);
 
-  const deleteFromServer = useCallback(
+  const deleteLike = useCallback(
     async (repoId: string) => {
       let res = null;
 
@@ -46,7 +46,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     [likes, setLikes, repo],
   );
 
-  const saveToServer = useCallback(async () => {
+  const addLike = useCallback(async () => {
     let res = null;
 
     const newObject = {
@@ -73,15 +73,15 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
 
   const onThumbPress = useCallback(() => {
     if (repoLiked) {
-      deleteFromServer(repo.id.toString());
+      deleteLike(repo.id.toString());
     } else {
       if (likes.length < numAllowedLikes) {
-        saveToServer();
+        addLike();
       } else if (likes.length >= numAllowedLikes) {
         Alert.alert('Error', 'You can only like 10 repositories.');
       }
     }
-  }, [likes, repoLiked, repo, deleteFromServer, saveToServer]);
+  }, [likes, repoLiked, repo, deleteLike, addLike]);
 
   useEffect(() => {
     const found = likes.find(like => like.id === repo.id);

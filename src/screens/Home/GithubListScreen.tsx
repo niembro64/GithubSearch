@@ -29,6 +29,7 @@ import {
 import {spacing} from '../../styles';
 import {ListItem} from './ListItem';
 import {keyboardVerticalOffsetIOS} from '../../helpers';
+import {NumLikesState} from '../../types';
 
 type GithubListScreenProps = {
   navigation: any;
@@ -36,6 +37,7 @@ type GithubListScreenProps = {
 
 const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   const [likes, setLikes] = useAtom(likesGithubAtom);
+  const [numLikesState, setNumLikesState] = useState<NumLikesState>('zero');
 
   const [searchResults, setSearchResults] = useAtom(searchResultsAtom);
 
@@ -43,24 +45,6 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   const [error, setError] = useState<any>(null);
   const [textInput, setTextInput] = useAtom(textInputAtom);
   const [textQuery, setTextQuery] = useAtom(textQueryAtom);
-
-  useEffect(() => {
-    if (likes.length === numAllowedLikes) {
-      Alert.alert(
-        'Congratulations!',
-        `You have liked ${numAllowedLikes} repositories! 🎉`,
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              // console.log('OK Pressed');
-            },
-          },
-        ],
-        {cancelable: false},
-      );
-    }
-  }, [likes.length]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -72,7 +56,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
     };
   }, [textInput]);
 
-  const getSearchResults = useCallback(async () => {
+  const githubGetSearchResults = useCallback(async () => {
     if (textQuery === '') {
       setSearchResults([]);
     } else {
@@ -99,7 +83,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
     }
   }, [textQuery, setTextQuery, setSearchResults]);
 
-  const fetchSavedRepos = () => {
+  const serverGetLikes = () => {
     axios
       .get(`http://${myIp}:8080/repo/`)
       .then(response => {
@@ -113,12 +97,31 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   };
 
   useEffect(() => {
-    getSearchResults();
+    githubGetSearchResults();
   }, [textQuery]);
 
   useEffect(() => {
-    fetchSavedRepos();
+    serverGetLikes();
   }, []);
+
+  useEffect(() => {
+    console.log('likes', likes);
+
+    switch (likes.length) {
+      case 0:
+        setNumLikesState('zero');
+        break;
+      case 1:
+        setNumLikesState('one');
+        break;
+      case numAllowedLikes:
+        setNumLikesState('max');
+        break;
+      default:
+        setNumLikesState('many');
+        break;
+    }
+  }, [likes]);
 
   return (
     <>
@@ -135,7 +138,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
               refreshControl={
                 <RefreshControl
                   refreshing={isLoading}
-                  onRefresh={getSearchResults}
+                  onRefresh={githubGetSearchResults}
                 />
               }
               contentContainerStyle={{
@@ -174,9 +177,13 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                 style={{
                   marginHorizontal: spacing.md,
                   backgroundColor:
-                    likes.length > 0
+                    numLikesState === 'zero'
+                      ? colors.palette.gray100
+                      : numLikesState === 'one'
                       ? colors.palette.blue200
-                      : colors.palette.gray200,
+                      : numLikesState === 'many'
+                      ? colors.palette.blue200
+                      : colors.palette.red200,
                   display: 'flex',
                   flexDirection: 'row',
                   justifyContent: 'center',
@@ -192,23 +199,37 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                     fontSize: 22,
                     fontWeight: 'bold',
                     color:
-                      likes.length > 0
+                      numLikesState === 'zero'
+                        ? colors.palette.gray300
+                        : numLikesState === 'one'
                         ? colors.palette.blue600
-                        : colors.palette.gray400,
+                        : numLikesState === 'many'
+                        ? colors.palette.blue600
+                        : colors.palette.red600,
                     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
                   }}>
-                  {likes.length}
+                  {likes.length === numAllowedLikes ? '' : likes.length}
                 </Text>
                 <Text
                   style={{
                     fontSize: 22,
                     fontWeight: 'bold',
                     color:
-                      likes.length > 0
+                      numLikesState === 'zero'
+                        ? colors.palette.gray300
+                        : numLikesState === 'one'
                         ? colors.palette.blue600
-                        : colors.palette.gray400,
+                        : numLikesState === 'many'
+                        ? colors.palette.blue600
+                        : colors.palette.red600,
                   }}>
-                  {likes.length === 1 ? ' Like' : ' Likes'}
+                  {numLikesState === 'zero'
+                    ? ' Likes'
+                    : numLikesState === 'one'
+                    ? ' Like'
+                    : numLikesState === 'many'
+                    ? ' Likes'
+                    : 'Max Likes'}
                 </Text>
               </TouchableOpacity>
               <Text

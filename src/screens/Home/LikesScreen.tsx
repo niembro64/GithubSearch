@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import {observer} from 'mobx-react';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -25,6 +25,10 @@ type LikesScreenProps = {
 
 const LikesScreen = observer(({navigation}: LikesScreenProps) => {
   const [likes, setLikes] = useAtom(likesGithubAtom);
+
+  useEffect(() => {
+    console.log('likes', likes);
+  }, [likes]);
 
   return (
     <KeyboardAvoidingView
