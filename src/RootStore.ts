@@ -7,3 +7,6 @@ export const RootStoreModel = types.model('RootStore').props({
 
 export type RootStore = typeof RootStoreModel.Type;
 export type RootStoreSnapshot = typeof RootStoreModel.SnapshotType;
+
+// Create the Root Store Instance
+export const rootStore = RootStoreModel.create({});

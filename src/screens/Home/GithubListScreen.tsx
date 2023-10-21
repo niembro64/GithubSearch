@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-import {inject, observer} from 'mobx-react';
+import {observer, useLocalObservable} from 'mobx-react-lite'; // Modified imports
 import React, {useEffect, useState} from 'react';
 import {
   FlatList,
@@ -24,11 +24,12 @@ type GithubListScreenProps = {
   rootStore: any;
 };
 
-const GithubListScreen = inject('rootStore')(
-  observer(({navigation, rootStore}: GithubListScreenProps) => {
+const GithubListScreen = observer(
+  ({navigation, rootStore}: GithubListScreenProps) => {
     if (!rootStore) {
       return null;
     }
+    const r = useLocalObservable(() => rootStore); // Assuming you have some global "stores" object
 
     const {
       likesStore: {
@@ -44,7 +45,7 @@ const GithubListScreen = inject('rootStore')(
         setStoreNumber,
         setLikesApp,
       },
-    } = rootStore;
+    } = r;
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [renderHelper, setRenderHelper] = useState<boolean>(false);
@@ -240,7 +241,7 @@ const GithubListScreen = inject('rootStore')(
         </View>
       </KeyboardAvoidingView>
     );
-  }),
+  },
 );
 
 export default GithubListScreen;
