@@ -2,14 +2,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import {observer} from 'mobx-react';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {FlatList, KeyboardAvoidingView, Platform} from 'react-native';
 import {spacing} from '../../styles';
 import {ListItem} from './ListItem';
 // import {useNavigation} from '@react-navigation/native';
 import {useAtom} from 'jotai';
-import {keyboardVerticalOffsetIOS} from '../../helpers';
-import {likesAtom} from '../../state';
+import {keyboardVerticalOffsetIOS, sortResults} from '../../helpers';
+import {likesAtom, sortStarsAtom} from '../../state';
 
 type LikesScreenProps = {
   navigation: any;
@@ -17,6 +17,11 @@ type LikesScreenProps = {
 
 const LikesScreen = observer(({navigation}: LikesScreenProps) => {
   const [likes, setLikes] = useAtom(likesAtom);
+  const [sortStars, setSortStars] = useAtom(sortStarsAtom);
+
+  useEffect(() => {
+    sortResults(likes, sortStars);
+  }, [sortStars]);
 
   return (
     <KeyboardAvoidingView

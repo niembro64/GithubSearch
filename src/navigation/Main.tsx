@@ -80,7 +80,25 @@ export const MainNavigator: React.FC = () => {
             // SO KEEPING THIS HERE
             /////////////////////////////////
             headerRight: () => (
-              <Button onPress={() => {}} title="" color={colors.transparent} />
+              <Button
+                onPress={() => {
+                  switch (sortStars) {
+                    case 'none':
+                      setSortStars('asc');
+                      break;
+                    case 'asc':
+                      setSortStars('desc');
+                      break;
+                    case 'desc':
+                      setSortStars('none');
+                      break;
+                    default:
+                      throw new Error('sortStars is not a valid value');
+                  }
+                }}
+                title={arrow + ' Sort by ⭐️'}
+                color={colors.palette.blue500}
+              />
             ),
           })}
         />

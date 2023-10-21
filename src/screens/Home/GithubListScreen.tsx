@@ -21,7 +21,7 @@ import {
 import {maxLikes, maxResults, myIp} from '../../YOUR_IP_HERE';
 import {colors} from '../../colors';
 import {ConfettiCannon} from '../../components/ConfettiCannon';
-import {keyboardVerticalOffsetIOS} from '../../helpers';
+import {keyboardVerticalOffsetIOS, sortResults} from '../../helpers';
 import {
   likesAtom,
   resultsAtom,
