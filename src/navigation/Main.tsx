@@ -41,7 +41,7 @@ export const MainNavigator: React.FC = () => {
                       throw new Error('sortStars is not a valid value');
                   }
                 }}
-                title={'Sort by ⭐️' + arrow}
+                title={arrow + ' Sort by ⭐️'}
                 color={colors.palette.blue500}
               />
             ),

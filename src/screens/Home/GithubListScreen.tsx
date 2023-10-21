@@ -35,6 +35,7 @@ import {
   RepoGithubSmall,
   RepoGithubFull,
   RepoServer,
+  SortStars,
 } from '../../types';
 import {ListItem} from './ListItem';
 
@@ -62,6 +63,9 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
     debouncedSetQuery(textInput);
   }, [textInput, debouncedSetQuery]);
 
+  useEffect(() => {
+    sortResults(results, sortStars);
+  }, [sortStars]);
   //////////////////////////////////////////////////
   // STATES
   //////////////////////////////////////////////////
@@ -160,18 +164,10 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
           },
         );
 
-        const sorted: RepoGithubSmall[] = smallerResItems.sort((a, b) => {
-          switch (sortStars) {
-            case 'none':
-              return 0;
-            case 'asc':
-              return a.stargazers_count - b.stargazers_count;
-            case 'desc':
-              return b.stargazers_count - a.stargazers_count;
-            default:
-              throw new Error('sortStars is not a valid value');
-          }
-        });
+        const sorted: RepoGithubSmall[] = sortResults(
+          smallerResItems,
+          sortStars,
+        );
 
         setResults(sorted);
       } catch (err) {
@@ -212,6 +208,23 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
       .catch(err => {
         console.error('Error fetching saved repos from server:', err);
       });
+  };
+
+  const sortResults = (
+    r: RepoGithubSmall[],
+    d: SortStars,
+  ): RepoGithubSmall[] => {
+    switch (d) {
+      case 'none':
+        // RANDOM SORT
+        return r.sort((a, b) => 0.5 - Math.random());
+      case 'asc':
+        return r.sort((a, b) => a.stargazers_count - b.stargazers_count);
+      case 'desc':
+        return r.sort((a, b) => b.stargazers_count - a.stargazers_count);
+      default:
+        throw new Error('sortStars is not a valid value');
+    }
   };
 
   useEffect(() => {
