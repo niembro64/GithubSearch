@@ -1,46 +1,47 @@
 1.  Adherence to Challenge Requirements (40%):
     React Native Application Features:
-
-        X Search Github repositories and display in a dropdown.
-        X Dropdown items: Repository name, description, programming language, and star count.
-        X Save and manage repositories using the reposerver API.
-        List view with sorting and management options.
-        App behavior on refresh.
+    X Search Github repositories and display in a dropdown.
+    X Dropdown items: Repository name, description, programming language, and star count.
+    X Save and manage repositories using the reposerver API.
+    List view with sorting and management options.
+    App behavior on refresh.
 
     User Interface:
+    Autocomplete dropdown for Github repository search.
 
-        Autocomplete dropdown for Github repository search.
-        Server Interactions:
+    Server Interactions:
+    Understand and adhere to server limitations (e.g., in-memory storage).
+    Correct use of provided API endpoints.
 
-Understand and adhere to server limitations (e.g., in-memory storage).
-Correct use of provided API endpoints.
-Repository Object Structure: Proper adherence to the expected data structure for repositories.
+    Repository Object Structure:
+    Proper adherence to the expected data structure for repositories.
 
-App Usage and Setup: Proper setup, starting of the API server, and development commands.
+    App Usage and Setup:
+    Proper setup, starting of the API server, and development commands.
 
-2. Clarity and Conciseness of the Code (20%):
-   Code readability.
-   Proper naming conventions.
-   Avoidance of overly complex solutions when simpler ones suffice.
-3. Avoidance of Common Mistakes (20%):
-   Proper error handling.
-   Efficient data structures and algorithms.
-   Avoidance of known anti-patterns.
-4. Testing (10%):
-   Implementation of unit tests.
-   Test coverage for core functionalities.
-   (Note: This criterion may be waived depending on the context.)
-5. Logical Code Organization (10%):
-   Structuring of components, modules, or functions.
-   Clear separation of concerns.
-   Intuitive directory and file naming.
-   Bonus Points:
-   Design-oriented enhancements such as:
-   Animations.
-   Visual cues or feedback mechanisms.
-   Optional Integration:
-   If the developer wishes to incorporate state management:
-   Mention of internal preference for Jotai, but open to any state management the developer is comfortable with.
+2.  Clarity and Conciseness of the Code (20%):
+    Code readability.
+    Proper naming conventions.
+    Avoidance of overly complex solutions when simpler ones suffice.
+3.  Avoidance of Common Mistakes (20%):
+    Proper error handling.
+    Efficient data structures and algorithms.
+    Avoidance of known anti-patterns.
+4.  Testing (10%):
+    Implementation of unit tests.
+    Test coverage for core functionalities.
+    (Note: This criterion may be waived depending on the context.)
+5.  Logical Code Organization (10%):
+    Structuring of components, modules, or functions.
+    Clear separation of concerns.
+    Intuitive directory and file naming.
+    Bonus Points:
+    Design-oriented enhancements such as:
+    Animations.
+    Visual cues or feedback mechanisms.
+    Optional Integration:
+    If the developer wishes to incorporate state management:
+    Mention of internal preference for Jotai, but open to any state management the developer is comfortable with.
 
 ////////////////////////////////////////////
 

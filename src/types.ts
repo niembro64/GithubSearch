@@ -4,6 +4,8 @@
 
 export type NumLikesState = 'zero' | 'one' | 'many' | 'max';
 
+export type SortStars = 'asc' | 'desc' | 'none';
+
 export type GitHubId = string;
 
 export type RepoServer = {

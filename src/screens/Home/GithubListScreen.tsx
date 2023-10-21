@@ -25,6 +25,7 @@ import {keyboardVerticalOffsetIOS} from '../../helpers';
 import {
   likesAtom,
   resultsAtom,
+  sortStarsAtom,
   textInputAtom,
   textQueryAtom,
 } from '../../state';
@@ -45,6 +46,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   //////////////////////////////////////////////////
   // STORES
   //////////////////////////////////////////////////
+  const [sortStars, setSortStars] = useAtom(sortStarsAtom);
   const [results, setResults] = useAtom(resultsAtom);
   const [likes, setLikes] = useAtom(likesAtom);
   const [textInput, setTextInput] = useAtom(textInputAtom);
@@ -159,7 +161,16 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
         );
 
         const sorted: RepoGithubSmall[] = smallerResItems.sort((a, b) => {
-          return b.stargazers_count - a.stargazers_count;
+          switch (sortStars) {
+            case 'none':
+              return 0;
+            case 'asc':
+              return a.stargazers_count - b.stargazers_count;
+            case 'desc':
+              return b.stargazers_count - a.stargazers_count;
+            default:
+              throw new Error('sortStars is not a valid value');
+          }
         });
 
         setResults(sorted);
