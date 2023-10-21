@@ -1,7 +1,8 @@
 import {Instance, SnapshotOut, types} from 'mobx-state-tree';
 import {RepoGithub, RepoServer} from './types';
 import axios from 'axios';
-
+// @ts-ignore
+import {myIp} from './constants';
 export const LikesStoreModel = types
   .model('LikesStore', {
     searchResults: types.optional(types.array(types.frozen<RepoServer>()), []),
@@ -56,7 +57,7 @@ export const LikesStoreModel = types
     ///////////////////////////////
     fetchReposServer: async () => {
       axios
-        .get('http://192.168.1.19:8080/repo/')
+        .get(`http://${myIp}:8080/repo/`)
         .then(response => {
           if (response?.data?.repos && Array.isArray(response.data.repos)) {
             // @ts-ignore

@@ -16,6 +16,7 @@ import {colors} from '../../colors';
 import {spacing} from '../../styles';
 import {RepoGithub, RepoServer} from '../../types';
 import {ListItem} from './ListItem';
+import {myIp} from '../../constants';
 // import {useNavigation} from '@react-navigation/native';
 
 type LikesScreenProps = {
@@ -34,7 +35,7 @@ const LikesScreen = inject('rootStore')(
     } = rootStore;
 
     const deleteFromServer = useCallback((repoId: string) => {
-      axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
+      axios.delete(`http://${myIp}:8080/repo/${repoId}`).catch(err => {
         console.error('Error deleting repo from server:', err);
         Alert.alert('Error', 'Failed to delete repository from server.');
       });
@@ -59,7 +60,7 @@ const LikesScreen = inject('rootStore')(
 
     // const fetchReposServer = useCallback(() => {
     //   axios
-    //     .get('http://192.168.1.19:8080/repo/')
+    //     .get(`http://${myIp}:8080/repo/`)
     //     .then(response => {
     //       if (response?.data?.repos && Array.isArray(response.data.repos)) {
     //         setLikesServer(response.data.repos);

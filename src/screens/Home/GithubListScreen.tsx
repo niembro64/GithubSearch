@@ -19,6 +19,7 @@ import {spacing} from '../../styles';
 import {RepoGithub, RepoServer} from '../../types';
 import {ListItem} from './ListItem';
 import {inject, observer} from 'mobx-react';
+import {myIp} from '../../constants';
 
 type GithubListScreenProps = {
   navigation: any;
@@ -111,7 +112,7 @@ const GithubListScreen = inject('rootStore')(
 
     const saveToServer = useCallback((repo: RepoGithub) => {
       axios
-        .post('http://192.168.1.19:8080/repo/', {
+        .post('http://${myIp}:8080/repo/', {
           id: repo?.id.toString() || '',
           fullName: repo?.full_name || '',
           createdAt: repo?.created_at || '',
@@ -126,7 +127,7 @@ const GithubListScreen = inject('rootStore')(
     }, []);
 
     const deleteFromServer = useCallback((repoId: string) => {
-      axios.delete(`http://192.168.1.19:8080/repo/${repoId}`).catch(err => {
+      axios.delete(`http://${myIp}:8080/repo/${repoId}`).catch(err => {
         console.error('Error deleting repo from server:', err);
         Alert.alert('Error', 'Failed to delete repository from server.');
       });
@@ -134,7 +135,7 @@ const GithubListScreen = inject('rootStore')(
 
     const fetchSavedRepos = useCallback(() => {
       axios
-        .get('http://192.168.1.19:8080/repo/')
+        .get('http://${myIp}:8080/repo/')
         .then(response => {
           if (response?.data?.repos && Array.isArray(response.data.repos)) {
             setLikesServer(response.data.repos);
