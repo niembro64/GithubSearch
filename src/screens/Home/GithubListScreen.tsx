@@ -22,6 +22,7 @@ import {myIp, maxLikes, maxResults} from '../../YOUR_IP_HERE';
 import {colors} from '../../colors';
 import {ConfettiCannon} from '../../components/ConfettiCannon';
 import {
+  hasSeenMaxMessageAtom,
   likesAtom,
   resultsAtom,
   textInputAtom,
@@ -37,41 +38,77 @@ type GithubListScreenProps = {
 };
 
 const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
+  //////////////////////////////////////////////////
+  // STORES
+  //////////////////////////////////////////////////
   const [results, setResults] = useAtom(resultsAtom);
   const [likes, setLikes] = useAtom(likesAtom);
-  const [numLikesState, setNumLikesState] = useState<NumLikesState>('zero');
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<any>(null);
   const [textInput, setTextInput] = useAtom(textInputAtom);
   const [textQuery, setTextQuery] = useAtom(textQueryAtom);
+  const [hasSeenMaxMessage, setHasSeenMaxMessage] = useAtom(
+    hasSeenMaxMessageAtom,
+  );
 
-  const borderColorAnim = useState(new Animated.Value(0))[0];
+  //////////////////////////////////////////////////
+  // STATES
+  //////////////////////////////////////////////////
+  const [numLikesState, setNumLikesState] = useState<NumLikesState>('zero');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<any>(null);
+  const [borderActive, setBorderActive] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (textQuery === textInput && !isLoading) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(borderColorAnim, {
-            toValue: 1,
-            duration: 500,
-            useNativeDriver: false,
-          }),
-          Animated.timing(borderColorAnim, {
-            toValue: 0,
-            duration: 500,
-            useNativeDriver: false,
-          }),
-        ]),
-      ).start();
-    } else {
-      borderColorAnim.setValue(0);
-    }
-  }, [textQuery, textInput, isLoading, borderColorAnim]);
+  //////////////////////////////////////////////////
+  // ANIMATION
+  //////////////////////////////////////////////////
+  const scaleValue = new Animated.Value(1);
+  const colorBlue = new Animated.Value(0);
+  const colorGray = new Animated.Value(0);
 
-  const interpolatedBorderColor = borderColorAnim.interpolate({
+  const springNumber: any = Animated.spring(scaleValue, {
+    toValue: 1,
+    friction: 2,
+    velocity: 3,
+    tension: 200,
+    useNativeDriver: true,
+  });
+
+  const loopRed: any = Animated.loop(
+    Animated.sequence([
+      Animated.timing(colorBlue, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: false,
+      }),
+      Animated.timing(colorBlue, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: false,
+      }),
+    ]),
+  );
+
+  const loopGray: any = Animated.loop(
+    Animated.sequence([
+      Animated.timing(colorGray, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: false,
+      }),
+      Animated.timing(colorGray, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: false,
+      }),
+    ]),
+  );
+
+  const interpolatedBlue = colorBlue.interpolate({
     inputRange: [0, 1],
-    outputRange: [colors.palette.blue500, 'white'],
+    outputRange: [colors.palette.blue400, colors.palette.blue600],
+  });
+  const interpolatedGray = colorGray.interpolate({
+    inputRange: [0, 1],
+    outputRange: [colors.palette.gray300, colors.palette.gray500],
   });
 
   useEffect(() => {
@@ -85,47 +122,48 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   }, [textInput]);
 
   const githubGetSearchResults = useCallback(async () => {
-    if (textQuery === '') {
+    if (textQuery === '' || textInput === '') {
       setResults([]);
-    } else {
-      setIsLoading(true);
-      setResults([]);
+      return;
+    }
 
-      try {
-        const response = await axios.get(
-          `https://api.github.com/search/repositories?q=${textQuery}`,
-        );
+    setIsLoading(true);
+    setResults([]);
 
-        if (!response?.data?.items) {
-          setResults([]);
-          Alert.alert('Error', 'Failed to fetch GitHub repositories.');
-          return;
-        }
-        const resItems: RepoGithubFull[] = response.data.items.slice(
-          0,
-          maxResults,
-        );
+    try {
+      const response = await axios.get(
+        `https://api.github.com/search/repositories?q=${textQuery}`,
+      );
 
-        const smallerResItems: RepoGithub[] = resItems.map(
-          (item: RepoGithubFull) => {
-            return {
-              id: item.id,
-              full_name: item.full_name,
-              description: item.description,
-              language: item.language,
-              stargazers_count: item.stargazers_count,
-              isLiked: likes.some(like => '' + like.id === '' + item.id),
-            };
-          },
-        );
-
-        setResults(smallerResItems);
-      } catch (err) {
+      if (!response?.data?.items) {
         setResults([]);
         Alert.alert('Error', 'Failed to fetch GitHub repositories.');
-      } finally {
-        setIsLoading(false);
+        return;
       }
+      const resItems: RepoGithubFull[] = response.data.items.slice(
+        0,
+        maxResults,
+      );
+
+      const smallerResItems: RepoGithub[] = resItems.map(
+        (item: RepoGithubFull) => {
+          return {
+            id: item.id,
+            full_name: item.full_name,
+            description: item.description,
+            language: item.language,
+            stargazers_count: item.stargazers_count,
+            isLiked: likes.some(like => '' + like.id === '' + item.id),
+          };
+        },
+      );
+
+      setResults(smallerResItems);
+    } catch (err) {
+      setResults([]);
+      Alert.alert('Error', 'Failed to fetch GitHub repositories.');
+    } finally {
+      setIsLoading(false);
     }
   }, [textQuery, setTextQuery, setResults]);
 
@@ -159,6 +197,12 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
         setNumLikesState('one');
         break;
       case maxLikes:
+        // celebration alert
+        Alert.alert(
+          'Congratulations!',
+          'You have reached the maximum number of likes.',
+        );
+
         setNumLikesState('max');
         break;
       default:
@@ -166,6 +210,48 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
         break;
     }
   }, [likes]);
+
+  useEffect(() => {
+    if (borderActive) {
+      loopGray.stop();
+      loopRed.start();
+    } else {
+      loopRed.stop();
+      loopGray.start();
+    }
+  }, [borderActive]);
+
+  useEffect(() => {
+    if (textQuery !== textInput || !isLoading) {
+      setBorderActive(true);
+    } else {
+      setBorderActive(false);
+    }
+  }, [textInput, textQuery, isLoading]);
+
+  useEffect(() => {
+    switch (numLikesState) {
+      case 'zero':
+        springNumber.stop();
+        break;
+      case 'one':
+        springNumber.start();
+        break;
+      case 'max':
+        if (!hasSeenMaxMessage) {
+          Alert.alert(
+            'Congratulations!',
+            'You have reached the maximum number of likes.',
+          );
+          setHasSeenMaxMessage(true);
+        }
+        springNumber.start();
+        break;
+      default:
+        springNumber.start();
+        break;
+    }
+  }, [numLikesState]);
 
   return (
     <>
@@ -216,9 +302,9 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                 alignItems: 'center',
                 marginVertical: spacing.md,
               }}>
-              <TouchableOpacity
-                activeOpacity={1}
+              <Animated.View
                 style={{
+                  transform: [{scale: scaleValue}],
                   flex: 1,
                   marginHorizontal: spacing.md,
                   backgroundColor:
@@ -236,9 +322,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                   borderRadius: spacing.sm,
                   padding: spacing.sm,
                   paddingHorizontal: spacing.md,
-                }}
-                // @ts-ignore
-                onPress={() => navigation.navigate('Likes')}>
+                }}>
                 <Text
                   style={{
                     fontSize: 22,
@@ -276,7 +360,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                     ? ' Likes'
                     : 'Max Likes'}
                 </Text>
-              </TouchableOpacity>
+              </Animated.View>
               <Text
                 style={{
                   flex: 2,
@@ -295,20 +379,21 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                 marginBottom: spacing.xl,
               }}>
               <Animated.View
-                style={{
-                  flex: 1,
-                  height: 50,
-                  borderColor:
-                    textQuery === textInput && !isLoading
-                      ? colors.palette.gray400
-                      : interpolatedBorderColor,
-                  borderWidth: 2,
-                  borderRadius: spacing.sm,
-                  marginRight: spacing.md,
-                  marginLeft: spacing.md,
-                  paddingLeft: spacing.md,
-                  paddingRight: spacing.md,
-                }}>
+                style={[
+                  {
+                    flex: 1,
+                    height: 50,
+                    borderWidth: 2,
+                    borderRadius: spacing.sm,
+                    marginRight: spacing.md,
+                    marginLeft: spacing.md,
+                    paddingLeft: spacing.md,
+                    paddingRight: spacing.md,
+                  },
+                  !borderActive
+                    ? {borderColor: interpolatedGray}
+                    : {borderColor: interpolatedBlue},
+                ]}>
                 <TextInput
                   style={{
                     flex: 1,
