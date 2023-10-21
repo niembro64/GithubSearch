@@ -34,8 +34,6 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
   const [numStarsTotal, setNumStarsTotal] = useState<number | null>(null);
   const [incrementAmount, setIncrementAmount] = useState<number>(999);
   const [numStars, setNumStars] = useState<number>(0);
-  const [languageBuilderIndex, setLanguageBuilderIndex] = useState<number>(0);
-  const [languageBuilder, setLanguageBuilder] = useState<string>('');
 
   useEffect(() => {
     setNumStarsTotal(repo?.stargazers_count || 0);
@@ -72,22 +70,6 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     // Clear the interval when component unmounts or numStars reaches numStarsTotal
     return () => clearInterval(interval);
   }, [numStars, incrementAmount, numStarsTotal]);
-
-  useEffect(() => {
-    const incrementLanguageBuilder = () => {
-      if (languageBuilderIndex < repo?.language.length || 0) {
-        setLanguageBuilderIndex(prev => prev + 1);
-      } else {
-        clearInterval(interval);
-      }
-    };
-
-    const interval = setInterval(incrementLanguageBuilder, 100);
-  }, [repo.language, languageBuilderIndex]);
-
-  useEffect(() => {
-    setLanguageBuilder(repo?.language.slice(0, languageBuilderIndex));
-  }, [languageBuilderIndex, repo]);
 
   const openGitHubURL = () => {
     if (repo?.html_url) {
@@ -279,7 +261,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
                 color: 'white',
                 fontSize: 16,
               }}>
-              {languageBuilder}
+              {repo?.language}
             </Text>
           </View>
           <View
