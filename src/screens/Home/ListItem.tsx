@@ -6,7 +6,7 @@ import {useAtom} from 'jotai';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Alert,
-  Image,
+  Animated,
   Platform,
   Text,
   TouchableOpacity,
@@ -24,12 +24,21 @@ interface ListItemProps {
 }
 
 export const ListItem: React.FC<ListItemProps> = ({repo}) => {
+  const scaleValue = new Animated.Value(1);
   const [repoIsLiked, setRepoIsLiked] = useState<boolean>(false);
   const isLoadingRef = useRef(false);
 
   const [results, setResults] = useAtom(resultsAtom);
   const [likes, setLikes] = useAtom(likesAtom);
   const numStars = repo?.stargazers_count || 0;
+
+  const springNumber: any = Animated.spring(scaleValue, {
+    toValue: 1,
+    friction: 2,
+    velocity: 3,
+    tension: 200,
+    useNativeDriver: true,
+  });
 
   const deleteLike = useCallback(async () => {
     isLoadingRef.current = true;
@@ -75,7 +84,7 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     }
   }, [likes, setLikes, repo]);
 
-  const onThumbPress = useCallback(() => {
+  const onThumbPress = useCallback(async () => {
     if (isLoadingRef.current) {
       Alert.alert('Error', 'Please wait for the previous action to complete.');
       return;
@@ -89,10 +98,11 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     );
 
     if (repoIsLiked) {
-      deleteLike();
+      await deleteLike();
     } else {
       if (likes.length < maxLikes) {
-        addLike();
+        springNumber.start();
+        await addLike();
       } else if (likes.length >= maxLikes) {
         Alert.alert(
           'Error',
@@ -100,7 +110,14 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
         );
       }
     }
-  }, [repo.full_name, repoIsLiked, deleteLike, likes.length, addLike]);
+  }, [
+    springNumber,
+    repo.full_name,
+    repoIsLiked,
+    deleteLike,
+    likes.length,
+    addLike,
+  ]);
 
   useEffect(() => {
     const found = likes.find(like => '' + like.id === '' + repo.id);
@@ -213,9 +230,10 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
           borderRadius: 50,
         }}
         onPress={onThumbPress}>
-        <Image
+        <Animated.Image
           source={require('../../../assets/images/like-button.png')}
           style={{
+            transform: [{scale: scaleValue}],
             width: 40,
             height: 40,
             tintColor: repoIsLiked
