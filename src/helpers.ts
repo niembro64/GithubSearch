@@ -25,7 +25,7 @@ export const sortResults = (
       return r.sort((a, b) => b.stargazers_count - a.stargazers_count);
     case 'star-desc' as SortRepoState:
       // RANDOM SORT
-      return r.sort((a, b) => 0.5 - Math.random());
+      return r.sort(() => 0.5 - Math.random());
     default:
       throw new Error('sortStars is not a valid value');
   }
