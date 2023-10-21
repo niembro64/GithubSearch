@@ -19,7 +19,7 @@ import {spacing} from '../../styles';
 import {RepoGithub, RepoServer} from '../../types';
 import {ListItem} from './ListItem';
 import {inject, observer} from 'mobx-react';
-import {myIp} from '../../constants';
+import {myIp} from '../../YOUR_IP_HERE';
 
 type GithubListScreenProps = {
   navigation: any;

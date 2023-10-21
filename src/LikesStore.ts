@@ -2,7 +2,7 @@ import {Instance, SnapshotOut, types} from 'mobx-state-tree';
 import {RepoGithub, RepoServer} from './types';
 import axios from 'axios';
 // @ts-ignore
-import {myIp} from './constants';
+import {myIp} from './YOUR_IP_HERE';
 export const LikesStoreModel = types
   .model('LikesStore', {
     searchResults: types.optional(types.array(types.frozen<RepoServer>()), []),

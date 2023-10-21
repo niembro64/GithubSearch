@@ -16,7 +16,7 @@ import {colors} from '../../colors';
 import {spacing} from '../../styles';
 import {RepoGithub, RepoServer} from '../../types';
 import {ListItem} from './ListItem';
-import {myIp} from '../../constants';
+import {myIp} from '../../YOUR_IP_HERE';
 // import {useNavigation} from '@react-navigation/native';
 
 type LikesScreenProps = {
