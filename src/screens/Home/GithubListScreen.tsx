@@ -190,11 +190,13 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
               description: item.description,
               language: item.language,
               stargazers_count: item.stargazersCount,
+              url: item.url,
+              created_at: item.createdAt,
             };
           },
         );
 
-        setLikes(response.data.repos);
+        setLikes(smallerResItems);
       })
       .catch(err => {
         console.error('Error fetching saved repos from server:', err);
