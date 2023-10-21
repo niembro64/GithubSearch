@@ -16,12 +16,18 @@ import {
   RefreshControl,
   Text,
   TextInput,
+  Vibration,
   View,
 } from 'react-native';
 import {maxLikes, maxResults, myIp} from '../../YOUR_IP_HERE';
 import {colors} from '../../colors';
 import {ConfettiCannon} from '../../components/ConfettiCannon';
-import {keyboardVerticalOffsetIOS, sortResults} from '../../helpers';
+import {
+  keyboardVerticalOffsetIOS,
+  sortResults,
+  vibrationComplex,
+  vibrationDouble,
+} from '../../helpers';
 import {
   likesAtom,
   resultsAtom,
@@ -153,6 +159,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
         );
 
         setResults(sorted);
+        vibrationDouble();
       } catch (err) {
         setResults([]);
         Alert.alert('Error', 'Failed to fetch GitHub repositories.');
@@ -202,6 +209,9 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   }, [textQuery]);
 
   useEffect(() => {
+    if (likes.length) {
+      return;
+    }
     serverGetLikes();
   }, []);
 

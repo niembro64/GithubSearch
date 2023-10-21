@@ -19,7 +19,7 @@ export const sortResults = (
   // SORTING IS HAPPENING FOR THE NEXT STATE
   //////////////////////////////////////////////
   switch (d) {
-    case 'star-random' as SortRepoState:
+    case 'random' as SortRepoState:
       return r.sort((a, b) => a.stargazers_count - b.stargazers_count);
     case 'star-asc' as SortRepoState:
       return r.sort((a, b) => b.stargazers_count - a.stargazers_count);
@@ -29,4 +29,17 @@ export const sortResults = (
     default:
       throw new Error('sortStars is not a valid value');
   }
+};
+
+import {Platform, Vibration} from 'react-native';
+
+export const vibrationComplex = () => {
+  Platform.OS === 'android' &&
+    Vibration.vibrate([0, 5, 80, 5, 80, 100, 80, 100]);
+  Platform.OS === 'ios' && Vibration.vibrate();
+};
+
+export const vibrationDouble = () => {
+  Platform.OS === 'android' && Vibration.vibrate([0, 5, 80, 5]);
+  Platform.OS === 'ios' && Vibration.vibrate();
 };

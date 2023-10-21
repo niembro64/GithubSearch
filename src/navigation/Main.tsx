@@ -17,7 +17,7 @@ export const MainNavigator: React.FC = () => {
   const [sortStars, setSortStars] = useAtom(sortStarsAtom);
 
   const arrow =
-    sortStars === ('star-random' as SortRepoState)
+    sortStars === ('random' as SortRepoState)
       ? '↕️'
       : sortStars === ('star-asc' as SortRepoState)
       ? '⬆️'
@@ -34,14 +34,14 @@ export const MainNavigator: React.FC = () => {
               <Button
                 onPress={() => {
                   switch (sortStars) {
-                    case 'star-random' as SortRepoState:
+                    case 'random' as SortRepoState:
                       setSortStars('star-asc' as SortRepoState);
                       break;
                     case 'star-asc' as SortRepoState:
                       setSortStars('star-desc' as SortRepoState);
                       break;
                     case 'star-desc' as SortRepoState:
-                      setSortStars('star-random' as SortRepoState);
+                      setSortStars('random' as SortRepoState);
                       break;
                     default:
                       throw new Error('sortStars is not a valid value');
@@ -89,14 +89,14 @@ export const MainNavigator: React.FC = () => {
               <Button
                 onPress={() => {
                   switch (sortStars) {
-                    case 'star-random' as SortRepoState:
+                    case 'random' as SortRepoState:
                       setSortStars('star-asc' as SortRepoState);
                       break;
                     case 'star-asc' as SortRepoState:
                       setSortStars('star-desc' as SortRepoState);
                       break;
                     case 'star-desc' as SortRepoState:
-                      setSortStars('star-random' as SortRepoState);
+                      setSortStars('random' as SortRepoState);
                       break;
                     default:
                       throw new Error('sortStars is not a valid value');
