@@ -4,19 +4,22 @@
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
 import {useAtom} from 'jotai';
-import {debounce} from 'lodash';
+import {debounce, set} from 'lodash';
 import {observer} from 'mobx-react';
+import RNModal from 'react-native-modal/dist/modal';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Alert,
   Animated,
   FlatList,
+  Modal,
   KeyboardAvoidingView,
   Platform,
   RefreshControl,
   Text,
   TextInput,
   View,
+  Button,
 } from 'react-native';
 import {maxLikes, maxResults, myIp} from '../../YOUR_IP_HERE';
 import {colors} from '../../colors';
@@ -27,6 +30,7 @@ import {
   vibrationDouble,
 } from '../../helpers';
 import {
+  hasSeenMaxMessageAtom,
   likesAtom,
   resultsAtom,
   sortStarsAtom,
@@ -55,6 +59,9 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   const [likes, setLikes] = useAtom(likesAtom);
   const [textInput, setTextInput] = useAtom(textInputAtom);
   const [textQuery, setTextQuery] = useAtom(textQueryAtom);
+  const [hasSeenMaxMessage, setHasSeenMaxMessages] = useAtom(
+    hasSeenMaxMessageAtom,
+  );
 
   //////////////////////////////////////////////////
   // STATES
@@ -306,6 +313,16 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
         springNumber.start();
         break;
       case 'max':
+        if (!hasSeenMaxMessageAtom) {
+          setHasSeenMaxMessages(true);
+
+          // Celebration alert
+
+          Alert.alert(
+            'Congratulations!',
+            `You have liked ${maxLikes} repositories!`,
+          );
+        }
         springNumber.start();
         break;
       default:
@@ -476,7 +493,63 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
           </View>
         </View>
       </KeyboardAvoidingView>
-      {likes?.length === maxLikes && <ConfettiCannon />}
+
+      {/* ////////////////////////////////////////////////// */}
+      {/* MODAL */}
+      {/* ////////////////////////////////////////////////// */}
+      <RNModal
+        style={{zIndex: 0}}
+        isVisible={numLikesState === 'max' && !hasSeenMaxMessage}
+        backdropTransitionOutTiming={0}
+        onBackdropPress={() => {
+          setHasSeenMaxMessages(true);
+        }}
+        onSwipeComplete={() => {
+          setHasSeenMaxMessages(true);
+        }}
+        swipeDirection={['down', 'left', 'right', 'up']}
+        onBackButtonPress={() => {
+          setHasSeenMaxMessages(true);
+        }}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              width: '80%',
+              height: '30%',
+              backgroundColor: 'white',
+              borderRadius: spacing.md,
+              padding: spacing.md,
+              justifyContent: 'center',
+            }}>
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: 'bold',
+                color: colors.palette.green600,
+                textAlign: 'center',
+                marginBottom: spacing.md,
+              }}>
+              Congratulations!
+            </Text>
+            <Text
+              style={{
+                textAlign: 'center',
+              }}>
+              You have liked {maxLikes} repositories!
+            </Text>
+          </View>
+        </View>
+
+        {/* ////////////////////////////////////////////////// */}
+        {/* CONFETTI */}
+        {/* ////////////////////////////////////////////////// */}
+        {numLikesState === 'max' && !hasSeenMaxMessage && <ConfettiCannon />}
+      </RNModal>
     </>
   );
 });
