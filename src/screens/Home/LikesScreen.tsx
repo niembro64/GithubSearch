@@ -55,14 +55,8 @@ const LikesScreen = inject('rootStore')(
           }}
           keyExtractor={item => item.id.toString()}
           renderItem={({item: repo}) => (
-            <ListItem
-              repo={repo}
-              rootStore={rootStore}
-              likes={likes}
-              pressThumbBoth={async function (r: Repo): Promise<void> {
-                await pressThumbBoth(repo);
-              }}
-            />
+            //@ts-ignore
+            <ListItem repo={repo} />
           )}
         />
       </KeyboardAvoidingView>

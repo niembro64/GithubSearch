@@ -23,8 +23,7 @@ export const LikesStoreModel = types
         return {...repo, like: isLiked};
       });
 
-      // @ts-ignore
-      self.searchResults = newSearchResults;
+      self.searchResults.replace(newSearchResults);
     },
     ///////////////////////////////////////////////
     // LIKES GITHUB
@@ -43,8 +42,7 @@ export const LikesStoreModel = types
         console.log('LIKES BEFORE REPLACE', l?.like);
       });
       console.log('---');
-      // @ts-ignore
-      self.likes = likesPlusLike;
+      self.likes.replace(likesPlusLike);
       self.likes.forEach(l => {
         console.log('LIKES AFTER REPLACE', l?.like);
       });
@@ -56,8 +54,7 @@ export const LikesStoreModel = types
         return {...repo, isLiked};
       });
 
-      // @ts-ignore
-      self.searchResults = newSearchResults;
+      self.searchResults.replace(newSearchResults);
     },
     addLikeBoth(newLike: Repo) {
       (async () => {
@@ -69,6 +66,9 @@ export const LikesStoreModel = types
         }
         self.likes.push(newLike);
       })();
+    },
+    replaceSearchResults(repos: Repo[]) {
+      self.searchResults.replace(repos);
     },
     pressThumbBoth(repo: Repo) {
       (async () => {
@@ -118,10 +118,10 @@ export const LikesStoreModel = types
           return {...repo, isLiked};
         });
 
-        // @ts-ignore
-        self.searchResults = newSearchResults;
+        self.searchResults.replace(newSearchResults);
       })();
     },
+
     removeLikeBoth(likeId: string) {
       (async () => {
         const res = await serverLikeDelete(likeId);
@@ -135,8 +135,7 @@ export const LikesStoreModel = types
         if (index > -1) {
           const newLikes = self.likes.filter(like => like.id !== likeId);
 
-          // @ts-ignore
-          self.likes = newLikes;
+          self.likes.replace(newLikes);
         }
       })();
     },

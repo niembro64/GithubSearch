@@ -12,15 +12,16 @@ import {Repo} from '../../types';
 interface ListItemProps {
   repo: Repo;
   rootStore: any;
-  likes: Repo[];
-  pressThumbBoth: (repo: Repo) => Promise<void>;
 }
 
 export const ListItem: React.FC<ListItemProps> = inject('rootStore')(
-  observer(({repo, rootStore, likes, pressThumbBoth}) => {
+  observer(({repo, rootStore}) => {
     if (!rootStore) {
       return null;
     }
+    const {
+      likesStore: {likes, pressThumbBoth},
+    } = rootStore;
 
     const [forceRender, setForceRender] = useState<number>(0);
 
