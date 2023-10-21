@@ -152,7 +152,11 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
           },
         );
 
-        setResults(smallerResItems);
+        const sorted: RepoGithub[] = smallerResItems.sort((a, b) => {
+          return b.stargazers_count - a.stargazers_count;
+        });
+
+        setResults(sorted);
       } catch (err) {
         setResults([]);
         Alert.alert('Error', 'Failed to fetch GitHub repositories.');
