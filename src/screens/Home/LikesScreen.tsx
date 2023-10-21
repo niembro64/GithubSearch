@@ -48,65 +48,6 @@ const LikesScreen = observer(({navigation}: LikesScreenProps) => {
         keyExtractor={item => item.id.toString()}
         renderItem={({item: repo}) => <ListItem repo={repo} />}
       />
-      {/* ////////////////////////////////// */}
-      {/* SEARCH BAR */}
-      {/* ////////////////////////////////// */}
-      <View
-        style={{
-          width: '100%',
-          borderTopWidth: 1,
-          borderTopColor: colors.palette.gray400,
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: 0,
-          padding: spacing.md,
-          marginBottom: spacing.xl,
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-          <TouchableOpacity
-            style={{
-              height: 40,
-              marginLeft: spacing.md,
-              backgroundColor: colors.palette.blue200,
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: spacing.sm,
-              padding: spacing.sm,
-            }}
-            onPress={() => {
-              // @ts-ignore
-              navigation.canGoBack() && navigation.goBack();
-              // navigation.navigate('Home');
-            }}>
-            <Text
-              style={{
-                fontSize: 22,
-                fontWeight: 'bold',
-                color: colors.palette.blue600,
-              }}>
-              Home
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <Text
-          style={{
-            flex: 1,
-            textAlign: 'center',
-            fontSize: 22,
-            fontWeight: 'bold',
-          }}>
-          Liked Repositories
-        </Text>
-      </View>
     </KeyboardAvoidingView>
   );
 });

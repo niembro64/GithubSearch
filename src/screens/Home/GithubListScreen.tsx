@@ -175,6 +175,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
               <TouchableOpacity
                 activeOpacity={1}
                 style={{
+                  flex: 1,
                   marginHorizontal: spacing.md,
                   backgroundColor:
                     numLikesState === 'zero'
@@ -183,7 +184,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                       ? colors.palette.blue200
                       : numLikesState === 'many'
                       ? colors.palette.blue200
-                      : colors.palette.red200,
+                      : colors.palette.green200,
                   display: 'flex',
                   flexDirection: 'row',
                   justifyContent: 'center',
@@ -205,7 +206,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                         ? colors.palette.blue600
                         : numLikesState === 'many'
                         ? colors.palette.blue600
-                        : colors.palette.red600,
+                        : colors.palette.green600,
                     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
                   }}>
                   {likes.length === numAllowedLikes ? '' : likes.length}
@@ -221,7 +222,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                         ? colors.palette.blue600
                         : numLikesState === 'many'
                         ? colors.palette.blue600
-                        : colors.palette.red600,
+                        : colors.palette.green600,
                   }}>
                   {numLikesState === 'zero'
                     ? ' Likes'
@@ -234,7 +235,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
               </TouchableOpacity>
               <Text
                 style={{
-                  flex: 1,
+                  flex: 2,
                   textAlign: 'center',
                   fontSize: 22,
                   fontWeight: 'bold',
