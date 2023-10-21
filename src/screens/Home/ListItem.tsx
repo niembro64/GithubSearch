@@ -17,10 +17,10 @@ import {colors, getColorFromLanguage} from '../../colors';
 import {truncateString} from '../../helpers';
 import {likesAtom, resultsAtom} from '../../state';
 import {spacing} from '../../styles';
-import {RepoGithub, RepoServer} from '../../types';
+import {RepoGithubSmall, RepoServer} from '../../types';
 
 interface ListItemProps {
-  repo: RepoGithub;
+  repo: RepoGithubSmall;
 }
 
 export const ListItem: React.FC<ListItemProps> = ({repo}) => {
@@ -68,6 +68,8 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
       description: repo?.description || '',
       language: repo?.language || '',
       stargazersCount: repo?.stargazers_count || 0,
+      createdAt: repo?.created_at || '',
+      url: repo?.url || '',
     };
 
     try {

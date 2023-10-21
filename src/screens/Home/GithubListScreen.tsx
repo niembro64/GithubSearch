@@ -29,7 +29,12 @@ import {
   textQueryAtom,
 } from '../../state';
 import {spacing} from '../../styles';
-import {NumLikesState, RepoGithub, RepoGithubFull} from '../../types';
+import {
+  NumLikesState,
+  RepoGithubSmall,
+  RepoGithubFull,
+  RepoServer,
+} from '../../types';
 import {ListItem} from './ListItem';
 
 type GithubListScreenProps = {
@@ -139,7 +144,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
           maxResults,
         );
 
-        const smallerResItems: RepoGithub[] = resItems.map(
+        const smallerResItems: RepoGithubSmall[] = resItems.map(
           (item: RepoGithubFull) => {
             return {
               id: item.id,
@@ -147,11 +152,13 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
               description: item?.description || '',
               language: item?.language || '',
               stargazers_count: item?.stargazers_count || 0,
+              created_at: item?.created_at || '',
+              url: item?.url || '',
             };
           },
         );
 
-        const sorted: RepoGithub[] = smallerResItems.sort((a, b) => {
+        const sorted: RepoGithubSmall[] = smallerResItems.sort((a, b) => {
           return b.stargazers_count - a.stargazers_count;
         });
 
@@ -175,14 +182,14 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
           return;
         }
 
-        const smallerResItems: RepoGithub[] = response.data.repos.map(
-          (item: RepoGithubFull) => {
+        const smallerResItems: RepoGithubSmall[] = response.data.repos.map(
+          (item: RepoServer) => {
             return {
               id: item.id,
-              full_name: item.full_name,
+              full_name: item.fullName,
               description: item.description,
               language: item.language,
-              stargazers_count: item.stargazers_count,
+              stargazers_count: item.stargazersCount,
             };
           },
         );

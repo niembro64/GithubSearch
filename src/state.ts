@@ -1,8 +1,8 @@
 import {atom} from 'jotai';
-import {RepoGithub} from './types';
+import {RepoGithubSmall} from './types';
 
-export const likesAtom = atom<RepoGithub[]>([]);
-export const resultsAtom = atom<RepoGithub[]>([]);
+export const likesAtom = atom<RepoGithubSmall[]>([]);
+export const resultsAtom = atom<RepoGithubSmall[]>([]);
 export const textInputAtom = atom<string>('');
 export const textQueryAtom = atom<string>('');
 export const hasSeenMaxMessageAtom = atom<boolean>(false);

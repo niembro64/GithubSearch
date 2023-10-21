@@ -12,14 +12,18 @@ export type RepoServer = {
   description: string;
   language: string;
   stargazersCount: number;
+  createdAt: string;
+  url: string;
 };
 
-export type RepoGithub = {
+export type RepoGithubSmall = {
   id: GitHubId;
   full_name: string;
   description: string;
   language: string;
   stargazers_count: number;
+  created_at: string;
+  url: string;
 };
 
 export type RepoGithubFull = {
