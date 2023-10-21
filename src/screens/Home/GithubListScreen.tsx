@@ -271,8 +271,8 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                   height: 40,
                   borderColor:
                     textQuery === textInput && !isLoading
-                      ? colors.palette.blue300
-                      : colors.palette.gray400,
+                      ? colors.palette.gray400
+                      : colors.palette.blue500,
                   borderWidth: 2,
                   borderRadius: spacing.sm,
                   paddingLeft: spacing.md,
