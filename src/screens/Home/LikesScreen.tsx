@@ -30,9 +30,12 @@ const LikesScreen = inject('rootStore')(
       return null;
     }
 
-    const {
-      likesStore: {likesGithub, setLikesGithub, likesServer, fetchReposServer},
-    } = rootStore;
+    // const {
+    //   likesStore: {likesGithub, setLikesGithub, likesServer, fetchReposServer},
+    // } = rootStore;
+
+    const [likesGithub, setLikesGithub] = React.useState<RepoGithub[]>([]);
+    const [likesServer, setLikesServer] = React.useState<RepoServer[]>([]);
 
     const deleteFromServer = useCallback((repoId: string) => {
       axios.delete(`http://${myIp}:8080/repo/${repoId}`).catch(err => {
@@ -58,18 +61,18 @@ const LikesScreen = inject('rootStore')(
       setLikesGithub(likesFromServerFormatted);
     }, [likesServer]);
 
-    // const fetchReposServer = useCallback(() => {
-    //   axios
-    //     .get(`http://${myIp}:8080/repo/`)
-    //     .then(response => {
-    //       if (response?.data?.repos && Array.isArray(response.data.repos)) {
-    //         setLikesServer(response.data.repos);
-    //       }
-    //     })
-    //     .catch(err => {
-    //       console.error('Error fetching saved repos from server:', err);
-    //     });
-    // }, []);
+    const fetchReposServer = useCallback(() => {
+      axios
+        .get(`http://${myIp}:8080/repo/`)
+        .then(response => {
+          if (response?.data?.repos && Array.isArray(response.data.repos)) {
+            setLikesServer(response.data.repos);
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching saved repos from server:', err);
+        });
+    }, []);
 
     useEffect(() => {
       fetchReposServer();

@@ -32,9 +32,12 @@ const GithubListScreen = inject('rootStore')(
       return null;
     }
 
-    const {
-      likesStore: {searchResults, setSearchResults, isLoading, setIsLoading},
-    } = rootStore;
+    // const {
+    //   likesStore: {searchResults, setSearchResults, isLoading, setIsLoading},
+    // } = rootStore;
+
+    const [searchResults, setSearchResults] = useState<RepoGithub[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [error, setError] = useState<any>(null);
     const [inputValue, setInputValue] = useState<string>('web_smashed');
