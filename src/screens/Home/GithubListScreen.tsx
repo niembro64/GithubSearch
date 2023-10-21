@@ -40,7 +40,6 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
   const [likes, setLikes] = useAtom(likesAtom);
   const [numLikesState, setNumLikesState] = useState<NumLikesState>('zero');
 
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>(null);
   const [textInput, setTextInput] = useAtom(textInputAtom);
@@ -86,7 +85,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
               description: item.description,
               language: item.language,
               stargazers_count: item.stargazers_count,
-              isLiked: likes.some(like => like.id == item.id),
+              isLiked: likes.some(like => '' + like.id === '' + item.id),
             };
           },
         );
@@ -161,7 +160,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
                 marginTop: spacing.xxl,
                 width: '100%',
               }}
-              keyExtractor={item => item.id.toString()}
+              keyExtractor={item => '' + item.id}
               renderItem={({item: repo}) => <ListItem repo={repo} />}
             />
           )}

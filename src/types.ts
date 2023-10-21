@@ -15,7 +15,6 @@ export type RepoServer = {
 };
 
 export type RepoGithub = {
-  isLiked: boolean;
   id: GitHubId;
   full_name: string;
   description: string;

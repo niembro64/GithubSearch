@@ -41,7 +41,7 @@ const LikesScreen = observer(({navigation}: LikesScreenProps) => {
           marginTop: spacing.xxl,
           width: '100%',
         }}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={item => '' + item.id}
         renderItem={({item: repo}) => <ListItem repo={repo} />}
       />
     </KeyboardAvoidingView>
