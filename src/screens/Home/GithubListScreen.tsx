@@ -28,7 +28,7 @@ import {
 } from '../../state';
 import {spacing} from '../../styles';
 import {ListItem} from './ListItem';
-import {keyboardVerticalOffsetIOS} from '~/helpers';
+import {keyboardVerticalOffsetIOS} from '../../helpers';
 
 type GithubListScreenProps = {
   navigation: any;

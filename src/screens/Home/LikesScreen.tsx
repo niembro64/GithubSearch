@@ -17,7 +17,7 @@ import {ListItem} from './ListItem';
 // import {useNavigation} from '@react-navigation/native';
 import {useAtom} from 'jotai';
 import {likesGithubAtom, searchResultsAtom} from '../../state';
-import {keyboardVerticalOffsetIOS} from '~/helpers';
+import {keyboardVerticalOffsetIOS} from '../../helpers';
 
 type LikesScreenProps = {
   navigation: any;
