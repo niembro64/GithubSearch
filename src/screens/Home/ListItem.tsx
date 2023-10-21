@@ -27,14 +27,6 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
   const [likes, setLikes] = useAtom(likesGithubAtom);
   const [repoLiked, setRepoLiked] = useState<boolean>(false);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const deleteFromServer = useCallback((repoId: string) => {
-  //   axios.delete(`http://${myIp}:8080/repo/${repoId}`).catch(err => {
-  //     console.error('Error deleting repo from server:', err);
-  //     Alert.alert('Error', 'Failed to delete repository from server.');
-  //   });
-  // }, []);
-
   const deleteFromServer = useCallback(
     async (repoId: string) => {
       let res = null;
@@ -52,21 +44,6 @@ export const ListItem: React.FC<ListItemProps> = ({repo}) => {
     },
     [likes, setLikes, repo.id],
   );
-
-  // const saveToServer = useCallback((repo: RepoGithub) => {
-  //   axios
-  //     .post(`http://${myIp}:8080/repo/`, {
-  //       id: repo?.id.toString() || '',
-  //       full_name: repo?.full_name || '',
-  //       description: repo?.description || '',
-  //       language: repo?.language || '',
-  //       stargazers_count: repo?.stargazers_count || 0,
-  //     })
-  //     .catch(err => {
-  //       console.error('Error saving repo to server:', err);
-  //       Alert.alert('Error', 'Failed to save repository to server.');
-  //     });
-  // }, []);
 
   const saveToServer = useCallback(
     async (repo: RepoGithub) => {
