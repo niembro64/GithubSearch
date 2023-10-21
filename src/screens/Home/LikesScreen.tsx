@@ -2,7 +2,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import axios from 'axios';
 import {observer} from 'mobx-react';
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback} from 'react';
 import {
   Alert,
   FlatList,
@@ -15,7 +15,7 @@ import {
 import {myIp} from '../../YOUR_IP_HERE';
 import {colors} from '../../colors';
 import {spacing} from '../../styles';
-import {RepoGithub, RepoServer} from '../../types';
+import {RepoGithub} from '../../types';
 import {ListItem} from './ListItem';
 // import {useNavigation} from '@react-navigation/native';
 import {useAtom} from 'jotai';
@@ -27,7 +27,6 @@ type LikesScreenProps = {
 
 const LikesScreen = observer(({navigation}: LikesScreenProps) => {
   const [likesGithub, setLikesGithub] = useAtom(likesGithubAtom);
-  const [likesServer, setLikesServer] = React.useState<RepoServer[]>([]);
 
   const deleteFromServer = useCallback((repoId: string) => {
     axios.delete(`http://${myIp}:8080/repo/${repoId}`).catch(err => {
@@ -36,39 +35,6 @@ const LikesScreen = observer(({navigation}: LikesScreenProps) => {
     });
   }, []);
 
-  useEffect(() => {
-    const likesFromServerFormatted: RepoGithub[] = likesServer.map(
-      (repo: RepoServer) => {
-        // @ts-ignore
-        const x: RepoGithub = {
-          id: repo.id,
-          name: repo.fullName,
-          description: repo.description,
-          language: repo.language,
-          stargazers_count: repo.stargazersCount,
-        };
-        return x;
-      },
-    );
-    setLikesGithub(likesFromServerFormatted);
-  }, [likesServer]);
-
-  const fetchReposServer = useCallback(() => {
-    axios
-      .get(`http://${myIp}:8080/repo/`)
-      .then(response => {
-        if (response?.data?.repos && Array.isArray(response.data.repos)) {
-          setLikesServer(response.data.repos);
-        }
-      })
-      .catch(err => {
-        console.error('Error fetching saved repos from server:', err);
-      });
-  }, []);
-
-  useEffect(() => {
-    fetchReposServer();
-  }, []);
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}

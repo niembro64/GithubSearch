@@ -20,7 +20,7 @@ import {myIp} from '../../YOUR_IP_HERE';
 import {colors} from '../../colors';
 import {likesGithubAtom} from '../../state';
 import {spacing} from '../../styles';
-import {RepoGithub, RepoServer} from '../../types';
+import {RepoGithub} from '../../types';
 import {ListItem} from './ListItem';
 
 type GithubListScreenProps = {
@@ -28,37 +28,14 @@ type GithubListScreenProps = {
 };
 
 const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
+  const [likesGithub, setLikesGithub] = useAtom(likesGithubAtom);
   const [searchResults, setSearchResults] = useState<RepoGithub[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
   const [error, setError] = useState<any>(null);
   const [inputValue, setInputValue] = useState<string>('web_smashed');
   const [searchingValue, setSearchingValue] = useState<string>('web_smashed');
-  const [likesGithub, setLikesGithub] = useAtom(likesGithubAtom);
-  const [likesServer, setLikesServer] = useState<RepoServer[]>([]);
+
   const [allowLikes, setAllowLikes] = useState<boolean>(true);
-
-  useEffect(() => {
-    console.log('serverLikes.length', likesServer.length);
-
-    const likesFromServerFormatted: RepoGithub[] = likesServer.map(
-      (repo: RepoServer, index: number) => {
-        const x: RepoGithub = {
-          id: repo.id,
-          full_name: repo.fullName,
-          description: repo.description,
-          language: repo.language,
-          stargazers_count: repo.stargazersCount,
-        };
-
-        console.log('index', index, 'x', x);
-
-        return x;
-      },
-    );
-
-    setLikesGithub(likesFromServerFormatted);
-  }, [likesServer]);
 
   useEffect(() => {
     if (likesGithub.length > 9) {
@@ -108,11 +85,10 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
     axios
       .post(`http://${myIp}:8080/repo/`, {
         id: repo?.id.toString() || '',
-        fullName: repo?.full_name || '',
-        createdAt: repo?.created_at || '',
-        stargazersCount: repo?.stargazers_count || 0,
+        full_name: repo?.full_name || '',
+        description: repo?.description || '',
         language: repo?.language || '',
-        url: repo?.html_url || '',
+        stargazers_count: repo?.stargazers_count || 0,
       })
       .catch(err => {
         console.error('Error saving repo to server:', err);
@@ -132,7 +108,7 @@ const GithubListScreen = observer(({navigation}: GithubListScreenProps) => {
       .get(`http://${myIp}:8080/repo/`)
       .then(response => {
         if (response?.data?.repos && Array.isArray(response.data.repos)) {
-          setLikesServer(response.data.repos);
+          setLikesGithub(response.data.repos);
         }
       })
       .catch(err => {

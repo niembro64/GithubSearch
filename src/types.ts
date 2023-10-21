@@ -3,13 +3,13 @@
 ///////////////////////////////////////////////
 export type GitHubId = string;
 
-export type RepoServer = {
-  id: GitHubId;
-  fullName: string;
-  description: string;
-  stargazersCount: number;
-  language: string;
-};
+// export type RepoServer = {
+//   id: GitHubId;
+//   fullName: string;
+//   description: string;
+//   stargazersCount: number;
+//   language: string;
+// };
 
 export type RepoGithub = {
   id: GitHubId;
@@ -17,6 +17,10 @@ export type RepoGithub = {
   description: string;
   language: string;
   stargazers_count: number;
+
+  //////////////////////////
+  // OTHER
+  //////////////////////////
   node_id?: string;
   name?: string;
   private?: boolean;
